@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+    <table class="fancy"> 
+        {% for feed in feeds %}
+        <tr>
+            <td class="date">{{ feed.date_time_str }}</td>
+            <td class="source">{{ feed.source }}</td>
+            <td class="time">{{ feed.time_str }}</td>
+            <td class="title"><a href="{{ feed.link }}" target="_blank">{{ feed.title }}</a></td>
+        </tr> 
+        {% endfor %}
+    </table>
+{% endblock %}
