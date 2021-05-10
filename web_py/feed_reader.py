@@ -19,10 +19,7 @@ def add_timezone_field(date):
     date_str = date.strftime(rss_date_format)
     return date_str
 
-
-feed_data = []
-
-async def get_feed_async(feed):
+async def get_feed_async(feed, feed_data):
     """Read a single rss feed asynchronously. Store the data in feed_data"""
     feed_xml = await fetch(feed)
     d = feedparser.parse(feed_xml)
@@ -40,8 +37,9 @@ async def get_feed_async(feed):
         })
 
 def get_feeds_async(loop):
+    feed_data = []
     """Read a number of feeds asynchronously and then sort them by date"""
-    tasks = [get_feed_async(feed) for feed in feeds]
+    tasks = [get_feed_async(feed, feed_data) for feed in feeds]
     loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
     feed_data.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
     return feed_data
@@ -56,6 +54,7 @@ async def fetch(url, timeout=10):
 
 def get_feeds():
     """Read in feeds from the sources and sort them by time"""
+    feed_data = []
 
     for feed in feeds:
         d = feedparser.parse(feed)
@@ -71,12 +70,12 @@ def get_feeds():
                 'title': title, 'source': source, 'image': image,'summary': summary, 'link': entry['link'],
                 'date': date_str
             })
-        
+
     feed_data.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
 
     return feed_data 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    get_feeds_async(loop)
+    feed_data = get_feeds_async(loop)
     print('after get_feeds ' + str(len(feed_data)))
