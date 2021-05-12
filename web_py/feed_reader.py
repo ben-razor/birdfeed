@@ -9,7 +9,9 @@ feeds = [
     'https://cointelegraph.com/rss',
     'https://www.newsbtc.com/feed',
     'https://blog.coinbase.com/feed',
-    'https://dailyhodl.com/altcoins/feed/'
+    'https://dailyhodl.com/altcoins/feed/',
+    'https://news.bitcoin.com/feed/',
+    'https://bitcoinmagazine.com/.rss/full/'
 ]
 
 def add_timezone_field(date):
@@ -23,7 +25,9 @@ async def get_feed_async(feed, feed_data):
     """Read a single rss feed asynchronously. Store the data in feed_data"""
     feed_xml = await fetch(feed)
     d = feedparser.parse(feed_xml)
-    source = d['feed']['title']
+    if 'tele' in feed:
+        print(d)
+    source = d['feed'].get('title', '')
     image = d['feed'].get('image', {'href': ''})
 
     for entry in d['entries']: 
@@ -47,8 +51,18 @@ def get_feeds_async(loop):
 async def fetch(url, timeout=10):
     """Fetch a response from a url asynchronously"""
     with async_timeout.timeout(timeout):
-        async with aiohttp.ClientSession() as session:
+        headers = {
+            "Accept": "application/rss+xml, application/rdf+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8", 
+            "Content-Type": "application/rss+xml",
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36", 
+        }
+        async with aiohttp.ClientSession(skip_auto_headers=['User-Agent', 'Accept', 'Content-Type'], headers=headers) as session:
             async with session.get(url) as response:
+                if 'tele' in url:
+                    print('-- headers --')
+                    print(response.status)
+                    print(response.headers)
+                    print('-- end headers --')
                 resp_str = await response.read()
     return resp_str
 
