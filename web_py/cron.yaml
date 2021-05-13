@@ -1,0 +1,4 @@
+cron:
+- description: "Get new feeeds"
+  url: /api/feed?reload=1
+  schedule: every 15 minutes
