@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import feed_reader
 import asyncio
+import logging
 from datetime import datetime
 from bs4 import BeautifulSoup
 from flask import Flask, request, url_for, render_template, jsonify
@@ -76,6 +77,24 @@ def feed_json():
     response = jsonify(feeds)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+@app.route('/api/feed_urls', methods=['GET', 'POST'])
+def feed_urls():
+    status = 200
+    resp = {}
+    if request.method == 'GET':
+        resp = feed_reader.get_feed_urls(loop)
+    elif request.method == 'POST':
+        logging.error(request.json)
+        body = request.json
+        feed_url = body['feed_url']
+        feed_reader.add_feed_url(loop, feed_url)
+        status = 201
+        resp = [feed_url]
+
+    response = jsonify(resp)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, status
 
 if __name__ == '__main__':
     app.run(debug=True)

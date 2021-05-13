@@ -92,18 +92,37 @@ def get_feeds():
     return feed_data 
 
 def get_stored_feeds(loop):
-    url = 'https://storage.googleapis.com/birdfeed-01000101.appspot.com/feed-data.json'
+    return get_obj(loop, 'feed-data.json')
+
+def get_feed_urls(loop):
+    return get_obj(loop, 'feed-urls.json')
+
+def add_feed_url(loop, feed_url):
+    feeds = get_feed_urls(loop)
+    feeds.append(feed_url)
+    store_feed_urls(feeds)
+
+def store_feeds(feeds):
+    store_obj(feeds, 'feed-data.json', is_cached=False)
+
+def store_feed_urls(feed_urls):
+    store_obj(feed_urls, 'feed-urls.json', is_cached=False)
+
+def store_obj(obj, file_name, is_public=True, is_cached=True):
+    client = storage.Client()
+    bucket = client.bucket('birdfeed-01000101.appspot.com')
+    blob = bucket.get_blob(file_name)
+    if not is_cached:
+        blob.cache_control = 'no-cache,no-store'
+    blob.upload_from_string(json.dumps(obj))
+    if is_public:
+        blob.make_public()
+
+def get_obj(loop, file_name):
+    url = 'https://storage.googleapis.com/birdfeed-01000101.appspot.com/' + file_name
     data = loop.run_until_complete(fetch(url))
     logging.error(data)
     return json.loads(data)
-
-def store_feeds(feeds):
-    client = storage.Client()
-    bucket = client.bucket('birdfeed-01000101.appspot.com')
-    blob = bucket.get_blob('feed-data.json')
-    blob.cache_control = 'no-cache,no-store'
-    blob.upload_from_string(json.dumps(feeds))
-    blob.make_public()
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
