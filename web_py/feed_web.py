@@ -1,11 +1,13 @@
+#!/usr/bin/env python
 import feed_reader
 import asyncio
 from datetime import datetime
 from bs4 import BeautifulSoup
-from flask import Flask, url_for, render_template, jsonify
+from flask import Flask, request, url_for, render_template, jsonify
 from flask_cors import CORS
 import urllib
 from tabulate import tabulate
+from google.cloud import *
 
 loop = asyncio.get_event_loop()
 app = Flask(__name__)
@@ -48,7 +50,10 @@ def process_feeds(feeds):
 def hello_world(): 
     response = ''
     try:
-        feeds = feed_reader.get_feeds_async(loop)
+        feeds = feed_reader.get_stored_feeds(loop)
+        print('-- feeds --')
+        print(feeds)
+        print('-- ---- --')
         feeds = process_feeds(feeds)
         response = render_template('feeds.html', feeds=feeds) 
     except Exception as e:
@@ -60,7 +65,14 @@ def hello_world():
 
 @app.route('/api/feed')
 def feed_json():
-    feeds = feed_reader.get_feeds_async(loop)
+    reload = request.args.get('reload')
+
+    if reload:
+        feeds = feed_reader.get_feeds_async(loop)
+        feed_reader.store_feeds(feeds)
+    else:
+        feeds = feed_reader.get_stored_feeds(loop)
+
     response = jsonify(feeds)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response

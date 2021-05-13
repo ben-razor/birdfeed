@@ -1,9 +1,11 @@
-import feedparser
+import feedparser, json
 import asyncio, aiohttp, async_timeout
+import logging
 from tabulate import tabulate
 from datetime import *
 from dateutil import parser
 import re
+from google.cloud import storage
 
 feeds = [
     'https://cointelegraph.com/rss',
@@ -89,7 +91,22 @@ def get_feeds():
 
     return feed_data 
 
+def get_stored_feeds(loop):
+    url = 'https://storage.googleapis.com/birdfeed-01000101.appspot.com/feed-data.json'
+    data = loop.run_until_complete(fetch(url))
+    logging.error(data)
+    return json.loads(data)
+
+def store_feeds(feeds):
+    client = storage.Client()
+    bucket = client.bucket('birdfeed-01000101.appspot.com')
+    blob = bucket.get_blob('feed-data.json')
+    blob.cache_control = 'no-cache,no-store'
+    blob.upload_from_string(json.dumps(feeds))
+    blob.make_public()
+
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    feed_data = get_feeds_async(loop)
+    #feed_data = get_feeds_async(loop)
+    feed_data = get_stored_feeds(loop)
     print('after get_feeds ' + str(len(feed_data)))
