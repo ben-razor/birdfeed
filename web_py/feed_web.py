@@ -2,7 +2,9 @@
 import feed_reader
 import asyncio
 import logging
+import datetime as dt
 from datetime import datetime
+import pytz
 from bs4 import BeautifulSoup
 from flask import Flask, request, url_for, render_template, jsonify
 from flask_cors import CORS
@@ -24,6 +26,8 @@ def process_feeds(feeds):
         summary = soup.get_text() # Strip html from summary
  
         date = datetime.strptime(feed["date"], "%a, %d %b %Y %H:%M:%S %z")
+        LOCAL_TIMEZONE = datetime.now(dt.timezone.utc).astimezone().tzinfo
+        date = date.astimezone(LOCAL_TIMEZONE)
         date_str = date.strftime('%a %d %b')
         time_str = date.strftime("%H:%M")
 
