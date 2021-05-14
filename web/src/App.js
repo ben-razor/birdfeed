@@ -2,6 +2,20 @@ import logo from './logo.svg';
 import {useEffect, useState} from 'react'
 import './App.css';
 
+function formatTime(date, useSeconds=true) {
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  let seconds = date.getSeconds();
+
+  let timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+  if(useSeconds) {
+    timeStr += `:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  return timeStr;
+}
+
 function App() {
   const [feeds, setFeeds] = useState([]);
 
@@ -23,7 +37,8 @@ function App() {
 
         let date = new Date(feed['date']);
         let dateStr = date.toLocaleDateString();
-        feed['time_str'] = date.toLocaleTimeString();
+        feed['time_str'] = formatTime(date, false);
+        date.toDateString()
 
         if(dateStr === prevDateStr) {
           dateStr = '';
@@ -34,6 +49,8 @@ function App() {
         feed['date_time_str'] = dateStr;
 
         let source = feed['source'];
+        let variant = source.split('').map(x => x.charCodeAt(0)).reduce((p, c) => p + c) % 30; 
+        feed['color'] = `hsl(190, 100%, ${variant}%)`;
 
         if(source === prevSource) {
           if(dateStr === '') source = '';
@@ -54,9 +71,9 @@ function App() {
       {feeds.map((feed, index) => {
         return <tr>
             <td class="date">{ feed.date_time_str }</td>
-            <td class="source">{ feed.source }</td>
+            <td class="source" style={{"color": "white", "background-color": feed.color}}>{ feed.source }</td>
             <td class="time">{ feed.time_str }</td>
-            <td class="title"><a href="{{ feed.link }}" target="_blank">{ feed.title }</a></td>
+            <td class="title"><a href={ feed.link } target="_blank">{ feed.title }</a></td>
         </tr> 
       })}
       </table>

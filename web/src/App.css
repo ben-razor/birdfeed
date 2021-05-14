@@ -59,18 +59,19 @@ table.fancy {
 
 table.fancy td {
     padding: 6px;
-    border: 1px solid hsl(0, 0%, 99%);
-    color: hsl(200, 10%, 40%);
+    vertical-align: top;
     font-family: LatoBold, Verdana, sans-serif;
 }
 
 td.date {
     text-align: right;
+    color: hsl(200, 50%, 84%);
     white-space: nowrap;
 }
 
 td.time {
     text-align: right;
+    color: hsl(200, 20%, 40%);
     white-space: nowrap;
 }
 
@@ -82,11 +83,12 @@ td.source {
 table.fancy .title {
     text-transform: uppercase;
     font-weight: bold;
+    background-color: hsl(200, 40%, 10%);
 }
 
 a {
     text-decoration: none;
-    color: hsl(200, 10%, 20%)
+    color: hsl(200, 10%, 80%);
 }
 
 a:hover {
