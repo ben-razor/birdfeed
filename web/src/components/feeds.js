@@ -81,7 +81,7 @@ function Feeds() {
       }
       setFeeds(json); 
     });
-    }, [])
+    }, [feeds])
 
     return (
         <div>
