@@ -94,3 +94,30 @@ a {
 a:hover {
     color: hsl(200, 90%, 40%)
 }
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: hsl(200, 40%, 10%);
+  text-align: right;
+}
+
+nav ul li {
+  display: inline-block;
+  text-decoration: none;
+}
+
+nav ul li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: white;
+}
+
+nav ul li a.active {
+  background-color: #008CBA;
+}
