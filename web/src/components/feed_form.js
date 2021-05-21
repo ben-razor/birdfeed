@@ -1,27 +1,39 @@
 import React from 'react';
 import { Formik } from 'formik';
 
+let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
+
 const FeedForm = () => (
   <div>
-    <h1>Anywhere in your app!</h1>
+    <h1>Enter RSS URL</h1>
     <Formik
-      initialValues={{ email: '', password: '' }}
+      initialValues={{ url: ''}}
       validate={values => {
         const errors = {};
-        if (!values.email) {
-          errors.email = 'Required';
-        } else if (
-          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-        ) {
-          errors.email = 'Invalid email address';
+        let urlMatch = urlRegex.test(values.url);
+
+        if (!values.url) {
+          errors.url = 'Required';
+        } else if (!urlMatch) {
+          errors.url= 'Invalid url';
         }
         return errors;
       }}
       onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          alert(JSON.stringify(values, null, 2));
+        fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
+          method: 'POST',
+          headers : { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({feed_url: values.url})
+        }).then(response => response.json()).then(json => {
+          console.log(json)
           setSubmitting(false);
-        }, 400);
+        }).catch(error => {
+          console.log(error);
+          setSubmitting(false);
+        });
       }}
     >
       {({
@@ -36,21 +48,14 @@ const FeedForm = () => (
       }) => (
         <form onSubmit={handleSubmit}>
           <input
-            type="email"
-            name="email"
+            type="url"
+            name="url"
+            id="url"
             onChange={handleChange}
             onBlur={handleBlur}
-            value={values.email}
+            value={values.url}
           />
-          {errors.email && touched.email && errors.email}
-          <input
-            type="password"
-            name="password"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.password}
-          />
-          {errors.password && touched.password && errors.password}
+          {errors.url && touched.url && errors.url}
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
