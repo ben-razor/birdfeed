@@ -82,7 +82,7 @@ def feed_json():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/api/feed_urls', methods=['GET', 'POST'])
+@app.route('/api/feed_urls', methods=['GET', 'POST', 'DELETE'])
 def feed_urls():
     status = 200
     resp = {}
@@ -92,9 +92,12 @@ def feed_urls():
         logging.error(request.json)
         body = request.json
         feed_url = body['feed_url']
-        feed_reader.add_feed_url(loop, feed_url)
+        resp = feed_reader.add_feed_url(loop, feed_url)
         status = 201
-        resp = [feed_url]
+    elif request.method == 'DELETE':
+        body = request.json
+        feed_url = body['feed_url']
+        resp = feed_reader.delete_feed_url(loop, feed_url)
 
     response = jsonify(resp)
     response.headers.add('Access-Control-Allow-Origin', '*')

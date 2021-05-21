@@ -25,7 +25,6 @@ function App() {
       </header>
       <Switch>
         <Route path="/setup">
-          <FeedForm />
           <FeedSetup />
         </Route>
         <Route path="/">

@@ -101,6 +101,13 @@ def add_feed_url(loop, feed_url):
     feeds = get_feed_urls(loop)
     feeds.append(feed_url)
     store_feed_urls(feeds)
+    return feeds
+
+def delete_feed_url(loop, feed_url):
+    feeds = get_feed_urls(loop)
+    feeds.remove(feed_url)
+    store_feed_urls(feeds)
+    return feeds
 
 def store_feeds(feeds):
     store_obj(feeds, 'feed-data.json', is_cached=False)

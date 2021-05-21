@@ -3,7 +3,7 @@ import { Formik } from 'formik';
 
 let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
 
-const FeedForm = () => (
+const FeedForm = (props) => (
   <div>
     <h1>Enter RSS URL</h1>
     <Formik
@@ -30,6 +30,7 @@ const FeedForm = () => (
         }).then(response => response.json()).then(json => {
           console.log(json)
           setSubmitting(false);
+          props.setFeeds(json);
         }).catch(error => {
           console.log(error);
           setSubmitting(false);
