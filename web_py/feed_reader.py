@@ -7,15 +7,6 @@ from dateutil import parser
 import re
 from google.cloud import storage
 
-feeds = [
-    'https://cointelegraph.com/rss',
-    'https://www.newsbtc.com/feed',
-    'https://blog.coinbase.com/feed',
-    'https://dailyhodl.com/altcoins/feed/',
-    'https://news.bitcoin.com/feed/',
-    'https://bitcoinmagazine.com/.rss/full/'
-]
-
 def add_timezone_field(date):
     """The RSS standard has timezone in the date, but not all feeds do. This adds it."""
     rss_date_format = "%a, %d %b %Y %H:%M:%S %z"
@@ -44,6 +35,7 @@ async def get_feed_async(feed, feed_data):
 
 def get_feeds_async(loop):
     feed_data = []
+    feeds = get_feed_urls(loop)
     """Read a number of feeds asynchronously and then sort them by date"""
     tasks = [get_feed_async(feed, feed_data) for feed in feeds]
     loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
@@ -71,6 +63,7 @@ async def fetch(url, timeout=10):
 def get_feeds():
     """Read in feeds from the sources and sort them by time"""
     feed_data = []
+    feeds = get_feed_urls(loop)
 
     for feed in feeds:
         d = feedparser.parse(feed)
@@ -99,7 +92,8 @@ def get_feed_urls(loop):
 
 def add_feed_url(loop, feed_url):
     feeds = get_feed_urls(loop)
-    feeds.append(feed_url)
+    if feed_url not in feeds:
+        feeds.append(feed_url)
     store_feed_urls(feeds)
     return feeds
 
