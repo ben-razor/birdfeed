@@ -30,7 +30,7 @@ async def get_feed_async(feed, feed_data):
 
         feed_data.append({
             'title': title, 'source': source, 'image': image,'summary': summary, 'link': entry['link'],
-            'date': date_str
+            'date': date_str, 'source_url': feed
         })
 
 def get_feeds_async(loop):
@@ -101,6 +101,7 @@ def delete_feed_url(loop, feed_url):
     feeds = get_feed_urls(loop)
     feeds.remove(feed_url)
     store_feed_urls(feeds)
+
     return feeds
 
 def store_feeds(feeds):
