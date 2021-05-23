@@ -12,7 +12,8 @@ function App() {
     <DocumentTitle title='My Web App'>
       <Router>
         <header>
-          <h2 class="logo">Birdfeed</h2>
+          <img src="logo192.png" class="logo" />
+          <h2 class="app-name">Birdfeed</h2>
           <nav>
             <ul>
               <li>

@@ -127,12 +127,12 @@ header {
   flex-direction: row;
 }
 
-header .logo {
+header .app-name {
   flex: 1 1 auto;
   padding: 0;
   margin: 0;
   font-size: 4em;
-  letter-spacing: 0.5em;
+  letter-spacing: 0.7em;
   transform: scaleY(0.4);
 }
 
@@ -140,3 +140,9 @@ header nav {
   flex: 2 1 auto;
 }
 
+img.logo {
+  width: 40px;
+  height: 40px;
+  margin: auto;
+  padding-right: 1em;
+}
