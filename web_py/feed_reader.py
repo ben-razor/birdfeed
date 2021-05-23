@@ -98,11 +98,13 @@ def add_feed_url(loop, feed_url):
     return feeds
 
 def delete_feed_url(loop, feed_url):
-    feeds = get_feed_urls(loop)
-    feeds.remove(feed_url)
-    store_feed_urls(feeds)
-
-    return feeds
+    feed_urls = get_feed_urls(loop)
+    feed_urls.remove(feed_url)
+    store_feed_urls(feed_urls)
+    feeds = get_stored_feeds(loop)
+    feeds = list(filter(lambda x: x['source_url'] != feed_url, feeds))
+    store_feeds(feeds)
+    return feed_urls
 
 def store_feeds(feeds):
     store_obj(feeds, 'feed-data.json', is_cached=False)
