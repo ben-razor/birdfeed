@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import DocumentTitle from 'react-document-title';
 
 /**
  * Returns time in format HH:MM:SS.
@@ -135,6 +136,7 @@ function Feeds() {
     }, [])
 
     return (
+      <DocumentTitle title='Birdfeed - Latest News'>
         <div>
             <table class="fancy"> 
             {feeds.map((feed, index) => {
@@ -147,6 +149,7 @@ function Feeds() {
             })}
             </table>
         </div>
+      </DocumentTitle>
     )
 }
 

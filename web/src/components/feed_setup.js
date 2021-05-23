@@ -1,5 +1,6 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import FeedForm from './feed_form';
+import DocumentTitle from 'react-document-title';
 
 function FeedSetup() {
   const [feeds, setFeeds] = useState([]);
@@ -32,6 +33,7 @@ function FeedSetup() {
   }
 
   return (
+    <DocumentTitle title='Birdfeed - Configure Your News Sources'>
       <Fragment>
         <FeedForm setFeeds={setFeeds} />
         <h3>List of configured feeds will appear here</h3>
@@ -42,6 +44,7 @@ function FeedSetup() {
         })}
         </table>
       </Fragment>
+    </DocumentTitle>
   )
 }
 
