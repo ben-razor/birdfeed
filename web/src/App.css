@@ -83,7 +83,7 @@ td.source {
 table.fancy .title {
     text-transform: uppercase;
     font-weight: bold;
-    background-color: hsl(200, 40%, 10%);
+    background-color: hsl(200deg 21% 33%);
 }
 
 a {
@@ -100,7 +100,6 @@ nav ul {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: hsl(200, 40%, 10%);
   text-align: right;
 }
 
