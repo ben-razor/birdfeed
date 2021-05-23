@@ -42,7 +42,7 @@ function stringToColour(text, hue, levels, baseLevel) {
 
 function fetchFeeds() {
   let feeds = [];
- fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed", {
+  fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed", {
     headers : { 
       'Content-Type': 'application/json',
       'Accept': 'application/json'
@@ -87,13 +87,52 @@ function Feeds() {
   const [feeds, setFeeds] = useState([]);
 
   useEffect(() => {
-      setFeeds(fetchFeeds()); 
+    let feeds = [];
+    fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed", {
+      headers : { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+        }
+    }).then(response => response.json()).then(json => {
+      let prevSource = '';
+      let prevDateStr = '';
 
+      for(let feed of json) {
+        let source = feed['source'];
+        let date = new Date(feed['date']);
+        let dateStr = date.toLocaleDateString();
+        feed['time_str'] = formatTime(date, false);
+        date.toDateString()
+
+        if(dateStr === prevDateStr) {
+          dateStr = '';
+        }
+        else {
+          prevDateStr = dateStr;
+        }
+        feed['date_time_str'] = dateStr;
+
+        feed['color'] = stringToColour(source)
+
+        if(source === prevSource) {
+          if(dateStr === '') source = '';
+        }
+        else {
+          prevSource = source;
+        }
+        feed['source'] = source;
+      }
+      feeds = json;
+      setFeeds(feeds);
+    });
+      /** 
+       * 
       setInterval(() => {
         setFeeds(fetchFeeds()); 
       }, 60000 * 10)
+      */
       
-    }, [feeds])
+    }, [])
 
     return (
         <div>

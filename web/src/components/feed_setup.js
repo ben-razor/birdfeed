@@ -13,7 +13,7 @@ function FeedSetup() {
         }).then(response => response.json()).then(json => {
           setFeeds(json);
         }).catch(error => { console.log(error); });
-  }, [feeds]);
+  }, []);
 
   function deleteFeed(url) {
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {

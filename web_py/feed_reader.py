@@ -14,7 +14,7 @@ def add_timezone_field(date):
     date_str = date.strftime(rss_date_format)
     return date_str
 
-async def get_feed_async(feed, feed_data):
+async def get_feed_async(feed, feed_data=[]):
     """Read a single rss feed asynchronously. Store the data in feed_data"""
     feed_xml = await fetch(feed)
     d = feedparser.parse(feed_xml)
@@ -32,6 +32,8 @@ async def get_feed_async(feed, feed_data):
             'title': title, 'source': source, 'image': image,'summary': summary, 'link': entry['link'],
             'date': date_str, 'source_url': feed
         })
+
+    return feed_data
 
 def get_feeds_async(loop):
     feed_data = []
@@ -91,11 +93,25 @@ def get_feed_urls(loop):
     return get_obj(loop, 'feed-urls.json')
 
 def add_feed_url(loop, feed_url):
-    feeds = get_feed_urls(loop)
-    if feed_url not in feeds:
-        feeds.append(feed_url)
-    store_feed_urls(feeds)
-    return feeds
+    success = False
+    feed_urls = get_feed_urls(loop)
+    if feed_url not in feed_urls:
+        feeds = get_stored_feeds(loop)
+        try:
+            new_feeds = loop.run_until_complete(asyncio.wait_for(get_feed_async(feed_url, []), timeout=5))
+            if new_feeds and len(new_feeds):
+                feeds.extend(new_feeds)
+                feeds.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
+                feed_urls.append(feed_url)
+                store_feeds(feeds)
+                store_feed_urls(feed_urls)
+                success = True
+            else:
+                success = False
+        except TimeoutError:
+            success = False
+
+    return feed_urls, success
 
 def delete_feed_url(loop, feed_url):
     feed_urls = get_feed_urls(loop)

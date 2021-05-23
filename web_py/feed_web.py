@@ -92,8 +92,13 @@ def feed_urls():
         logging.error(request.json)
         body = request.json
         feed_url = body['feed_url']
-        resp = feed_reader.add_feed_url(loop, feed_url)
-        status = 201
+        resp, success = feed_reader.add_feed_url(loop, feed_url)
+        
+        if success:
+            status = 201
+        else:
+            status = 400
+
     elif request.method == 'DELETE':
         body = request.json
         feed_url = body['feed_url']
