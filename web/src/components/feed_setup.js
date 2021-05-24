@@ -36,11 +36,9 @@ function FeedSetup() {
     <DocumentTitle title='Birdfeed - Configure Your News Sources'>
       <Fragment>
         <FeedForm setFeeds={setFeeds} />
-        <h3>List of configured feeds will appear here</h3>
-
-        <table>
+        <table className="feed-url-table">
         {feeds.map((feed, index) => {
-          return <tr><td>{feed}</td><td><button onClick={() => deleteFeed(feed)} >Delete</button></td></tr>
+          return <tr><td class="feed-url">{feed}</td><td><button onClick={() => deleteFeed(feed)} >Delete</button></td></tr>
         })}
         </table>
       </Fragment>

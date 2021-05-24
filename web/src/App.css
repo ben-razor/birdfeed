@@ -145,3 +145,16 @@ img.logo {
   margin: auto;
   padding-right: 1em;
 }
+
+table.feed-url-table {
+  margin-top: 1em;
+}
+
+td.feed-url {
+  width: 24em;
+  border-bottom: 1px solid hsl(199deg, 15%, 36%);
+}
+
+input#url {
+  width: 24em;
+}

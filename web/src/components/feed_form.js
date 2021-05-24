@@ -56,10 +56,11 @@ const FeedForm = (props) => (
             onBlur={handleBlur}
             value={values.url}
           />
-          {errors.url && touched.url && errors.url}
           <button type="submit" disabled={isSubmitting}>
             Submit
           </button>
+          <br />
+          {errors.url && touched.url && errors.url}
         </form>
       )}
     </Formik>
