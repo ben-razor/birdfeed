@@ -65,13 +65,13 @@ table.fancy td {
 
 td.date {
     text-align: right;
-    color: hsl(200, 50%, 84%);
+    color: hsl(200, 66%, 93%);
     white-space: nowrap;
 }
 
 td.time {
     text-align: right;
-    color: hsl(200, 20%, 40%);
+    color: hsl(200, 66%, 93%);
     white-space: nowrap;
 }
 
@@ -83,7 +83,7 @@ td.source {
 table.fancy .title {
     text-transform: uppercase;
     font-weight: bold;
-    background-color: hsl(200deg 21% 33%);
+    border-bottom: 1px solid hsl(199deg, 15%, 36%);
 }
 
 a {
@@ -118,7 +118,7 @@ nav ul li a {
 }
 
 nav ul li a.active {
-  background-color: #008CBA;
+  border-bottom: 4px solid #008cba;
 }
 
 header {
