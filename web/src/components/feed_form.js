@@ -1,5 +1,6 @@
 import React from 'react';
 import { Formik } from 'formik';
+import Button from 'react-bootstrap/Button';
 
 let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
 
@@ -56,9 +57,9 @@ const FeedForm = (props) => (
             onBlur={handleBlur}
             value={values.url}
           />
-          <button type="submit" disabled={isSubmitting}>
+          <Button variant="primary" type="submit" disabled={isSubmitting}>
             Submit
-          </button>
+          </Button>
           <br />
           {errors.url && touched.url && errors.url}
         </form>

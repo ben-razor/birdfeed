@@ -1,6 +1,7 @@
 import React, {useState, useEffect, Fragment} from 'react';
 import FeedForm from './feed_form';
 import DocumentTitle from 'react-document-title';
+import Button from 'react-bootstrap/Button';
 
 function FeedSetup() {
   const [feeds, setFeeds] = useState([]);
@@ -38,7 +39,10 @@ function FeedSetup() {
         <FeedForm setFeeds={setFeeds} />
         <table className="feed-url-table">
         {feeds.map((feed, index) => {
-          return <tr><td class="feed-url">{feed}</td><td><button onClick={() => deleteFeed(feed)} >Delete</button></td></tr>
+          return <tr>
+            <td class="feed-url">{feed}</td>
+            <td><Button variant="primary" onClick={() => deleteFeed(feed)} >Delete</Button></td>
+            </tr>
         })}
         </table>
       </Fragment>

@@ -109,11 +109,11 @@ nav ul li {
 
 nav ul li a {
   display: block;
-  color: #666;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  color: white;
+  color: #c7ced1;
+  font-weight: bold;
 }
 
 nav ul li a.active {
@@ -121,7 +121,7 @@ nav ul li a.active {
   border-radius: 5px;
 }
 
-header {
+div.header {
   display: flex;
   flex-direction: row;
 }
