@@ -38,12 +38,14 @@ function FeedSetup() {
       <Fragment>
         <FeedForm setFeeds={setFeeds} />
         <table className="feed-url-table">
-        {feeds.map((feed, index) => {
-          return <tr>
-            <td class="feed-url">{feed}</td>
-            <td><Button variant="primary" onClick={() => deleteFeed(feed)} >Delete</Button></td>
-            </tr>
-        })}
+          <tbody>
+          {feeds.map((feed, index) => {
+            return <tr key={index}>
+              <td className="feed-url">{feed}</td>
+              <td><Button variant="primary" onClick={() => deleteFeed(feed)} >Delete</Button></td>
+              </tr>
+          })}
+          </tbody>
         </table>
       </Fragment>
     </DocumentTitle>

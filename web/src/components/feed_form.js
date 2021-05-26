@@ -1,71 +1,99 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Formik } from 'formik';
 import Button from 'react-bootstrap/Button';
+import Alert from 'react-bootstrap/Alert';
 
 let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
 
-const FeedForm = (props) => (
-  <div>
-    <h1>Enter RSS URL</h1>
-    <Formik
-      initialValues={{ url: ''}}
-      validate={values => {
-        const errors = {};
-        let urlMatch = urlRegex.test(values.url);
+const FeedForm = (props) => {
+  const [showingAlert, showAlert] = useState('');
 
-        if (!values.url) {
-          errors.url = 'Required';
-        } else if (!urlMatch) {
-          errors.url= 'Invalid url';
-        }
-        return errors;
-      }}
-      onSubmit={(values, { setSubmitting }) => {
-        fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
-          method: 'POST',
-          headers : { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({feed_url: values.url})
-        }).then(response => response.json()).then(json => {
-          console.log(json)
-          setSubmitting(false);
-          props.setFeeds(json);
-        }).catch(error => {
-          console.log(error);
-          setSubmitting(false);
-        });
-      }}
-    >
-      {({
-        values,
-        errors,
-        touched,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        isSubmitting,
-        /* and other goodies */
-      }) => (
-        <form onSubmit={handleSubmit}>
-          <input
-            type="url"
-            name="url"
-            id="url"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.url}
-          />
-          <Button variant="primary" type="submit" disabled={isSubmitting}>
-            Submit
-          </Button>
-          <br />
-          {errors.url && touched.url && errors.url}
-        </form>
-      )}
-    </Formik>
-  </div>
-);
+  let alertTimer = null;
+
+  function resetAlert(t) {
+    clearTimeout(alertTimer);
+    alertTimer = setTimeout(() => showAlert(''), t * 1000);
+  }
+
+  function revealAlert(text) {
+    showAlert(text);
+    resetAlert(5);
+  }
+
+  return (
+    <div>
+      <h1>Enter RSS URL</h1>
+      <Formik
+        initialValues={{ url: ''}}
+        validate={values => {
+          const errors = {};
+          let urlMatch = urlRegex.test(values.url);
+
+          if (!values.url) {
+            errors.url = 'Required';
+          } else if (!urlMatch) {
+            errors.url= 'Invalid url';
+          }
+          return errors;
+        }}
+        onSubmit={(values, { setSubmitting }) => {
+          fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
+            method: 'POST',
+            headers : { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({feed_url: values.url})
+          }).then(response => {
+            if(!response.ok) {
+              return Promise.reject();
+            }
+            else {
+              return response.json();
+            }
+          }).then(json => {
+            console.log(json)
+            revealAlert('Feed URL added')
+            setSubmitting(false);
+            props.setFeeds(json);
+          }).catch(error => {
+            console.log(error);
+            revealAlert('Error adding feed URL\n\nAre you sure this is a valid RSS feed?')
+            setSubmitting(false);
+          });
+        }}
+      >
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+          isSubmitting,
+          /* and other goodies */
+        }) => (
+          <form onSubmit={handleSubmit}>
+            <input
+              type="url"
+              name="url"
+              id="url"
+              onChange={handleChange}
+              onBlur={handleBlur}
+              value={values.url}
+            />
+            <Button variant="primary" type="submit" disabled={isSubmitting}>
+              Submit
+            </Button>
+            <br />
+            {errors.url && touched.url && errors.url}
+            <Alert variant="info" className={'bf-alert ' + (showingAlert ? 'anim-fade-out' : '')}>{showingAlert}</Alert>
+          </form>
+        )}
+      </Formik>
+    </div>
+  );
+
+}
 
 export default FeedForm;

@@ -139,6 +139,19 @@ header nav {
   flex: 2 1 auto;
 }
 
+.bf-alert {
+  white-space: pre;
+  position: fixed;
+  max-width: 25em;
+  width: 98%;
+  top: 6em;
+  left: 0;
+  margin: 0 auto;
+  right: 0;
+  z-index: 10;
+  opacity: 0;
+}
+
 img.logo {
   width: 60px;
   margin: auto;
@@ -156,4 +169,16 @@ td.feed-url {
 
 input#url {
   width: 24em;
+}
+
+/* The animation code */
+@keyframes anim-fade-out {
+  0% {opacity: 0.9; }
+  50% {opacity: 0.9; }
+  100% {opacity: 0; }
+}
+
+div.anim-fade-out {
+  animation-name: anim-fade-out;
+  animation-duration: 5s;
 }

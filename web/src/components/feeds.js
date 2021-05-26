@@ -102,13 +102,13 @@ function Feeds() {
     return (
       <DocumentTitle title='Birdfeed - Latest News'>
         <div>
-            <table class="fancy"> 
+            <table className="fancy"> 
             {feeds.map((feed, index) => {
               return <tr>
-                  <td class="date">{ feed.date_time_str }</td>
-                  <td class="source" style={{"color": "white", "background-color": feed.color}}>{ feed.source }</td>
-                  <td class="time">{ feed.time_str }</td>
-                  <td class="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
+                  <td className="date">{ feed.date_time_str }</td>
+                  <td className="source" style={{"color": "white", "background-color": feed.color}}>{ feed.source }</td>
+                  <td className="time">{ feed.time_str }</td>
+                  <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
               </tr> 
             })}
             </table>
