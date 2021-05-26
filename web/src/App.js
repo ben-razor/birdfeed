@@ -1,10 +1,28 @@
+import {useState} from 'react';
 import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
 import Feeds from './components/feeds';
 import FeedSetup from './components/feed_setup';
 import DocumentTitle from 'react-document-title';
+import Alert from 'react-bootstrap/Alert';
+import {AlertContext} from './components/feed_alert';
 import './css/darkly/bootstrap.min.css';
 import './App.css';
+import React from "react";
+
 function App() {
+  const [showingAlert, showAlert] = useState('');
+
+  let alertTimer = null;
+
+  function resetAlert(t) {
+    clearTimeout(alertTimer);
+    alertTimer = setTimeout(() => showAlert(''), t * 1000);
+  }
+
+  function revealAlert(text) {
+    showAlert(text);
+    resetAlert(5);
+  }
 
   return (
     <DocumentTitle title='My Web App'>
@@ -25,14 +43,17 @@ function App() {
             </nav>
           </div>
         </header>
-        <Switch>
-          <Route path="/setup">
-            <FeedSetup />
-          </Route>
-          <Route path="/">
-            <Feeds />
-          </Route>
-        </Switch>
+        <Alert variant="info" className={'bf-alert ' + (showingAlert ? 'anim-fade-out' : '')}>{showingAlert}</Alert>
+        <AlertContext.Provider value={revealAlert}>
+          <Switch>
+            <Route path="/setup">
+              <FeedSetup />
+            </Route>
+            <Route path="/">
+              <Feeds />
+            </Route>
+          </Switch>
+        </AlertContext.Provider>
       </Router>
     </DocumentTitle>
  );

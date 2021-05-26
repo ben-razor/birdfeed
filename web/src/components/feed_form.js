@@ -1,25 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import { Formik } from 'formik';
 import Button from 'react-bootstrap/Button';
-import Alert from 'react-bootstrap/Alert';
+import {AlertContext} from './feed_alert';
 
 let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
 
 const FeedForm = (props) => {
-  const [showingAlert, showAlert] = useState('');
-
-  let alertTimer = null;
-
-  function resetAlert(t) {
-    clearTimeout(alertTimer);
-    alertTimer = setTimeout(() => showAlert(''), t * 1000);
-  }
-
-  function revealAlert(text) {
-    showAlert(text);
-    resetAlert(5);
-  }
-
+  const showAlert = useContext(AlertContext);
   return (
     <div>
       <h1>Enter RSS URL</h1>
@@ -53,12 +40,12 @@ const FeedForm = (props) => {
             }
           }).then(json => {
             console.log(json)
-            revealAlert('Feed URL added')
+            showAlert('Feed URL added')
             setSubmitting(false);
             props.setFeeds(json);
           }).catch(error => {
             console.log(error);
-            revealAlert('Error adding feed URL\n\nAre you sure this is a valid RSS feed?')
+            showAlert('Error adding feed URL\n\nAre you sure this is a valid RSS feed?')
             setSubmitting(false);
           });
         }}
@@ -87,7 +74,6 @@ const FeedForm = (props) => {
             </Button>
             <br />
             {errors.url && touched.url && errors.url}
-            <Alert variant="info" className={'bf-alert ' + (showingAlert ? 'anim-fade-out' : '')}>{showingAlert}</Alert>
           </form>
         )}
       </Formik>

@@ -1,10 +1,12 @@
-import React, {useState, useEffect, Fragment} from 'react';
+import React, {useState, useContext, useEffect, Fragment} from 'react';
 import FeedForm from './feed_form';
 import DocumentTitle from 'react-document-title';
 import Button from 'react-bootstrap/Button';
+import {AlertContext} from './feed_alert';
 
 function FeedSetup() {
   const [feeds, setFeeds] = useState([]);
+  const showAlert = useContext(AlertContext);
 
   useEffect(() => {
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
@@ -27,9 +29,11 @@ function FeedSetup() {
       body: JSON.stringify({feed_url: url})
     }).then(response => response.json()).then(json => {
       console.log(json)
+      showAlert('Feed URL deleted');
       setFeeds(json);
     }).catch(error => {
       console.log(error);
+      showAlert('Error deleting feed URL');
     });
   }
 
