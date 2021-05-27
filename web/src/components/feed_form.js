@@ -32,20 +32,40 @@ const FeedForm = (props) => {
             },
             body: JSON.stringify({feed_url: values.url})
           }).then(response => {
-            if(!response.ok) {
-              return Promise.reject();
-            }
-            else {
-              return response.json();
-            }
+            return response.json();
           }).then(json => {
             console.log(json)
-            showAlert('Feed URL added')
             setSubmitting(false);
-            props.setFeeds(json);
+            if(json.success) {
+              showAlert({'variant': 'success', 'message': 'Feed URL added'})
+              props.setFeeds(json.data);
+            }
+            else {
+              let message = '';
+              switch(json.reason) {
+                case 'no-data-from-feed':
+                  message = 'No data from feed\n\nAre you sure this is a valid feed?';
+                  break;
+                case 'url-exists':
+                  message = 'Feed URL already exists';
+                  break;
+                case 'max-feeds-10':
+                  message = 'Maximum 10 feed URLS have been added';
+                  break;
+                case 'timeout':
+                  message = 'The feed URL took too long to respond';
+                  break;
+                default:
+                  message = '';
+              }
+              showAlert({'variant': 'danger', 'message': message});
+            }
           }).catch(error => {
             console.log(error);
-            showAlert('Error adding feed URL\n\nAre you sure this is a valid RSS feed?')
+            showAlert({
+              'variant': 'danger', 
+              'message': `Error adding feed URL\n\nAre you sure this is a valid RSS feed?\n\n`
+            })
             setSubmitting(false);
           });
         }}

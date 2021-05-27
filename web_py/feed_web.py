@@ -84,7 +84,21 @@ def feed_json():
 
 @app.route('/api/feed_urls', methods=['GET', 'POST', 'DELETE'])
 def feed_urls():
+    """API endpoint for managing list of feed urls.
+
+        Returns json in format: {
+            'success': true/false,
+            'reason': string,
+            'data': [string, string, ...]
+        }
+
+        GET reason: ok
+        POST reason: ok, no-data-from-feed, url-exists, max-feeds-10, timeout
+        DELETE reason: ok, url-does-not-exist
+    """
     status = 200
+    success = True
+    reason = 'ok'
     resp = {}
     if request.method == 'GET':
         resp = feed_reader.get_feed_urls(loop)
@@ -92,7 +106,7 @@ def feed_urls():
         logging.error(request.json)
         body = request.json
         feed_url = body['feed_url']
-        resp, success = feed_reader.add_feed_url(loop, feed_url)
+        resp, success, reason = feed_reader.add_feed_url(loop, feed_url)
         
         if success:
             status = 201
@@ -102,9 +116,12 @@ def feed_urls():
     elif request.method == 'DELETE':
         body = request.json
         feed_url = body['feed_url']
-        resp = feed_reader.delete_feed_url(loop, feed_url)
+        resp, success, reason = feed_reader.delete_feed_url(loop, feed_url)
+        
+        if not success:
+            status = 400
 
-    response = jsonify(resp)
+    response = jsonify({'success': success, 'reason': reason, 'data': resp})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, status
 

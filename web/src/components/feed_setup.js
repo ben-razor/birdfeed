@@ -15,7 +15,8 @@ function FeedSetup() {
             'Accept': 'application/json'
           }
         }).then(response => response.json()).then(json => {
-          setFeeds(json);
+          console.log(json)
+          setFeeds(json.data);
         }).catch(error => { console.log(error); });
   }, []);
 
@@ -29,11 +30,23 @@ function FeedSetup() {
       body: JSON.stringify({feed_url: url})
     }).then(response => response.json()).then(json => {
       console.log(json)
-      showAlert('Feed URL deleted');
-      setFeeds(json);
+
+      if(json.success) {
+        showAlert({'variant': 'success', 'message': 'Feed URL deleted'});
+        setFeeds(json.data);
+      }
+      else {
+        let message = '';
+
+        if(json.reason === 'url-does-not-exist') {
+          message = 'The URL does not exist';  
+        }
+
+        showAlert({'variant': 'danger', 'message': message});
+      }
     }).catch(error => {
       console.log(error);
-      showAlert('Error deleting feed URL');
+      showAlert({'variant': 'danger', 'message': 'Error deleting feed URL'});
     });
   }
 

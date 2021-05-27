@@ -93,9 +93,23 @@ def get_feed_urls(loop):
     return get_obj(loop, 'feed-urls.json')
 
 def add_feed_url(loop, feed_url):
-    success = False
+    """Add a feed url and attempt to get and store new feeds.
+
+    Returns:
+        A tuple (feed_urls, success, reason)
+
+        feed_urls: updated array of feed_urls
+        success: boolean
+        reason: ok, no-data-from-feed, url-exists, max-feeds-10, timeout
+    """
+    success = True 
+    reason = 'ok'
     feed_urls = get_feed_urls(loop)
-    if feed_url not in feed_urls:
+    
+    if len(feed_urls) >= 10:
+        success = False
+        reason = 'max-feeds-10'
+    elif feed_url not in feed_urls:
         feeds = get_stored_feeds(loop)
         try:
             new_feeds = loop.run_until_complete(asyncio.wait_for(get_feed_async(feed_url, []), timeout=5))
@@ -105,22 +119,42 @@ def add_feed_url(loop, feed_url):
                 feed_urls.append(feed_url)
                 store_feeds(feeds)
                 store_feed_urls(feed_urls)
-                success = True
             else:
                 success = False
+                reason = 'no-data-from-feed'
         except TimeoutError:
             success = False
+            reason = 'timeout'
+    else:
+        success = False
+        reason = 'url-exists'
 
-    return feed_urls, success
+    return feed_urls, success, reason
 
 def delete_feed_url(loop, feed_url):
+    """Delete a feed url and remove feeds for that url.
+
+    Returns:
+        A tuple (feed_urls, success, reason)
+
+        feed_urls: updated array of feed_urls
+        success: boolean
+        reason: ok, url-does-not-exist
+    """
+    success = True
+    reason = 'ok'
     feed_urls = get_feed_urls(loop)
-    feed_urls.remove(feed_url)
-    store_feed_urls(feed_urls)
-    feeds = get_stored_feeds(loop)
-    feeds = list(filter(lambda x: x['source_url'] != feed_url, feeds))
-    store_feeds(feeds)
-    return feed_urls
+    if feed_url in feed_urls:
+        feed_urls.remove(feed_url)
+        store_feed_urls(feed_urls)
+        feeds = get_stored_feeds(loop)
+        feeds = list(filter(lambda x: x['source_url'] != feed_url, feeds))
+        store_feeds(feeds)
+    else:
+        success = False
+        reason = 'url-does-not-exist'
+
+    return feed_urls, success, reason
 
 def store_feeds(feeds):
     store_obj(feeds, 'feed-data.json', is_cached=False)
