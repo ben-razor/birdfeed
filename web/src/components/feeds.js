@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import DocumentTitle from 'react-document-title';
+import {AlertContext} from './feed_alert';
 
 /**
  * Returns time in format HH:MM:SS.
@@ -88,8 +89,10 @@ async function fetchFeeds() {
 
 function Feeds() {
   const [feeds, setFeeds] = useState([]);
+  const showAlert = useContext(AlertContext);
 
   useEffect(() => {
+    showAlert({message: ''});
     async function fetchFeedsAndSet() {
       let feeds = await fetchFeeds();
       setFeeds(feeds);
@@ -98,7 +101,7 @@ function Feeds() {
 
     let timer = setInterval(() => fetchFeedsAndSet(), 60000 * 5);
     return () => clearInterval(timer);
-  }, []);
+  }, [showAlert]);
 
     return (
       <DocumentTitle title='Birdfeed - Latest News'>
