@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useContext} from 'react';
 import { Formik } from 'formik';
 import Button from 'react-bootstrap/Button';
 import {AlertContext} from './feed_alert';

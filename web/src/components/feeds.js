@@ -96,21 +96,27 @@ function Feeds() {
     }
     fetchFeedsAndSet();
 
-    setInterval(() => fetchFeedsAndSet(), 60000);
+    let timer = setInterval(() => fetchFeedsAndSet(), 60000 * 5);
+    return () => clearInterval(timer);
   }, []);
 
     return (
       <DocumentTitle title='Birdfeed - Latest News'>
         <div>
-            <table className="fancy"> 
-            {feeds.map((feed, index) => {
-              return <tr>
-                  <td className="date">{ feed.date_time_str }</td>
-                  <td className="source" style={{"color": "white", "background-color": feed.color}}>{ feed.source }</td>
-                  <td className="time">{ feed.time_str }</td>
-                  <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
-              </tr> 
-            })}
+            {feeds.length === 0 && 
+            <div class="lds-default anim-fade-in-short" style={{marginLeft:"50%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+
+            <table className="fancy anim-fade-in-short"> 
+            <tbody>
+              {feeds.map((feed, index) => {
+                return <tr key={index}>
+                    <td className="date">{ feed.date_time_str }</td>
+                    <td className="source" style={{color: "white", backgroundColor: feed.color}}>{ feed.source }</td>
+                    <td className="time">{ feed.time_str }</td>
+                    <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
+                </tr> 
+              })}
+            </tbody>
             </table>
         </div>
       </DocumentTitle>
