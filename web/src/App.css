@@ -77,7 +77,6 @@ td.time {
 
 td.source {
     background-color: hsl(0, 0%, 95%);
-    white-space: nowrap;
 }
 
 table.fancy .title {
@@ -159,16 +158,16 @@ img.logo {
 }
 
 table.feed-url-table {
+  width: 100%;
   margin-top: 1em;
 }
 
 td.feed-url {
-  width: 24em;
   border-bottom: 1px solid hsl(199deg, 15%, 36%);
 }
 
 input#url {
-  width: 24em;
+  width: 100%;
 }
 
 @keyframes anim-fade-out {

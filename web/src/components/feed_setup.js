@@ -2,6 +2,8 @@ import React, {useState, useContext, useEffect, Fragment} from 'react';
 import FeedForm from './feed_form';
 import DocumentTitle from 'react-document-title';
 import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import {AlertContext} from './feed_alert';
 
 function FeedSetup() {
@@ -57,30 +59,35 @@ function FeedSetup() {
   return (
     <DocumentTitle title='Birdfeed - Configure Your News Sources'>
       <Fragment>
-        <FeedForm setFeeds={setFeeds} />
-        {feeds.length === 0 && 
-          <div class="lds-default anim-fade-in-short" style={{marginLeft:"10%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
-        {feeds.length > 0 && 
-          <table class="feed-url-table anim-fade-in-short">
-            <tbody>
-            {feeds.map((feed, index) => {
-              let isDeleting= deleting[feed];
-              return <tr key={index}>
-                <td className="feed-url">{feed}</td>
-                <td>
-                  <Button variant="primary" onClick={() => deleteFeed(feed)} disabled={isDeleting}>
-                  <i className="fa fa-refresh fa-spin" style={{ 
-                    marginRight: isDeleting ? '5px' : '',
-                    width: isDeleting ? '1em' : 0,
-                    opacity: isDeleting ? 1 : 0 
-                  }} />
-                  Delete
-                  </Button></td>
-                </tr>
-            })}
-            </tbody>
-          </table>
-        }
+        <Row>
+          <Col>
+          <FeedForm setFeeds={setFeeds} />
+          {feeds.length === 0 && 
+            <div class="lds-default anim-fade-in-short" style={{marginLeft:"10%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+          {feeds.length > 0 && 
+            <table class="feed-url-table anim-fade-in-short">
+              <tbody>
+              {feeds.map((feed, index) => {
+                let isDeleting= deleting[feed];
+                return <tr key={index}>
+                  <td className="feed-url">{feed}</td>
+                  <td>
+                    <Button variant="primary" onClick={() => deleteFeed(feed)} disabled={isDeleting} className="float-right">
+                    <i className="fa fa-refresh fa-spin" style={{ 
+                      marginRight: isDeleting ? '5px' : '',
+                      width: isDeleting ? '1em' : 0,
+                      opacity: isDeleting ? 1 : 0 
+                    }} />
+                    Delete
+                    </Button></td>
+                  </tr>
+              })}
+              </tbody>
+            </table>
+          }
+          </Col>
+          <Col></Col>
+        </Row>
       </Fragment>
     </DocumentTitle>
   )
