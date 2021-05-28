@@ -6,6 +6,7 @@ import {AlertContext} from './feed_alert';
 
 function FeedSetup() {
   const [feeds, setFeeds] = useState([]);
+  const [deleting, setDeleting] = useState({});
   const showAlert = useContext(AlertContext);
 
   useEffect(() => {
@@ -21,6 +22,7 @@ function FeedSetup() {
   }, []);
 
   function deleteFeed(url) {
+    setDeleting({[url]: true});
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
       method: 'DELETE',
       headers : { 
@@ -47,6 +49,8 @@ function FeedSetup() {
     }).catch(error => {
       console.log(error);
       showAlert({'variant': 'danger', 'message': 'Error deleting feed URL'});
+    }).finally(() => {
+      setDeleting({});
     });
   }
 
@@ -60,9 +64,18 @@ function FeedSetup() {
           <table class="feed-url-table anim-fade-in-short">
             <tbody>
             {feeds.map((feed, index) => {
+              let isDeleting= deleting[feed];
               return <tr key={index}>
                 <td className="feed-url">{feed}</td>
-                <td><Button variant="primary" onClick={() => deleteFeed(feed)} >Delete</Button></td>
+                <td>
+                  <Button variant="primary" onClick={() => deleteFeed(feed)} disabled={isDeleting}>
+                  <i className="fa fa-refresh fa-spin" style={{ 
+                    marginRight: isDeleting ? '5px' : '',
+                    width: isDeleting ? '1em' : 0,
+                    opacity: isDeleting ? 1 : 0 
+                  }} />
+                  Delete
+                  </Button></td>
                 </tr>
             })}
             </tbody>

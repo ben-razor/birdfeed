@@ -95,6 +95,7 @@ function Feeds() {
     showAlert({message: ''});
     async function fetchFeedsAndSet() {
       let feeds = await fetchFeeds();
+      setTimeout(() => setFeeds(feeds), 1000);
       setFeeds(feeds);
     }
     fetchFeedsAndSet();
@@ -103,27 +104,27 @@ function Feeds() {
     return () => clearInterval(timer);
   }, [showAlert]);
 
-    return (
-      <DocumentTitle title='Birdfeed - Latest News'>
-        <div>
-            {feeds.length === 0 && 
-            <div class="lds-default anim-fade-in-short" style={{marginLeft:"50%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+  return (
+    <DocumentTitle title='Birdfeed - Latest News'>
+      <div>
+          {feeds.length === 0 && 
+          <div class="lds-default anim-fade-in-short" style={{marginLeft:"50%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
 
-            <table className="fancy anim-fade-in-short"> 
-            <tbody>
-              {feeds.map((feed, index) => {
-                return <tr key={index}>
-                    <td className="date">{ feed.date_time_str }</td>
-                    <td className="source" style={{color: "white", backgroundColor: feed.color}}>{ feed.source }</td>
-                    <td className="time">{ feed.time_str }</td>
-                    <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
-                </tr> 
-              })}
-            </tbody>
-            </table>
-        </div>
-      </DocumentTitle>
-    )
+          <table className="fancy anim-fade-in-short"> 
+          <tbody>
+            {feeds.map((feed, index) => {
+              return <tr key={index}>
+                  <td className="date">{ feed.date_time_str }</td>
+                  <td className="source" style={{color: "white", backgroundColor: feed.color}}>{ feed.source }</td>
+                  <td className="time">{ feed.time_str }</td>
+                  <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
+              </tr> 
+            })}
+          </tbody>
+          </table>
+      </div>
+    </DocumentTitle>
+  )
 }
 
 export default Feeds;

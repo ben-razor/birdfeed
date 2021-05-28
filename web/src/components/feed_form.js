@@ -90,15 +90,20 @@ const FeedForm = (props) => {
               value={values.url}
             />
             <Button variant="primary" type="submit" disabled={isSubmitting}>
-              Submit
-            </Button>
-            <br />
-            {errors.url && touched.url && errors.url}
-          </form>
-        )}
-      </Formik>
-    </div>
-  );
+            <i className="fa fa-refresh fa-spin" style={{ 
+              marginRight: isSubmitting ? '5px' : '',
+              width: isSubmitting ? '1em' : 0,
+              opacity: isSubmitting ? 1 : 0 
+            }} />
+            Submit
+          </Button>
+          <br />
+          {errors.url && touched.url && errors.url}
+        </form>
+      )}
+    </Formik>
+  </div>
+);
 
 }
 
