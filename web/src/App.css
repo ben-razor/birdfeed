@@ -160,6 +160,7 @@ img.logo {
 table.feed-url-table {
   width: 100%;
   margin-top: 1em;
+  border-collapse: separate;
 }
 
 td.feed-url {

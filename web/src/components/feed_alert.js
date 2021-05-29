@@ -7,7 +7,7 @@ function FeedAlert(props) {
     const t = 5;
 
     useEffect(() => {
-        showAlert({message: ''});
+        showAlert({})
         let alertTimer = null;
         setTimeout(() => {
             showAlert({variant: props.alertInfo.variant, message: props.alertInfo.message});
@@ -17,9 +17,14 @@ function FeedAlert(props) {
         return () => clearTimeout(alertTimer);
     }, [props.alertInfo]);
 
-    return (
-        <Alert variant={alertInfo.variant} className={'bf-alert ' + (alertInfo.message ? 'anim-fade-out' : '')}>{alertInfo.message}</Alert>
-    )
+    let isShowing = Boolean(alertInfo.message);
+    
+    if(isShowing) {
+        return <Alert variant={alertInfo.variant} className={'bf-alert anim-fade-out'}>{alertInfo.message}</Alert>
+    }
+    else {
+        return '';
+    }
 }
 
 export default FeedAlert;

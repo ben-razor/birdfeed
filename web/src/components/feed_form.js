@@ -120,7 +120,7 @@ const FeedForm = (props) => {
 
   return (
     <div>
-      <h3>Enter RSS URL</h3>
+      <h3>Add RSS URL</h3>
       {addFeedForm}
     </div>
   );

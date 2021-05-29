@@ -23,6 +23,20 @@ function formatTime(date, useSeconds=true) {
   return timeStr;
 }
 
+function formatDate(date, useYear=true, separator='/') {
+  let dayStr = date.getDate().toString().padStart(2, '0');
+  let monthStr = date.getMonth().toString().padStart(2, '0');
+  let yearStr = date.getYear().toString();
+
+  let dateStr = dayStr + separator + monthStr;
+  
+  if(useYear) {
+    dateStr += separator + yearStr;
+  }
+
+  return dateStr;
+}
+
 /**
  * Converts a string to a colour with a given hue, 100% saturation and a value
  * from baseLevel to baseLevel + level.
@@ -59,7 +73,7 @@ async function fetchFeeds() {
   for(let feed of json) {
     let source = feed['source'];
     let date = new Date(feed['date']);
-    let dateStr = date.toLocaleDateString();
+    let dateStr = formatDate(date, false);
     feed['time_str'] = formatTime(date, false);
     date.toDateString()
 
@@ -115,8 +129,11 @@ function Feeds() {
             {feeds.map((feed, index) => {
               return <tr key={index}>
                   <td className="date">{ feed.date_time_str }</td>
-                  <td className="source" style={{color: "white", backgroundColor: feed.color}}>{ feed.source }</td>
-                  <td className="time">{ feed.time_str }</td>
+                  <td className="source" style={{color: "white", backgroundColor: feed.color, position: 'relative'}}>
+                    { feed.source }
+                    <div className="time d-block d-md-none" style={{position: 'absolute', bottom: 0, right: '5px' }}>{ feed.time_str }</div>
+                   </td>
+                  <td className="time d-none d-md-block">{ feed.time_str }</td>
                   <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
               </tr> 
             })}
