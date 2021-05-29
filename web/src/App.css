@@ -130,8 +130,16 @@ header .app-name {
   padding: 0;
   margin: 0;
   font-size: 4em;
-  letter-spacing: 0.7em;
+  letter-spacing: 0.6em;
   transform: scaleY(0.4);
+}
+
+@media only screen and (max-width: 600px) {
+  header .app-name {
+    letter-spacing: 0.3em;
+    font-size: 1.5rem !important;
+    transform: scaleY(0.6);
+  }
 }
 
 header nav {

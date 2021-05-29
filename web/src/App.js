@@ -18,7 +18,7 @@ function App() {
           <header className="mb-4">
             <div className="header">
               <img src="logo192.png" className="logo" alt="Logo" />
-              <h2 className="app-name d-none d-md-block">Birdfeed</h2>
+              <h2 className="app-name">Birdfeed</h2>
               <nav>
                 <ul>
                   <li>
