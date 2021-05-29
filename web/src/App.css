@@ -164,11 +164,18 @@ table.feed-url-table {
 
 td.feed-url {
   border-bottom: 1px solid hsl(199deg, 15%, 36%);
+  width: 80%;
 }
 
-input#url {
-  width: 100%;
+.feed-url-delete {
+  width: 8em;
 }
+
+.feed-url-submit {
+  width: 8em;
+}
+
+input#url { }
 
 @keyframes anim-fade-out {
   0% {opacity: 0.9; }

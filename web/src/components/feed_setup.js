@@ -60,10 +60,10 @@ function FeedSetup() {
     <DocumentTitle title='Birdfeed - Configure Your News Sources'>
       <Fragment>
         <Row>
-          <Col>
+          <Col style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
           <FeedForm setFeeds={setFeeds} />
           {feeds.length === 0 && 
-            <div class="lds-default anim-fade-in-short" style={{marginLeft:"10%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+            <div class="lds-default anim-fade-in-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
           {feeds.length > 0 && 
             <table class="feed-url-table anim-fade-in-short">
               <tbody>
@@ -72,7 +72,8 @@ function FeedSetup() {
                 return <tr key={index}>
                   <td className="feed-url">{feed}</td>
                   <td>
-                    <Button variant="primary" onClick={() => deleteFeed(feed)} disabled={isDeleting} className="float-right">
+                    <Button variant="primary" onClick={() => deleteFeed(feed)} 
+                            disabled={isDeleting} className="float-right feed-url-delete">
                     <i className="fa fa-refresh fa-spin" style={{ 
                       marginRight: isDeleting ? '5px' : '',
                       width: isDeleting ? '1em' : 0,

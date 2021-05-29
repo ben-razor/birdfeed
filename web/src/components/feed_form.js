@@ -3,6 +3,7 @@ import { Formik } from 'formik';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
 
 let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
@@ -83,8 +84,10 @@ const FeedForm = (props) => {
     }) => (
       <form onSubmit={handleSubmit}>
         <Row>
-          <Col md={8}>
+          <Col>
+            <InputGroup>
             <input
+              className="form-control"
               type="url"
               name="url"
               id="url"
@@ -92,16 +95,17 @@ const FeedForm = (props) => {
               onBlur={handleBlur}
               value={values.url}
             />
-          </Col>
-          <Col md={4}>
-            <Button variant="primary" type="submit" disabled={isSubmitting} className="float-right">
-              <i className="fa fa-refresh fa-spin" style={{ 
-                marginRight: isSubmitting ? '5px' : '',
-                width: isSubmitting ? '1em' : 0,
-                opacity: isSubmitting ? 1 : 0 
-              }} />
-              Submit
-            </Button>
+              <div class="input-group-append">
+                <Button variant="primary" type="submit" disabled={isSubmitting} className="feed-url-submit">
+                  <i className="fa fa-refresh fa-spin" style={{ 
+                    marginRight: isSubmitting ? '5px' : '',
+                    width: isSubmitting ? '1em' : 0,
+                    opacity: isSubmitting ? 1 : 0 
+                  }} />
+                  Submit
+                </Button>
+              </div>
+            </InputGroup>
           </Col>
         </Row>
         <Row>
