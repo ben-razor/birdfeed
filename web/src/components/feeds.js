@@ -1,11 +1,13 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, Fragment} from 'react';
 import DocumentTitle from 'react-document-title';
 import {AlertContext} from './feed_alert';
+import Alert from 'react-bootstrap/Alert';
+import Button from 'react-bootstrap/Button';
 
 /**
  * Returns time in format HH:MM:SS.
  * 
- * @param {string} date 
+ * @param {Date} date 
  * @param {boolean} useSeconds Whether to include seconds
  * @returns string
  */
@@ -23,6 +25,14 @@ function formatTime(date, useSeconds=true) {
   return timeStr;
 }
 
+/**
+ * Returns date in format dd/mm/yyyy.
+ * 
+ * @param {Date} date 
+ * @param {boolean} useYear Whether to include year 
+ * @param {string} separator Custom separator to use
+ * @returns string
+ */
 function formatDate(date, useYear=true, separator='/') {
   let dayStr = date.getDate().toString().padStart(2, '0');
   let monthStr = date.getMonth().toString().padStart(2, '0');
@@ -56,21 +66,26 @@ function stringToColour(text, hue, levels, baseLevel) {
   return variantCSS;
 }
 
-async function fetchFeeds() {
-  let feeds = [];
-  let response = await fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed", {
-    headers : { 
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-      }
-  });
+async function fetchWithTimeout(resource, options) {
+  const { timeout = 8000 } = options;
   
-  let json = await response.json();
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
 
+  const response = await fetch(resource, {
+    ...options,
+    signal: controller.signal  
+  });
+  clearTimeout(id);
+
+  return response;
+}
+
+function processFeeds(feeds) {
   let prevSource = '';
   let prevDateStr = '';
 
-  for(let feed of json) {
+  for(let feed of feeds) {
     let source = feed['source'];
     let date = new Date(feed['date']);
     let dateStr = formatDate(date, false);
@@ -96,33 +111,68 @@ async function fetchFeeds() {
     feed['source'] = source;
   }
 
-  feeds = json;
+  return feeds;
+}
 
+/**
+ * Fetch feed json and process ready for display.
+ * 
+ * @throws AbortError 
+ * @returns {object[]} An array of feed data
+ */
+async function fetchFeeds() {
+  let feeds = [];
+
+  const response = await fetchWithTimeout("https://birdfeed-01000101.ew.r.appspot.com/api/feed", {
+    timeout: 5000,
+    headers : { 
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+      }
+  });
+
+  feeds = await response.json();
+  feeds = processFeeds(feeds);
+ 
   return feeds;
 }
 
 function Feeds() {
   const [feeds, setFeeds] = useState([]);
+  const [timedOut, setTimedOut] = useState(false);
+  const [refresh, setRefresh] = useState(true);
   const showAlert = useContext(AlertContext);
 
   useEffect(() => {
-    showAlert({message: ''});
-    async function fetchFeedsAndSet() {
-      let feeds = await fetchFeeds();
-      setTimeout(() => setFeeds(feeds), 1000);
-      setFeeds(feeds);
-    }
-    fetchFeedsAndSet();
+    if(refresh) {
+      setRefresh(false);
+      console.log('fetching feeds...');
 
-    let timer = setInterval(() => fetchFeedsAndSet(), 60000 * 5);
-    return () => clearInterval(timer);
-  }, [showAlert]);
+      showAlert({message: ''});
+      async function fetchFeedsAndSet() {
+        try {
+          let feeds = await fetchFeeds();
+          setTimeout(() => setFeeds(feeds), 1000);
+          setFeeds(feeds);
+          setTimedOut(false);
+        }
+        catch(error) {
+          setTimedOut(true); 
+        }
+      }
+      fetchFeedsAndSet();
+
+      let timer = setInterval(() => fetchFeedsAndSet(), 60000 * 5);
+      return () => clearInterval(timer);
+    }
+  }, [showAlert, refresh]);
 
   return (
     <DocumentTitle title='Birdfeed - Latest News'>
       <div>
-          {feeds.length === 0 && 
-          <div class="lds-default anim-fade-in-short" style={{marginLeft:"50%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+          {feeds.length === 0 && !timedOut && 
+            <div className="lds-default anim-fade-in-short" style={{marginLeft:"50%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          }
 
           <table className="fancy anim-fade-in-short"> 
           <tbody>
@@ -139,7 +189,14 @@ function Feeds() {
             })}
           </tbody>
           </table>
+          {timedOut &&
+            <Fragment>
+              <Alert variant="warning">Timed out while attempting to get feeds.</Alert>
+              <Button onClick={() => setRefresh(!refresh)}>Try Again</Button>
+            </Fragment>
+          }
       </div>
+
     </DocumentTitle>
   )
 }
