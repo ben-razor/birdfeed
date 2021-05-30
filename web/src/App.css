@@ -80,7 +80,6 @@ td.source {
 }
 
 table.fancy .title {
-    font-weight: bold;
     border-bottom: 1px solid hsl(199deg, 15%, 36%);
 }
 
