@@ -140,31 +140,33 @@ async function fetchFeeds() {
 function Feeds() {
   const [feeds, setFeeds] = useState([]);
   const [timedOut, setTimedOut] = useState(false);
-  const [refresh, setRefresh] = useState(true);
+  const [refresh, setRefresh] = useState(1);
   const showAlert = useContext(AlertContext);
 
+  function triggerRefresh() {
+    setRefresh(refresh === 1 ? 2 : 1);
+  }
+
   useEffect(() => {
-    if(refresh) {
-      setRefresh(false);
+    showAlert({message: ''});
+    async function fetchFeedsAndSet() {
       console.log('fetching feeds...');
-
-      showAlert({message: ''});
-      async function fetchFeedsAndSet() {
-        try {
-          let feeds = await fetchFeeds();
-          setTimeout(() => setFeeds(feeds), 1000);
-          setFeeds(feeds);
-          setTimedOut(false);
-        }
-        catch(error) {
-          setTimedOut(true); 
-        }
+      try {
+        let feeds = await fetchFeeds();
+        setFeeds(feeds);
+        setTimedOut(false);
       }
-      fetchFeedsAndSet();
-
-      let timer = setInterval(() => fetchFeedsAndSet(), 60000 * 5);
-      return () => clearInterval(timer);
+      catch(error) {
+        setTimedOut(true); 
+      }
     }
+    fetchFeedsAndSet();
+
+    let timer = setInterval(() => { 
+      fetchFeedsAndSet();
+    }, 60000 * 5);
+
+    return () => clearInterval(timer);
   }, [showAlert, refresh]);
 
   return (
@@ -192,7 +194,7 @@ function Feeds() {
           {timedOut &&
             <Fragment>
               <Alert variant="warning">Timed out while attempting to get feeds.</Alert>
-              <Button onClick={() => setRefresh(!refresh)}>Try Again</Button>
+              <Button onClick={() => triggerRefresh()}>Try Again</Button>
             </Fragment>
           }
       </div>

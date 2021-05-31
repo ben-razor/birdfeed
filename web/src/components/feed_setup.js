@@ -63,9 +63,9 @@ function FeedSetup() {
           <Col md={6} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
           <FeedForm setFeeds={setFeeds} />
           {feeds.length === 0 && 
-            <div class="lds-default anim-fade-in-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+            <div className="lds-default anim-fade-in-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
           {feeds.length > 0 && 
-            <table class="feed-url-table anim-fade-in-short">
+            <table className="feed-url-table anim-fade-in-short">
               <tbody>
               {feeds.map((feed, index) => {
                 let isDeleting= deleting[feed];
