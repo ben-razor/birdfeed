@@ -87,6 +87,7 @@ function processFeeds(feeds) {
 
   for(let feed of feeds) {
     let source = feed['source'];
+    const MAX_SOURCE_LEN = 40;
     let date = new Date(feed['date']);
     let dateStr = formatDate(date, false);
     feed['time_str'] = formatTime(date, false);
@@ -108,7 +109,13 @@ function processFeeds(feeds) {
     else {
       prevSource = source;
     }
-    feed['source'] = source;
+
+    if(source.length > MAX_SOURCE_LEN) {
+      feed['source'] = source.substr(0, MAX_SOURCE_LEN) + '\u2026';
+    }
+    else {
+      feed['source'] = source;
+    }
   }
 
   return feeds;
