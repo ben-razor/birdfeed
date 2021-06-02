@@ -60,7 +60,7 @@ function FeedSetup() {
     <DocumentTitle title='Birdfeed - Configure Your News Sources'>
       <Fragment>
         <Row>
-          <Col md={6} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
+          <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
           <FeedForm setFeeds={setFeeds} />
           {feeds.length === 0 && 
             <div className="lds-default anim-fade-in-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
@@ -87,7 +87,7 @@ function FeedSetup() {
             </table>
           }
           </Col>
-          <Col md={6}></Col>
+          <Col md={4}></Col>
         </Row>
       </Fragment>
     </DocumentTitle>
