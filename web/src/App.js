@@ -11,7 +11,7 @@ import Container from 'react-bootstrap/Container';
 
 function App(props) {
   const [alertInfo, showAlert] = useState({variant: 'info', message: ''});
-  const [hiddenFeeds, setHiddenFeeds] = useState(['https://bitcoinmagazine.com/.rss/full/']);
+  const [hiddenFeeds, setHiddenFeeds] = useState([]);
 
   return (
     <DocumentTitle title='My Web App'>

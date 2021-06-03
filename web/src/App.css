@@ -55,6 +55,7 @@ html {
 
 table.fancy {
     border-collapse: collapse;
+    width: 100%;
 }
 
 table.fancy td {
@@ -76,7 +77,18 @@ td.time {
 }
 
 td.source {
-    background-color: hsl(0, 0%, 95%);
+  position: relative;
+  background-color: hsl(0, 0%, 95%);
+}
+
+td.source .sourceText {
+  margin-bottom: 1.2em;
+}
+
+td.source .time {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
 }
 
 table.fancy .title {
@@ -193,18 +205,18 @@ input#url { }
 
 div.anim-fade-out {
   animation-name: anim-fade-out;
-  animation-duration: 5s;
+  animation-duration: 4s;
 }
 
 @keyframes anim-fade-in {
   0% {opacity: 0; }
-  10% {opacity: 0; }
+  30% {opacity: 0; }
   100% {opacity: 1; }
 }
 
 .anim-fade-in-short {
   animation-name: anim-fade-in;
-  animation-duration: 3s;
+  animation-duration: 2s;
 }
 
 .lds-default {
@@ -290,11 +302,8 @@ div.anim-fade-out {
   }
 }
 
-td.checkbox-feed-url {
-  vertical-align: bottom !important;
-}
-
 td.checkbox-feed-url input {
   width: 2em;
   height: 2em;
+  vertical-align: middle;
 }

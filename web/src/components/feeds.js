@@ -195,9 +195,9 @@ function Feeds(props) {
             {feeds.map((feed, index) => {
               return <tr key={index}>
                   <td className="date">{ feed.date_time_str }</td>
-                  <td className="source" style={{color: "white", backgroundColor: feed.color, position: 'relative'}}>
-                    { feed.source }
-                    <div className="time d-block d-md-none" style={{position: 'absolute', bottom: 0, right: '5px' }}>{ feed.time_str }</div>
+                  <td className="source" style={{color: "white", backgroundColor: feed.color}}>
+                    <div className="sourceText">{ feed.source }</div>
+                    <div className="time d-block d-md-none">{ feed.time_str }</div>
                   </td>
                   <td className="time d-none d-md-block">{ feed.time_str }</td>
                   <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
