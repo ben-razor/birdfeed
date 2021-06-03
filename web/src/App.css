@@ -81,8 +81,11 @@ td.source {
   background-color: hsl(0, 0%, 95%);
 }
 
-td.source .sourceText {
-  margin-bottom: 1.2em;
+
+@media only screen and (max-width: 768px) {
+  td.source .sourceText {
+    margin-bottom: 1.2em;
+  }
 }
 
 td.source .time {
