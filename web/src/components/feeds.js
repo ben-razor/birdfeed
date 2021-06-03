@@ -81,11 +81,18 @@ async function fetchWithTimeout(resource, options) {
   return response;
 }
 
-function processFeeds(feeds) {
+function processFeeds(feeds, hiddenFeeds) {
   let prevSource = '';
   let prevDateStr = '';
+  let visibleFeeds = [];
 
   for(let feed of feeds) {
+    if(hiddenFeeds.includes(feed['source_url'])) {
+      continue;
+    }
+    else {
+      visibleFeeds.push(feed);
+    }
     let source = feed['source'];
     const MAX_SOURCE_LEN = 40;
     let date = new Date(feed['date']);
@@ -118,7 +125,7 @@ function processFeeds(feeds) {
     }
   }
 
-  return feeds;
+  return visibleFeeds;
 }
 
 /**
@@ -127,7 +134,7 @@ function processFeeds(feeds) {
  * @throws AbortError 
  * @returns {object[]} An array of feed data
  */
-async function fetchFeeds() {
+async function fetchFeeds(hiddenFeeds) {
   let feeds = [];
 
   const response = await fetchWithTimeout("https://birdfeed-01000101.ew.r.appspot.com/api/feed", {
@@ -139,12 +146,12 @@ async function fetchFeeds() {
   });
 
   feeds = await response.json();
-  feeds = processFeeds(feeds);
+  feeds = processFeeds(feeds, hiddenFeeds);
  
   return feeds;
 }
 
-function Feeds() {
+function Feeds(props) {
   const [feeds, setFeeds] = useState([]);
   const [timedOut, setTimedOut] = useState(false);
   const [refresh, setRefresh] = useState(1);
@@ -159,7 +166,7 @@ function Feeds() {
     async function fetchFeedsAndSet() {
       console.log('fetching feeds...');
       try {
-        let feeds = await fetchFeeds();
+        let feeds = await fetchFeeds(props.hiddenFeeds);
         setFeeds(feeds);
         setTimedOut(false);
       }
@@ -174,7 +181,7 @@ function Feeds() {
     }, 60000 * 5);
 
     return () => clearInterval(timer);
-  }, [showAlert, refresh]);
+  }, [showAlert, refresh, props.hiddenFeeds]);
 
   return (
     <DocumentTitle title='Birdfeed - Latest News'>
@@ -191,7 +198,7 @@ function Feeds() {
                   <td className="source" style={{color: "white", backgroundColor: feed.color, position: 'relative'}}>
                     { feed.source }
                     <div className="time d-block d-md-none" style={{position: 'absolute', bottom: 0, right: '5px' }}>{ feed.time_str }</div>
-                   </td>
+                  </td>
                   <td className="time d-none d-md-block">{ feed.time_str }</td>
                   <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
               </tr> 

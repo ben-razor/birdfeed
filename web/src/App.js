@@ -9,8 +9,9 @@ import './App.css';
 import React from "react";
 import Container from 'react-bootstrap/Container';
 
-function App() {
+function App(props) {
   const [alertInfo, showAlert] = useState({variant: 'info', message: ''});
+  const [hiddenFeeds, setHiddenFeeds] = useState(['https://bitcoinmagazine.com/.rss/full/']);
 
   return (
     <DocumentTitle title='My Web App'>
@@ -36,10 +37,10 @@ function App() {
             <FeedAlert alertInfo={alertInfo}></FeedAlert>
             <Switch>
               <Route path="/setup">
-                <FeedSetup />
+                <FeedSetup hiddenFeeds={hiddenFeeds} setHiddenFeeds={setHiddenFeeds} />
               </Route>
               <Route path="/">
-                <Feeds />
+                <Feeds hiddenFeeds={hiddenFeeds} />
               </Route>
             </Switch>
           </AlertContext.Provider>

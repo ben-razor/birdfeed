@@ -289,3 +289,12 @@ div.anim-fade-out {
     transform: scale(1.5);
   }
 }
+
+td.checkbox-feed-url {
+  vertical-align: bottom !important;
+}
+
+td.checkbox-feed-url input {
+  width: 2em;
+  height: 2em;
+}
