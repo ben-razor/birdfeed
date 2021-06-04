@@ -7,6 +7,10 @@ import Col from 'react-bootstrap/Col';
 import Checkbox from 'react-bootstrap/FormCheck';
 import {AlertContext} from './feed_alert';
 
+function logTime(label) {
+    console.log(label, performance.now() / 1000);
+}
+
 function FeedSetup(props) {
   const [feeds, setFeeds] = useState([]);
   const [deleting, setDeleting] = useState({});
@@ -18,8 +22,7 @@ function FeedSetup(props) {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           }
-        }).then(response => response.json()).then(json => {
-          console.log(json)
+        }).then(response => { return response.json() }).then(json => {
           setFeeds(json.data);
         }).catch(error => { console.log(error); });
   }, []);
@@ -96,7 +99,7 @@ function FeedSetup(props) {
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
           <FeedForm setFeeds={setFeeds} />
           {feeds.length === 0 && 
-            <div className="lds-default anim-fade-in-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+            <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
           {feeds.length > 0 && 
             <table className="feed-url-table anim-fade-in-short">
               <tbody>
@@ -110,7 +113,6 @@ function FeedSetup(props) {
                 let isDeleting= deleting[feed];
 
                 let isHidden = props.hiddenFeeds.indexOf(feed) !== -1;
-                console.log(isHidden, props.hiddenFeeds, feed);
 
                 const MAX_FEED_LEN = 50;
                 let feedStr = feed;

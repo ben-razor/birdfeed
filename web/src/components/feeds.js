@@ -187,24 +187,27 @@ function Feeds(props) {
     <DocumentTitle title='Birdfeed - Latest News'>
       <div>
           {feeds.length === 0 && !timedOut && 
-            <div className="lds-default anim-fade-in-short" style={{marginLeft:"50%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <div className="lds-default anim-fade-in-delayed-short" style={{marginLeft:"50%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
           }
 
-          <table className="fancy anim-fade-in-short"> 
-          <tbody>
-            {feeds.map((feed, index) => {
-              return <tr key={index}>
-                  <td className="date">{ feed.date_time_str }</td>
-                  <td className="source" style={{color: "white", backgroundColor: feed.color}}>
-                    <div className="sourceText">{ feed.source }</div>
-                    <div className="time d-block d-md-none">{ feed.time_str }</div>
-                  </td>
-                  <td className="time d-none d-md-block">{ feed.time_str }</td>
-                  <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
-              </tr> 
-            })}
-          </tbody>
-          </table>
+          {feeds.length > 0 &&
+            <table className="fancy anim-fade-in-short"> 
+            <tbody>
+              {feeds.map((feed, index) => {
+                return <tr key={index}>
+                    <td className="date">{ feed.date_time_str }</td>
+                    <td className="source" style={{color: "white", backgroundColor: feed.color}}>
+                      <div className="sourceText">{ feed.source }</div>
+                      <div className="time d-block d-md-none">{ feed.time_str }</div>
+                    </td>
+                    <td className="time d-none d-md-block">{ feed.time_str }</td>
+                    <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
+                </tr> 
+              })}
+            </tbody>
+            </table>
+          }
+          
           {timedOut &&
             <Fragment>
               <Alert variant="warning">Timed out while attempting to get feeds.</Alert>

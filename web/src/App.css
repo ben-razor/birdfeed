@@ -213,13 +213,23 @@ div.anim-fade-out {
 
 @keyframes anim-fade-in {
   0% {opacity: 0; }
+  100% {opacity: 1; }
+}
+
+@keyframes anim-fade-in-delayed {
+  0% {opacity: 0; }
   30% {opacity: 0; }
   100% {opacity: 1; }
 }
 
+.anim-fade-in-delayed-short {
+  animation-name: anim-fade-in-delayed;
+  animation-duration: 2s;
+}
+
 .anim-fade-in-short {
   animation-name: anim-fade-in;
-  animation-duration: 2s;
+  animation-duration: 1s;
 }
 
 .lds-default {
