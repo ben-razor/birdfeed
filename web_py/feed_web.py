@@ -102,8 +102,8 @@ def feed_urls():
         }
 
         GET reason: ok
-        POST reason: ok, no-data-from-feed, url-exists, max-feeds-10, timeout
-        DELETE reason: ok, url-does-not-exist
+        POST reason: ok, no-data-from-feed, url-exists, max-feeds-10, timeout, url-group-does-not-exist
+        DELETE reason: ok, url-does-not-exist, url-group-does-not-exist
     """
     status = 200
     success = True
