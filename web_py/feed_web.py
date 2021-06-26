@@ -56,6 +56,11 @@ def simple_web_page():
     response = ''
     try:
         feeds = feed_reader.get_stored_feeds(loop)
+
+        feed_url_group = request.args.get('feed_url_group', '')
+        if feed_url_group is not None:
+            feeds = feed_reader.limit_feeds_to_group(loop, feeds, feed_url_group)
+
         print('-- feeds --')
         print(feeds)
         print('-- ---- --')
@@ -71,12 +76,16 @@ def simple_web_page():
 @app.route('/api/feed')
 def feed_json():
     reload = request.args.get('reload')
+    feed_url_group = request.args.get('feed_url_group', '')
 
     if reload:
         feeds = feed_reader.get_feeds_async(loop)
         feed_reader.store_feeds(feeds)
     else:
         feeds = feed_reader.get_stored_feeds(loop)
+
+    if feed_url_group is not None:
+        feeds = feed_reader.limit_feeds_to_group(loop, feeds, feed_url_group)
 
     response = jsonify(feeds)
     response.headers.add('Access-Control-Allow-Origin', '*')

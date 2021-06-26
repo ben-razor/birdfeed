@@ -115,6 +115,16 @@ def get_feed_url_groups(loop):
     o = get_obj(loop, 'feed-url-groups.json')
     return o['feed_url_groups']
 
+def limit_feeds_to_group(loop, feeds, feed_url_group=''):
+    """Takes a list of feed entries and returns those with urls in the feed_url_group"""
+    feed_urls = get_feed_urls(loop, feed_url_group)
+    matching_feeds = []
+    for feed in feeds:
+        if feed['source_url'] in feed_urls:
+            matching_feeds.append(feed)
+
+    return matching_feeds
+
 def add_feed_url(loop, feed_url, feed_url_group=''):
     """Add a feed url and attempt to get and store new feeds.
 
