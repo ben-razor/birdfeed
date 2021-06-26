@@ -134,10 +134,13 @@ function processFeeds(feeds, hiddenFeeds) {
  * @throws AbortError 
  * @returns {object[]} An array of feed data
  */
-async function fetchFeeds(hiddenFeeds) {
+async function fetchFeeds(activeCollection, hiddenFeeds) {
   let feeds = [];
 
-  const response = await fetchWithTimeout("https://birdfeed-01000101.ew.r.appspot.com/api/feed", {
+  const response = await fetchWithTimeout(
+    "https://birdfeed-01000101.ew.r.appspot.com/api/feed?" + new URLSearchParams({ 
+      feed_url_group: activeCollection 
+    }), {
     timeout: 5000,
     headers : { 
       'Content-Type': 'application/json',
@@ -166,7 +169,7 @@ function Feeds(props) {
     async function fetchFeedsAndSet() {
       console.log('fetching feeds...');
       try {
-        let feeds = await fetchFeeds(props.hiddenFeeds);
+        let feeds = await fetchFeeds(props.activeCollection, props.hiddenFeeds);
         setFeeds(feeds);
         setTimedOut(false);
       }
@@ -181,7 +184,7 @@ function Feeds(props) {
     }, 60000 * 5);
 
     return () => clearInterval(timer);
-  }, [showAlert, refresh, props.hiddenFeeds]);
+  }, [showAlert, refresh, props.hiddenFeeds, props.activeCollection]);
 
   return (
     <DocumentTitle title='Birdfeed - Latest News'>

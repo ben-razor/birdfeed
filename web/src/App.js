@@ -9,9 +9,26 @@ import './App.css';
 import React from "react";
 import Container from 'react-bootstrap/Container';
 
+const useStateWithLocalStorage = localStorageKey => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(localStorageKey) || ''
+  );
+ 
+  React.useEffect(() => {
+    localStorage.setItem(localStorageKey, value);
+  }, [value]);
+ 
+  return [value, setValue];
+};
+
 function App(props) {
   const [alertInfo, showAlert] = useState({variant: 'info', message: ''});
   const [hiddenFeeds, setHiddenFeeds] = useState([]);
+  const [activeCollection, setActiveCollection] = useStateWithLocalStorage('activeCollection');
+
+  function handleActiveCollectionChange(event) {
+    setActiveCollection(event.target.value);
+  }
 
   return (
     <DocumentTitle title='My Web App'>
@@ -20,6 +37,11 @@ function App(props) {
             <div className="header">
               <img src="logo192.png" className="logo" alt="Logo" />
               <h2 className="app-name">Birdfeed</h2>
+              <select value={activeCollection} onChange={handleActiveCollectionChange}> 
+                <option value="">The Menagerie</option>
+                <option value="UK News">UK News</option>
+                <option value="Crypto">Crypto</option> 
+              </select>
               <nav>
                 <ul>
                   <li>
@@ -40,7 +62,8 @@ function App(props) {
                 <FeedSetup hiddenFeeds={hiddenFeeds} setHiddenFeeds={setHiddenFeeds} />
               </Route>
               <Route path="/">
-                <Feeds hiddenFeeds={hiddenFeeds} />
+                <Feeds hiddenFeeds={hiddenFeeds} 
+                       activeCollection={activeCollection} setActiveCollection={setActiveCollection} />
               </Route>
             </Switch>
           </AlertContext.Provider>
