@@ -81,13 +81,6 @@ td.source {
   background-color: hsl(0, 0%, 95%);
 }
 
-
-@media only screen and (max-width: 768px) {
-  td.source .sourceText {
-    margin-bottom: 1.2em;
-  }
-}
-
 td.source .time {
   position: absolute;
   right: 5px;
@@ -137,6 +130,20 @@ nav ul li a.active {
 div.header {
   display: flex;
   flex-direction: row;
+}
+
+.header-name-and-select {
+  display: flex;
+  flex-direction: row;
+}
+
+.header-select {
+  background-color: hsl(0, 0%, 20%);
+  color: white;
+  display: inline-block;
+  height: 2em;
+  vertical-align: middle;
+  margin: auto 0;
 }
 
 header .app-name {
@@ -319,4 +326,13 @@ td.checkbox-feed-url input {
   width: 2em;
   height: 2em;
   vertical-align: middle;
+}
+
+@media only screen and (max-width: 768px) {
+  td.source .sourceText {
+    margin-bottom: 1.2em;
+  }
+  .header-name-and-select {
+    flex-direction: column;
+  }
 }

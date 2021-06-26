@@ -36,12 +36,14 @@ function App(props) {
           <header className="mb-4">
             <div className="header">
               <img src="logo192.png" className="logo" alt="Logo" />
-              <h2 className="app-name">Birdfeed</h2>
-              <select value={activeCollection} onChange={handleActiveCollectionChange}> 
-                <option value="">The Menagerie</option>
-                <option value="UK News">UK News</option>
-                <option value="Crypto">Crypto</option> 
-              </select>
+              <div class="header-name-and-select">
+                <h2 className="app-name">Birdfeed</h2>
+                <select className="header-select" value={activeCollection} onChange={handleActiveCollectionChange}> 
+                  <option value="">The Menagerie</option>
+                  <option value="UK News">UK News</option>
+                  <option value="Crypto">Crypto</option> 
+                </select>
+              </div>
               <nav>
                 <ul>
                   <li>
