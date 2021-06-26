@@ -119,7 +119,7 @@ def feed_urls():
         body = request.json
         feed_url = body['feed_url']
         feed_url_group = body.get('feed_url_group', '')
-        resp, success, reason = feed_reader.delete_feed_url(loop, feed_url)
+        resp, success, reason = feed_reader.delete_feed_url(loop, feed_url, feed_url_group)
         
         if not success:
             status = 400

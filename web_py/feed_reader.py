@@ -158,7 +158,7 @@ def add_feed_url(loop, feed_url, feed_url_group=''):
 
     return feed_urls, success, reason
 
-def delete_feed_url(loop, feed_url, feed_url_group):
+def delete_feed_url(loop, feed_url, feed_url_group=''):
     """Delete a feed url and remove feeds for that url.
 
     Returns:
