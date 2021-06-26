@@ -7,6 +7,8 @@ from dateutil import parser
 import re
 from google.cloud import storage
 
+BUCKET_URL='https://storage.googleapis.com/birdfeed-01000101.appspot.com/'
+
 def add_timezone_field(date):
     """The RSS standard has timezone in the date, but not all feeds do. This adds it."""
     rss_date_format = "%a, %d %b %Y %H:%M:%S %z"
@@ -35,11 +37,23 @@ async def get_feed_async(feed, feed_data=[]):
 
     return feed_data
 
+def get_unique_feed_urls(feed_url_groups):
+    feed_urls = []
+
+    for g in feed_url_groups:
+        urls = feed_url_groups[g]['feeds']
+        for url in urls:
+            if url not in feed_urls:
+                feed_urls.append(url)
+    return feed_urls 
+
 def get_feeds_async(loop):
     feed_data = []
-    feeds = get_feed_urls(loop)
+    feed_url_groups = get_feed_url_groups(loop)
+    feed_urls = get_unique_feed_urls(feed_url_groups) 
+
     """Read a number of feeds asynchronously and then sort them by date"""
-    tasks = [get_feed_async(feed, feed_data) for feed in feeds]
+    tasks = [get_feed_async(feed, feed_data) for feed in feed_urls]
     loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
     feed_data.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
     return feed_data
@@ -63,9 +77,10 @@ async def fetch(url, timeout=10):
     return resp_str
 
 def get_feeds():
-    """Read in feeds from the sources and sort them by time"""
+    """Read in feeds synchronously from the sources and sort them by time"""
     feed_data = []
-    feeds = get_feed_urls(loop)
+    feed_url_groups = get_feed_url_groups(loop)
+    feeds = get_unique_feed_urls(feed_url_groups) 
 
     for feed in feeds:
         d = feedparser.parse(feed)
@@ -89,10 +104,18 @@ def get_feeds():
 def get_stored_feeds(loop):
     return get_obj(loop, 'feed-data.json')
 
-def get_feed_urls(loop):
-    return get_obj(loop, 'feed-urls.json')
+def get_feed_urls(loop, feed_url_group):
+    feed_url_groups = get_feed_url_groups(loop)
+    feed_urls = []
+    if feed_url_group in feed_url_groups:
+        feed_urls = feed_url_groups[feed_url_group]['feeds']
+    return feed_urls
 
-def add_feed_url(loop, feed_url):
+def get_feed_url_groups(loop):
+    o = get_obj(loop, 'feed-url-groups.json')
+    return o['feed_url_groups']
+
+def add_feed_url(loop, feed_url, feed_url_group=''):
     """Add a feed url and attempt to get and store new feeds.
 
     Returns:
@@ -104,8 +127,12 @@ def add_feed_url(loop, feed_url):
     """
     success = True 
     reason = 'ok'
-    feed_urls = get_feed_urls(loop)
-    
+    feed_url_groups = get_feed_url_groups(loop)
+    if feed_url_group not in feed_url_groups:
+        feed_url_groups[feed_url_group] = {'feeds': []}
+
+    feed_urls = feed_url_groups[feed_url_group]['feeds']
+
     if len(feed_urls) >= 10:
         success = False
         reason = 'max-feeds-10'
@@ -118,7 +145,7 @@ def add_feed_url(loop, feed_url):
                 feeds.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
                 feed_urls.append(feed_url)
                 store_feeds(feeds)
-                store_feed_urls(feed_urls)
+                store_feed_url_groups(feed_url_groups)
             else:
                 success = False
                 reason = 'no-data-from-feed'
@@ -131,7 +158,7 @@ def add_feed_url(loop, feed_url):
 
     return feed_urls, success, reason
 
-def delete_feed_url(loop, feed_url):
+def delete_feed_url(loop, feed_url, feed_url_group):
     """Delete a feed url and remove feeds for that url.
 
     Returns:
@@ -143,16 +170,22 @@ def delete_feed_url(loop, feed_url):
     """
     success = True
     reason = 'ok'
-    feed_urls = get_feed_urls(loop)
-    if feed_url in feed_urls:
-        feed_urls.remove(feed_url)
-        store_feed_urls(feed_urls)
-        feeds = get_stored_feeds(loop)
-        feeds = list(filter(lambda x: x['source_url'] != feed_url, feeds))
-        store_feeds(feeds)
-    else:
+    feed_url_groups = get_feed_url_groups(loop)
+
+    if feed_url_group not in feed_url_groups:
         success = False
-        reason = 'url-does-not-exist'
+        reason = 'url-group-does-not-exist'
+    else:
+        feed_urls = feed_url_groups.get(feed_url_group)['feeds']
+        if feed_url in feed_urls:
+            feed_urls.remove(feed_url)
+            store_feed_url_groups(feed_url_groups)
+            feeds = get_stored_feeds(loop)
+            feeds = list(filter(lambda x: x['source_url'] != feed_url, feeds))
+            store_feeds(feeds)
+        else:
+            success = False
+            reason = 'url-does-not-exist'
 
     return feed_urls, success, reason
 
@@ -160,9 +193,15 @@ def store_feeds(feeds):
     store_obj(feeds, 'feed-data.json', is_cached=False)
 
 def store_feed_urls(feed_urls):
-    store_obj(feed_urls, 'feed-urls.json', is_cached=False)
+    store_obj(feed_urls, 'feed-url-groups.json', is_cached=False)
+
+def store_feed_url_groups(feed_url_groups):
+    store_obj({'feed_url_groups': feed_url_groups}, 'feed-url-groups.json', is_cached=False)
 
 def store_obj(obj, file_name, is_public=True, is_cached=True):
+    """JSONify an object and upload to google cloud storage. Setting public 
+    and no-cache/no-store if needed.
+    """
     client = storage.Client()
     bucket = client.bucket('birdfeed-01000101.appspot.com')
     blob = bucket.get_blob(file_name)
@@ -173,13 +212,19 @@ def store_obj(obj, file_name, is_public=True, is_cached=True):
         blob.make_public()
 
 def get_obj(loop, file_name):
-    url = 'https://storage.googleapis.com/birdfeed-01000101.appspot.com/' + file_name
+    url = BUCKET_URL + file_name
+    print(url)
     data = loop.run_until_complete(fetch(url))
-    logging.error(data)
-    return json.loads(data)
+    data_obj = {}
+    print(data[0:1000])
+    try:
+        data_obj = json.loads(data)
+    except Exception as e:
+        print("Exceptional!")
+    return data_obj
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    #feed_data = get_feeds_async(loop)
-    feed_data = get_stored_feeds(loop)
+    feed_data = get_feeds_async(loop)
+    #feed_data = get_stored_feeds(loop)
     print('after get_feeds ' + str(len(feed_data)))

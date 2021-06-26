@@ -52,7 +52,7 @@ def process_feeds(feeds):
     return feeds
 
 @app.route('/')
-def hello_world(): 
+def simple_web_page(): 
     response = ''
     try:
         feeds = feed_reader.get_stored_feeds(loop)
@@ -101,12 +101,14 @@ def feed_urls():
     reason = 'ok'
     resp = {}
     if request.method == 'GET':
-        resp = feed_reader.get_feed_urls(loop)
+        feed_url_group = request.args.get('feed_url_group', '')
+        resp = feed_reader.get_feed_urls(loop, feed_url_group)
     elif request.method == 'POST':
-        logging.error(request.json)
+        logging.debug(request.json)
         body = request.json
         feed_url = body['feed_url']
-        resp, success, reason = feed_reader.add_feed_url(loop, feed_url)
+        feed_url_group = body.get('feed_url_group', '')
+        resp, success, reason = feed_reader.add_feed_url(loop, feed_url, feed_url_group)
         
         if success:
             status = 201
@@ -116,6 +118,7 @@ def feed_urls():
     elif request.method == 'DELETE':
         body = request.json
         feed_url = body['feed_url']
+        feed_url_group = body.get('feed_url_group', '')
         resp, success, reason = feed_reader.delete_feed_url(loop, feed_url)
         
         if not success:

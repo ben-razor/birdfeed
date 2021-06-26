@@ -1,0 +1,34 @@
+{
+	"feed_url_groups": { 
+		"": {
+			"feeds": [
+				"https://cointelegraph.com/rss", 
+				"https://blog.coinbase.com/feed", 
+				"https://www.newsbtc.com/feed", 
+				"https://dailyhodl.com/altcoins/feed/", 
+				"https://news.bitcoin.com/feed/", 
+				"https://bitcoinmagazine.com/.rss/full/", 
+				"http://feeds.bbci.co.uk/news/rss.xml?edition=uk", 
+				"https://theguardian.com/uk/rss", 
+				"https://cryptonews.com/news/feed"
+			]
+		},
+		"Crypto": {
+			"feeds": [
+			"https://cointelegraph.com/rss", 
+			"https://blog.coinbase.com/feed", 
+			"https://www.newsbtc.com/feed", 
+			"https://dailyhodl.com/altcoins/feed/", 
+			"https://news.bitcoin.com/feed/", 
+			"https://bitcoinmagazine.com/.rss/full/", 
+			"https://cryptonews.com/news/feed"
+			]
+		},
+		"UK News": {
+			"feeds": [
+				"http://feeds.bbci.co.uk/news/rss.xml?edition=uk", 
+				"https://theguardian.com/uk/rss"
+			]
+		}
+	}
+}
