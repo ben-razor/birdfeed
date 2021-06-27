@@ -146,6 +146,13 @@ div.header {
   margin: auto auto auto 0;
   padding-right: 1em;
   font-size: 1.2rem;
+  border-radius: 0.3em;
+  border: 0 solid black;
+  outline: none;
+}
+
+.header-select:focus {
+  border: 1px solid #444;
 }
 
 header .app-name {
