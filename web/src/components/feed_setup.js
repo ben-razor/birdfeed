@@ -15,9 +15,12 @@ function FeedSetup(props) {
   const [feeds, setFeeds] = useState([]);
   const [deleting, setDeleting] = useState({});
   const showAlert = useContext(AlertContext);
+  let activeCollection = props.activeCollection;
 
   useEffect(() => {
-    fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
+    fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls?" + new URLSearchParams({ 
+        feed_url_group: activeCollection 
+      }), {
           headers : { 
             'Content-Type': 'application/json',
             'Accept': 'application/json'
@@ -25,17 +28,17 @@ function FeedSetup(props) {
         }).then(response => { return response.json() }).then(json => {
           setFeeds(json.data);
         }).catch(error => { console.log(error); });
-  }, []);
+  }, [activeCollection]);
 
   function deleteFeed(url) {
     setDeleting({[url]: true});
-    fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
+    fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls?", {
       method: 'DELETE',
       headers : { 
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: JSON.stringify({feed_url: url})
+      body: JSON.stringify({feed_url: url, feed_url_group: activeCollection })
     }).then(response => response.json()).then(json => {
       console.log(json)
 

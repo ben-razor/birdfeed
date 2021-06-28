@@ -61,7 +61,8 @@ function App(props) {
             <FeedAlert alertInfo={alertInfo}></FeedAlert>
             <Switch>
               <Route path="/setup">
-                <FeedSetup hiddenFeeds={hiddenFeeds} setHiddenFeeds={setHiddenFeeds} />
+                <FeedSetup hiddenFeeds={hiddenFeeds} setHiddenFeeds={setHiddenFeeds}
+                       activeCollection={activeCollection} setActiveCollection={setActiveCollection} />
               </Route>
               <Route path="/">
                 <Feeds hiddenFeeds={hiddenFeeds} 
