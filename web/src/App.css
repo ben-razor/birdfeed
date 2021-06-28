@@ -214,7 +214,9 @@ td.feed-url {
   width: 8em;
 }
 
-input#url { }
+.big-label {
+  font-size: 1.2em;
+}
 
 @keyframes anim-fade-out {
   0% {opacity: 0.9; }

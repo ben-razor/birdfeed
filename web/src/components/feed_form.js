@@ -85,6 +85,7 @@ const FeedForm = (props) => {
       <form onSubmit={handleSubmit}>
         <Row>
           <Col>
+            <label for="url" class="big-label">Add RSS URL</label>
             <InputGroup>
             <input
               className="form-control"
@@ -120,7 +121,6 @@ const FeedForm = (props) => {
 
   return (
     <div>
-      <h3>Add RSS URL</h3>
       {addFeedForm}
     </div>
   );

@@ -108,9 +108,6 @@ function FeedSetup(props) {
               <tbody>
                 <tr>
                   <td colspan="2"></td>
-                  <td className="checkbox-feed-url">
-                    <input type="checkbox" checked={allChecked} onChange={handleAllChecked} />
-                  </td>
                 </tr>
               {feeds.map((feed, index) => {
                 let isDeleting= deleting[feed];
@@ -135,9 +132,6 @@ function FeedSetup(props) {
                     }} />
                     Delete
                     </Button>
-                  </td>
-                  <td className="checkbox-feed-url">
-                    <input key={feed} type="checkbox" checked={!isHidden} onChange={(e)=>handleChecked(e, feed)} />
                   </td>
                 </tr>
               })}
