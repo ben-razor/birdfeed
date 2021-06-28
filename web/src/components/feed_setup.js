@@ -100,7 +100,7 @@ function FeedSetup(props) {
       <Fragment>
         <Row>
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
-          <FeedForm setFeeds={setFeeds} />
+          <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
           {feeds.length === 0 && 
             <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
           {feeds.length > 0 && 

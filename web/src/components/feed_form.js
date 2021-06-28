@@ -10,7 +10,7 @@ let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()
 
 const FeedForm = (props) => {
   const showAlert = useContext(AlertContext);
-
+  const activeCollection = props.activeCollection;
 
   const addFeedForm = <Formik
     initialValues={{ url: ''}}
@@ -32,7 +32,7 @@ const FeedForm = (props) => {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({feed_url: values.url})
+        body: JSON.stringify({feed_url: values.url, feed_url_group: activeCollection })
       }).then(response => {
         return response.json();
       }).then(json => {
