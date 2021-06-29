@@ -91,9 +91,35 @@ def feed_json():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+@app.route('/api/feed_groups')
+def feed_groups():
+    """API endpoint for managing named groups of feed urls."""
+    status = 200
+    success = True
+    reason = 'ok'
+    resp = {}
+
+    feed_url_group = request.args.get('feed_url_group', '')
+    feed_url_groups = feed_reader.get_feed_url_groups(loop)
+
+    group_info = feed_url_groups.get(feed_url_group)
+
+    if group_info:
+        group_info.pop('feeds')
+    else:
+        success = False
+        status = 400
+        reason = 'url-group-does-not-exist'
+
+    response = jsonify({'success': success, 'reason': reason, 'data': resp})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response, status
+
 @app.route('/api/feed_urls', methods=['GET', 'POST', 'DELETE'])
 def feed_urls():
     """API endpoint for managing list of feed urls.
+
+        Takes a feed_url_group string to determine which group to add the feed to.
 
         Returns json in format: {
             'success': true/false,
