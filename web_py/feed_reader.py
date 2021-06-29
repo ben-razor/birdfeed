@@ -159,22 +159,29 @@ def add_feed_url(loop, feed_url, feed_url_group=''):
 
     feed_urls = feed_url_groups[feed_url_group]['feeds']
 
+    feed_url_counts = get_feed_url_counts(feed_url_groups)
+    feed_already_exists = feed_url_counts.get(feed_url, 0) > 0
+
     if len(feed_urls) >= 10:
         success = False
         reason = 'max-feeds-10'
     elif feed_url not in feed_urls:
-        feeds = get_stored_feeds(loop)
         try:
-            new_feeds = loop.run_until_complete(asyncio.wait_for(get_feed_async(feed_url, []), timeout=5))
-            if new_feeds and len(new_feeds):
-                feeds.extend(new_feeds)
-                feeds.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
+            if feed_already_exists:
                 feed_urls.append(feed_url)
-                store_feeds(feeds)
                 store_feed_url_groups(feed_url_groups)
             else:
-                success = False
-                reason = 'no-data-from-feed'
+                feeds = get_stored_feeds(loop)
+                new_feeds = loop.run_until_complete(asyncio.wait_for(get_feed_async(feed_url, []), timeout=5))
+                if new_feeds and len(new_feeds):
+                    feeds.extend(new_feeds)
+                    feeds.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
+                    feed_urls.append(feed_url)
+                    store_feeds(feeds)
+                    store_feed_url_groups(feed_url_groups)
+                else:
+                    success = False
+                    reason = 'no-data-from-feed'
         except TimeoutError:
             success = False
             reason = 'timeout'
@@ -198,6 +205,7 @@ def delete_feed_url(loop, feed_url, feed_url_group=''):
     reason = 'ok'
     feed_url_groups = get_feed_url_groups(loop)
     feed_url_counts = get_feed_url_counts(feed_url_groups)
+    feed_still_in_use = feed_url_counts.get(feed_url, 0) > 1
 
     if feed_url_group not in feed_url_groups:
         success = False
@@ -207,9 +215,8 @@ def delete_feed_url(loop, feed_url, feed_url_group=''):
         if feed_url in feed_urls:
             feed_urls.remove(feed_url)
             store_feed_url_groups(feed_url_groups)
-            feed_in_use = feed_url_counts.get(feed_url, 0) > 0
             
-            if not feed_in_use:
+            if not feed_still_in_use:
                 feeds = get_stored_feeds(loop)
                 feeds = list(filter(lambda x: x['source_url'] != feed_url, feeds))
                 store_feeds(feeds)
