@@ -1,6 +1,7 @@
 import React, {useContext} from 'react';
 import { Formik } from 'formik';
 import Button from 'react-bootstrap/Button';
+import ButtonSubmit from './button_submit'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -97,14 +98,7 @@ const FeedForm = (props) => {
               value={values.url}
             />
               <div class="input-group-append">
-                <Button variant="primary" type="submit" disabled={isSubmitting} className="feed-url-submit">
-                  <i className="fa fa-refresh fa-spin" style={{ 
-                    marginRight: isSubmitting ? '5px' : '',
-                    width: isSubmitting ? '1em' : 0,
-                    opacity: isSubmitting ? 1 : 0 
-                  }} />
-                  Submit
-                </Button>
+                <ButtonSubmit isSubmitting={isSubmitting} />
               </div>
             </InputGroup>
           </Col>

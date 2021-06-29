@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Checkbox from 'react-bootstrap/FormCheck';
 import {AlertContext} from './feed_alert';
+import ButtonSubmit from './button_submit';
 
 function logTime(label) {
     console.log(label, performance.now() / 1000);
@@ -22,7 +23,6 @@ function FeedSetup(props) {
         feed_url_group: activeCollection 
       }), {
           headers : { 
-            'Content-Type': 'application/json',
             'Accept': 'application/json'
           }
         }).then(response => { return response.json() }).then(json => {
@@ -123,15 +123,7 @@ function FeedSetup(props) {
                 return <tr key={feed}>
                   <td className="feed-url">{feedStr}</td>
                   <td>
-                    <Button variant="primary" onClick={() => deleteFeed(feed)} 
-                            disabled={isDeleting} className="float-right feed-url-delete">
-                    <i className="fa fa-refresh fa-spin" style={{ 
-                      marginRight: isDeleting ? '5px' : '',
-                      width: isDeleting ? '1em' : 0,
-                      opacity: isDeleting ? 1 : 0 
-                    }} />
-                    Delete
-                    </Button>
+                    <ButtonSubmit onSubmitting={isDeleting} onClick={() => deleteFeed(feed)} label="Delete" className="float-right" />
                   </td>
                 </tr>
               })}
