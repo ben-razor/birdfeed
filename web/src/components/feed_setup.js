@@ -6,7 +6,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Checkbox from 'react-bootstrap/FormCheck';
 import {AlertContext} from './feed_alert';
-import ButtonSubmit from './button_submit';
+import ButtonSubmit from './forms_button_submit';
+import FeedGroupForm from './feed_group_form';
 
 function logTime(label) {
     console.log(label, performance.now() / 1000);
@@ -17,6 +18,9 @@ function FeedSetup(props) {
   const [deleting, setDeleting] = useState({});
   const showAlert = useContext(AlertContext);
   let activeCollection = props.activeCollection;
+  let setActiveCollection = props.setActiveCollection;
+  let collections = props.collections;
+  let setCollections = props.setCollections;
 
   useEffect(() => {
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls?" + new URLSearchParams({ 
@@ -100,6 +104,8 @@ function FeedSetup(props) {
       <Fragment>
         <Row>
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
+          <FeedGroupForm  activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
+                          collections={collections} setCollections={setCollections} />
           <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
           {feeds.length === 0 && 
             <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
@@ -107,7 +113,7 @@ function FeedSetup(props) {
             <table className="feed-url-table anim-fade-in-short">
               <tbody>
                 <tr>
-                  <td colspan="2"></td>
+                  <td colSpan="2"></td>
                 </tr>
               {feeds.map((feed, index) => {
                 let isDeleting= deleting[feed];

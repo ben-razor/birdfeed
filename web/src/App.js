@@ -9,29 +9,37 @@ import './App.css';
 import React from "react";
 import Container from 'react-bootstrap/Container';
 
-const useStateWithLocalStorage = localStorageKey => {
+const useStateWithLocalStorage = (localStorageKey, defaultValue) => {
   const [value, setValue] = React.useState(
-    localStorage.getItem(localStorageKey) || ''
+    JSON.parse(localStorage.getItem(localStorageKey)) || defaultValue
   );
  
   React.useEffect(() => {
-    localStorage.setItem(localStorageKey, value);
-  }, [value]);
- 
+    localStorage.setItem(localStorageKey, JSON.stringify(value));
+  }, [value, localStorageKey]);
+
   return [value, setValue];
 };
 
 function App(props) {
   const [alertInfo, showAlert] = useState({variant: 'info', message: ''});
   const [hiddenFeeds, setHiddenFeeds] = useState([]);
-  const [activeCollection, setActiveCollection] = useStateWithLocalStorage('activeCollection');
+  const [activeCollection, setActiveCollection] = useStateWithLocalStorage('activeCollection', '');
+  const [collections, setCollections] = useStateWithLocalStorage('collections', [
+    { id: "", text: "The Menagerie"},
+    { id: "UK News", text: "UK News"},
+    { id: "Crypto", text: "Crypto"},
+  ]);
 
   function handleActiveCollectionChange(event) {
     setActiveCollection(event.target.value);
   }
 
-  return (
-    <DocumentTitle title='My Web App'>
+  let options = collections.map(collection => {
+    return <option value={collection.id} key={collection.id}>{collection.text}</option>
+  });
+
+  return <DocumentTitle title='My Web App'>
       <Router>
           <header className="mb-4">
             <div className="header">
@@ -39,9 +47,7 @@ function App(props) {
               <div class="header-name-and-select">
                 <h2 className="app-name">Birdfeed</h2>
                 <select className="header-select" value={activeCollection} onChange={handleActiveCollectionChange}> 
-                  <option value="">The Menagerie</option>
-                  <option value="UK News">UK News</option>
-                  <option value="Crypto">Crypto</option> 
+                  {options}
                 </select>
               </div>
               <nav>
@@ -62,7 +68,8 @@ function App(props) {
             <Switch>
               <Route path="/setup">
                 <FeedSetup hiddenFeeds={hiddenFeeds} setHiddenFeeds={setHiddenFeeds}
-                       activeCollection={activeCollection} setActiveCollection={setActiveCollection} />
+                       activeCollection={activeCollection} setActiveCollection={setActiveCollection}
+                       collections={collections} setCollections={setCollections} />
               </Route>
               <Route path="/">
                 <Feeds hiddenFeeds={hiddenFeeds} 
@@ -73,7 +80,6 @@ function App(props) {
         </Container>
       </Router>
     </DocumentTitle>
- );
 }
 
 export default App;
