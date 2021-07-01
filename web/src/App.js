@@ -45,8 +45,8 @@ function App(props) {
 
   return <DocumentTitle title='My Web App'>
       <Router>
-        <div class="thing"></div>
         <div class="thing thing2"></div>
+        <div class="thing"></div>
           <header className="mb-4">
             <div className="header">
               <img src="logo192.png" className="logo" alt="Logo" />

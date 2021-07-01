@@ -90,7 +90,7 @@ const FeedGroupForm = (props) => {
       <form onSubmit={handleSubmit}>
         <Row>
           <Col>
-            <label htmlFor="groupName" className="big-label">Add or Import Group</label>
+            <label htmlFor="groupName" className="big-label">Create / Import Group</label>
             <InputGroup>
             <input
               className="form-control"
@@ -134,11 +134,18 @@ const FeedGroupForm = (props) => {
     })
   }
 
+  function handleGroupSelect(e, id) {
+    setActiveCollection(id);
+  }
+
   let options = collections.map(collection => {
+    let isActive = collection.id === activeCollection; 
+    let groupNameClass = "feed-group-list-group " + (isActive ? "feed-group-list-group-active" : '');
+
     return <div className="feed-group-list-row" value={collection.id} key={collection.id}>
-      <div className="feed-group-list-group">
+      <button className={groupNameClass} onClick={(e) => handleGroupSelect(e, collection.id)}>
         {collection.text}
-      </div>
+      </button>
       <div className="feed-group-list-delete">
         <ButtonSubmit onClick={() => deleteGroup(collection.id)}  label="🗑" className="float-right" />
       </div>
@@ -148,7 +155,7 @@ const FeedGroupForm = (props) => {
   return (
     <div>
       {addFeedGroupForm}
-      <label htmlFor="groupName" className="big-label mt-3">Delete / Reorder Groups</label>
+      <div className="big-label mt-3">Delete Groups</div>
       <div class="feed-group-list">
         {options}
       </div>
