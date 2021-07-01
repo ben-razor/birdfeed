@@ -99,7 +99,8 @@ a {
 }
 
 a:hover {
-    color: hsl(200, 90%, 40%)
+  text-decoration: none;
+  color:hsl(0, 0%, 40%);
 }
 
 nav ul {
