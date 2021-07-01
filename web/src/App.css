@@ -68,17 +68,20 @@ td.date {
     text-align: right;
     color: hsl(200, 66%, 93%);
     white-space: nowrap;
+    width: 4em;
 }
 
 td.time {
     text-align: right;
     color: hsl(200, 66%, 93%);
     white-space: nowrap;
+    width: 3em;
 }
 
-td.source {
+.source {
   position: relative;
   background-color: hsl(0, 0%, 95%);
+  width: 15em;
 }
 
 td.source .time {
@@ -379,5 +382,8 @@ td.checkbox-feed-url input {
   }
   .header-select {
     font-size: 1rem;
+  }
+  .source {
+    width: initial;
   }
 }
