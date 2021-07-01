@@ -16,7 +16,6 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -116,23 +115,26 @@ nav ul li {
   text-decoration: none;
 }
 
-nav ul li a {
+.header-nav-link {
   display: block;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  color: #c7ced1;
+  color: #f0f0f0;
   font-weight: bold;
 }
 
-nav ul li a.active {
-  border-bottom: 4px solid hsl(205deg, 24%, 54%);
+.header-nav-link.active {
+  color: white;
+  border-bottom: 4px solid rgb(255, 255, 255);
   border-radius: 5px;
 }
 
-div.header {
+.header {
   display: flex;
   flex-direction: row;
+  padding: 0.5em 1em;
+  border-radius: 0.5em 0.5em 1em 1em;
 }
 
 .header-name-and-select {
@@ -155,7 +157,7 @@ div.header {
 }
 
 .header-select:focus {
-  border: 1px solid #444;
+  border: 1px solid rgb(255, 255, 255);
 }
 
 header .app-name {
@@ -371,6 +373,93 @@ td.checkbox-feed-url input {
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+body {
+  color: black;
+  background-color: hsl(0, 0%, 95%);
+  background-image: initial;
+}
+
+table.fancy .title {
+  border-bottom: 1px solid hsl(0, 0%, 95%);
+}
+
+td.date, td.time {
+  color: hsl(200deg, 59%, 61%);
+}
+
+.header {
+  color: white;
+  background-color: #42a3c5;
+  box-shadow: 0px 2px 50px #ffffff;
+}
+
+.thing {
+  position: absolute;
+  width: 1000px;
+  height: 100px;
+  background-color: #02b2e1;
+  left: 0;
+  top: 0;
+  display: block;
+  z-index: -1;
+  transform: perspective(100px) rotate( 45deg) scale(4);
+  overflow: hidden;
+  width: 100%;
+}
+
+.thing2 {
+  background-color: orange;
+  transform: translateX(-300px) perspective(100px) rotate( 45deg) scale(4);
+  overflow: hidden;
+  width: 100%;
+}
+
+table.fancy {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: hsla(0deg, 0%, 100%, 0.95);
+  box-shadow: 0px 5px 8px grey;
+  border-radius: 1em;
+}
+
+a {
+  color: hsl(0, 0%, 20%);
+}
+
+.feed-group-list {
+  width: 100%;
+  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-group-list-row {
+  display: flex;
+  flex-direction: row;
+  padding: 0.2em;
+}
+
+.feed-group-list-group {
+  flex: 1 0;
+  border-bottom: 1px solid grey;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.feed-group-list-delete {
+  flex: 0 1;
+  margin-left: auto;
+}
+
+.setup-panel {
+  background-color: hsl(0deg, 0%, 100%, 0.7);
+  border-radius: 0.5em;
+  margin-top: 1em;
+  padding: 0.5em;
+  box-shadow: 0px 5px 8px grey;
 }
 
 @media only screen and (max-width: 768px) {
