@@ -14,6 +14,7 @@ function logTime(label) {
 }
 
 function FeedSetup(props) {
+  const [loaded, setLoaded] = useState(false);
   const [feeds, setFeeds] = useState([]);
   const [deleting, setDeleting] = useState({});
   const showAlert = useContext(AlertContext);
@@ -23,6 +24,7 @@ function FeedSetup(props) {
   let setCollections = props.setCollections;
 
   useEffect(() => {
+    setLoaded(false);
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls?" + new URLSearchParams({ 
         feed_url_group: activeCollection 
       }), {
@@ -31,6 +33,7 @@ function FeedSetup(props) {
           }
         }).then(response => { return response.json() }).then(json => {
           setFeeds(json.data);
+          setLoaded(true);
         }).catch(error => { console.log(error); });
   }, [activeCollection]);
 
@@ -104,12 +107,18 @@ function FeedSetup(props) {
       <Fragment>
         <Row>
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
-          <FeedGroupForm  activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
-                          collections={collections} setCollections={setCollections} />
           <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
-          {feeds.length === 0 && 
+          {!loaded && 
             <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
-          {feeds.length > 0 && 
+          {loaded && feeds.length === 0 &&
+            <div class="alert alert-info mt-1 anim-fade-in-short">
+              <h4>Empty Group</h4>
+              <hr />
+              <p class="lead">There are no feeds in group {activeCollection}.</p>
+              <p class="lead">Use the form above to add new feeds.</p>
+            </div>
+          }
+          {loaded && feeds.length > 0 && 
             <table className="feed-url-table anim-fade-in-short">
               <tbody>
                 <tr>
@@ -137,7 +146,10 @@ function FeedSetup(props) {
             </table>
           }
           </Col>
-          <Col md={4}></Col>
+          <Col md={4}>
+            <FeedGroupForm  activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
+                          collections={collections} setCollections={setCollections} />
+          </Col>
         </Row>
       </Fragment>
     </DocumentTitle>
