@@ -10,7 +10,6 @@
 
 html {
   position: relative;
-  width: 100vw;
   overflow-x: hidden;
 }
 
@@ -25,7 +24,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: hsl(200deg 31% 27%);
   color: white;
-  padding: 1em 0.5em;
   background-image: url('./img/bg-grid-2.jpg');
 }
 

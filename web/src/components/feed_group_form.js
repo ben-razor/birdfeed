@@ -148,6 +148,7 @@ const FeedGroupForm = (props) => {
   return (
     <div>
       {addFeedGroupForm}
+      <label htmlFor="groupName" className="big-label mt-3">Delete / Reorder Groups</label>
       <div class="feed-group-list">
         {options}
       </div>
