@@ -107,48 +107,52 @@ function FeedSetup(props) {
       <Fragment>
         <Row>
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
-          <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
-          {!loaded && 
-            <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
-          {loaded && feeds.length === 0 &&
-            <div class="alert alert-info mt-1 anim-fade-in-short">
-              <h4>Empty Group</h4>
-              <hr />
-              <p class="lead">There are no feeds in group {activeCollection}.</p>
-              <p class="lead">Use the form above to add new feeds.</p>
-            </div>
-          }
-          {loaded && feeds.length > 0 && 
-            <table className="feed-url-table anim-fade-in-short">
-              <tbody>
-                <tr>
-                  <td colSpan="2"></td>
-                </tr>
-              {feeds.map((feed, index) => {
-                let isDeleting= deleting[feed];
+            <div className="setup-panel">
+              <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
+              {!loaded && 
+                <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+              {loaded && feeds.length === 0 &&
+                <div class="alert alert-info mt-1 anim-fade-in-short">
+                  <h4>Empty Group</h4>
+                  <hr />
+                  <p class="lead">There are no feeds in group {activeCollection}.</p>
+                  <p class="lead">Use the form above to add new feeds.</p>
+                </div>
+              }
+              {loaded && feeds.length > 0 && 
+                <table className="feed-url-table anim-fade-in-short">
+                  <tbody>
+                    <tr>
+                      <td colSpan="2"></td>
+                    </tr>
+                  {feeds.map((feed, index) => {
+                    let isDeleting= deleting[feed];
 
-                let isHidden = props.hiddenFeeds.indexOf(feed) !== -1;
+                    let isHidden = props.hiddenFeeds.indexOf(feed) !== -1;
 
-                const MAX_FEED_LEN = 50;
-                let feedStr = feed;
-                if(feed.length > MAX_FEED_LEN) {
-                  feedStr = feed.substr(0, MAX_FEED_LEN) + '\u2026';
-                }
+                    const MAX_FEED_LEN = 50;
+                    let feedStr = feed;
+                    if(feed.length > MAX_FEED_LEN) {
+                      feedStr = feed.substr(0, MAX_FEED_LEN) + '\u2026';
+                    }
 
-                return <tr key={feed}>
-                  <td className="feed-url">{feedStr}</td>
-                  <td>
-                    <ButtonSubmit onSubmitting={isDeleting} onClick={() => deleteFeed(feed)} label="Delete" className="float-right" />
-                  </td>
-                </tr>
-              })}
-              </tbody>
-            </table>
-          }
+                    return <tr key={feed}>
+                      <td className="feed-url">{feedStr}</td>
+                      <td>
+                        <ButtonSubmit onSubmitting={isDeleting} onClick={() => deleteFeed(feed)} label="🗑" className="float-right" />
+                      </td>
+                    </tr>
+                  })}
+                  </tbody>
+                </table>
+              }
+          </div>
           </Col>
           <Col md={4}>
-            <FeedGroupForm  activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
-                          collections={collections} setCollections={setCollections} />
+            <div className="setup-panel">
+              <FeedGroupForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
+                            collections={collections} setCollections={setCollections} />
+            </div>
           </Col>
         </Row>
       </Fragment>

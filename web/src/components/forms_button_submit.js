@@ -8,7 +8,7 @@ function ButtonSubmit(props) {
   let label = props.label;
 
 	return <Button variant="primary" type="submit" 
-                 disabled={isSubmitting} className={ (className ? className : '') + " birdfeed-submit" } onClick={onClick}>
+                 disabled={isSubmitting} className={ (className ? className : '') } onClick={onClick}>
     <i className="fa fa-refresh fa-spin" style={{ 
       marginRight: isSubmitting ? '5px' : '',
       width: isSubmitting ? '1em' : 0,

@@ -44,8 +44,9 @@ const FeedGroupForm = (props) => {
         setSubmitting(false);
 
         if(json.success) {
-          // Group already exists, ask if user wishes to add the group or pick a different name
           showAlert({'variant': 'info', 'message': 'Group already exists'});
+          let newCollections = [...collections, {id: groupName, text: groupName}];
+          setCollections(newCollections);
           setActiveCollection(groupName);
         }
         else {
@@ -115,10 +116,41 @@ const FeedGroupForm = (props) => {
   )}
 </Formik>;
 
+  function deleteGroup(id) {
+    let newActiveCollection = '';
+    let newCollections = collections.filter((item) => item.id !== id); 
+    setCollections(newCollections);
+
+    if(activeCollection === id) {
+      if(newCollections.length) {
+        newActiveCollection = newCollections[0].id;
+      }
+      setActiveCollection(newActiveCollection);
+    }
+
+    showAlert({
+      'variant': 'info', 
+      'message': `Feed Group Deleted`
+    })
+  }
+
+  let options = collections.map(collection => {
+    return <div className="feed-group-list-row" value={collection.id} key={collection.id}>
+      <div className="feed-group-list-group">
+        {collection.text}
+      </div>
+      <div className="feed-group-list-delete">
+        <ButtonSubmit onClick={() => deleteGroup(collection.id)}  label="🗑" className="float-right" />
+      </div>
+      </div>
+  });
 
   return (
     <div>
       {addFeedGroupForm}
+      <div class="feed-group-list">
+        {options}
+      </div>
     </div>
   );
 

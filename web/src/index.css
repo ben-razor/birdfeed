@@ -17,6 +17,8 @@ body {
   color: white;
   padding: 1em 0.5em;
   background-image: url('./img/bg-grid-2.jpg');
+  overflow-x: hidden;
+  width: 100%;
 }
 
 @media only screen and (max-width: 600px) {

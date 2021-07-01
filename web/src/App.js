@@ -10,9 +10,13 @@ import React from "react";
 import Container from 'react-bootstrap/Container';
 
 const useStateWithLocalStorage = (localStorageKey, defaultValue) => {
-  const [value, setValue] = React.useState(
-    JSON.parse(localStorage.getItem(localStorageKey)) || defaultValue
-  );
+  let item = defaultValue;
+  let itemJSON = localStorage.getItem(localStorageKey);
+  if(itemJSON) {
+    item = JSON.parse(itemJSON) || defaultValue
+  }
+
+  const [value, setValue] = React.useState(item);
  
   React.useEffect(() => {
     localStorage.setItem(localStorageKey, JSON.stringify(value));
@@ -41,6 +45,8 @@ function App(props) {
 
   return <DocumentTitle title='My Web App'>
       <Router>
+        <div class="thing"></div>
+        <div class="thing thing2"></div>
           <header className="mb-4">
             <div className="header">
               <img src="logo192.png" className="logo" alt="Logo" />
@@ -53,10 +59,10 @@ function App(props) {
               <nav>
                 <ul>
                   <li>
-                    <NavLink activeClassName="active" exact={true} to="/">Latest</NavLink>
+                    <NavLink className="header-nav-link" activeClassName="active" exact={true} to="/">Latest</NavLink>
                   </li>
                   <li>
-                    <NavLink activeClassName="active" to="/setup">Setup</NavLink>
+                    <NavLink className="header-nav-link" activeClassName="active" to="/setup">Setup</NavLink>
                   </li>
                 </ul>
               </nav>
