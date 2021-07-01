@@ -156,7 +156,7 @@ const FeedGroupForm = (props) => {
     <div>
       {addFeedGroupForm}
       <div className="big-label mt-3">Delete Groups</div>
-      <div class="feed-group-list">
+      <div class="setup-table feed-group-list">
         {options}
       </div>
     </div>

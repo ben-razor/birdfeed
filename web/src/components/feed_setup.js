@@ -120,7 +120,7 @@ function FeedSetup(props) {
                 </div>
               }
               {loaded && feeds.length > 0 && 
-                <table className="feed-url-table anim-fade-in-short">
+                <table className="setup-table feed-url-table anim-fade-in-short">
                   <tbody>
                     <tr>
                       <td colSpan="2"></td>

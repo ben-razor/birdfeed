@@ -5,8 +5,19 @@
 
 @font-face {
     font-family: LatoBold;
-    src: url(font/Lato/Lato-Bold.ttf);
+    src: url(font/Raleway-Medium.ttf);
 }
+
+@font-face {
+    font-family: Raleway;
+    src: url(font/NotoSansJP-Regular.otf);
+}
+
+@font-face {
+    font-family: RalewayBold;
+    src: url(font/NotoSansJP-Medium.otf);
+}
+
 
 html {
   position: relative;
@@ -19,7 +30,7 @@ body {
   width: 100%;
   min-height: 100vh;
   margin: 0;
-  font-family: Lato, Verdana, sans-serif;
+  font-family: Lato, Verdana, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: hsl(200deg 31% 27%);
