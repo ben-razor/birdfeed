@@ -8,7 +8,17 @@
     src: url(font/Lato/Lato-Bold.ttf);
 }
 
+html {
+  position: relative;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
 body {
+  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
   margin: 0;
   font-family: Lato, Verdana, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -17,8 +27,6 @@ body {
   color: white;
   padding: 1em 0.5em;
   background-image: url('./img/bg-grid-2.jpg');
-  overflow-x: hidden;
-  width: 100%;
 }
 
 @media only screen and (max-width: 600px) {
