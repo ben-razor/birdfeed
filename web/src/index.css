@@ -1,23 +1,12 @@
 @font-face {
-    font-family: Lato;
-    src: url(font/Lato/Lato-Regular.ttf);
+    font-family: BirdfeedReg;
+    src: url(font/Nunito-Regular.ttf);
 }
 
 @font-face {
-    font-family: LatoBold;
-    src: url(font/Raleway-Medium.ttf);
+    font-family: BirdfeedBold;
+    src: url(font/Nunito-SemiBold.ttf); 
 }
-
-@font-face {
-    font-family: Raleway;
-    src: url(font/NotoSansJP-Regular.otf);
-}
-
-@font-face {
-    font-family: RalewayBold;
-    src: url(font/NotoSansJP-Medium.otf);
-}
-
 
 html {
   position: relative;
@@ -30,12 +19,12 @@ body {
   width: 100%;
   min-height: 100vh;
   margin: 0;
-  font-family: Lato, Verdana, sans-serif !important;
+  font-family: BirdfeedReg, Verdana, sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: hsl(200deg 31% 27%);
-  color: white;
   background-image: url('./img/bg-grid-2.jpg');
+  color: hsl(200, 10%, 20%) !important;
 }
 
 @media only screen and (max-width: 600px) {

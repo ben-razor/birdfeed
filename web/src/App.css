@@ -38,7 +38,7 @@
 }
 
 html {
-    font-family: Lato, Verdana, sans-serif;
+    font-family: BirdfeedReg, Verdana, sans-serif;
     font-size: 11pt;
 }
 
@@ -50,7 +50,7 @@ table.fancy {
 table.fancy td {
     padding: 6px;
     vertical-align: top;
-    font-family: RalewayBold, serif;
+    font-family: BirdfeedBold, serif;
 }
 
 td.date {
@@ -85,12 +85,12 @@ table.fancy .title {
 
 a {
     text-decoration: none;
-    color: hsl(200, 10%, 80%);
+    color: hsl(200, 10%, 20%);
 }
 
 a:hover {
   text-decoration: none;
-  color:hsl(0, 0%, 40%);
+  color:hsl(0, 0%, 20%);
 }
 
 nav ul {
@@ -369,7 +369,6 @@ td.checkbox-feed-url input {
 }
 
 body {
-  color: black;
   background-color: hsl(0, 0%, 95%);
   background-image: initial;
 }
@@ -406,17 +405,17 @@ td.date, td.time {
 table.fancy {
   border-collapse: collapse;
   width: 100%;
-  background-color: hsla(0deg, 0%, 100%, 0.95);
   box-shadow: 0px 5px 8px grey;
   border-radius: 1em;
-}
-
-a {
-  color: hsl(0, 0%, 20%);
+  background-color: hsla(200deg, 0%, 100%, 0.8);
 }
 
 .setup-table {
-  font-family: RalewayBold, Verdana, sans-serif;
+  font-family: BirdfeedBold, Verdana, sans-serif;
+}
+
+.button-styled-as-link {
+  color: hsl(200, 10%, 20%);
 }
 
 .feed-group-list {
@@ -442,7 +441,7 @@ a {
 }
 
 .feed-group-list-group-active {
-  color: hsl(200deg 76% 36%);
+  color: hsl(200deg, 76%, 36%);
   font-weight: bolder;
 }
 

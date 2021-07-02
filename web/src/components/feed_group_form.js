@@ -17,64 +17,65 @@ const FeedGroupForm = (props) => {
   const setCollections = props.setCollections;
 
   const addFeedGroupForm = <Formik
-    initialValues={{ groupName: ''}}
+    initialValues={{ groupName: ''}} 
     validate={values => {
       const errors = {};
       let groupName = values.groupName;
       let validGroupName = groupNameRegex.test(groupName);
 
-      if (!groupName) {
-        errors.groupName = 'Required';
-      } else if (!validGroupName) {
+      if (!validGroupName) {
         errors.groupName = 'Invalid group name. Group names have letters and numbers and spaces only';
       }
       return errors;
     }}
     onSubmit={(values, { setSubmitting }) => {
       let groupName = values.groupName;
-      fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + new URLSearchParams({ 
-        feed_url_group: groupName
-      }), {
-        headers : { 
-          'Accept': 'application/json'
-        },
-      }).then(response => {
-        return response.json();
-      }).then(json => {
-        setSubmitting(false);
 
-        if(json.success) {
-          showAlert({'variant': 'info', 'message': 'Group already exists'});
-          let newCollections = [...collections, {id: groupName, text: groupName}];
-          setCollections(newCollections);
-          setActiveCollection(groupName);
-        }
-        else {
-          let message = '';
-          switch(json.reason) {
-            case 'url-group-does-not-exist':
-              if(!collections.includes(groupName)) {
+      if(collections.includes(groupName)) {
+        setActiveCollection(groupName);
+      }
+      else {
+        let urlSearchParams = new URLSearchParams({feed_url_group: groupName});
+
+        fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + urlSearchParams , {
+          headers : { 
+            'Accept': 'application/json'
+          },
+        })
+        .then(response => {
+          return response.json();
+        })
+        .then(json => {
+          setSubmitting(false);
+
+          if(json.success) {
+            showAlert({'variant': 'info', 'message': 'Feed group imported'});
+            let newCollections = [...collections, {id: groupName, text: groupName}];
+            setCollections(newCollections);
+            setActiveCollection(groupName);
+          }
+          else {
+            switch(json.reason) {
+              case 'url-group-does-not-exist':
                 let newCollections = [...collections, {id: groupName, text: groupName}];
                 setCollections(newCollections);
                 showAlert({'variant': 'info', 'message': 'Group added'});
-              }
-              else {
-                showAlert({'variant': 'info', 'message': 'Group already exists'});
-              }
-              setActiveCollection(groupName);
-              break;
-            default:
-              message = json.reason;
+                setActiveCollection(groupName);
+                break;
+              default:
+                showAlert({'variant': 'info', 'message': json.reason});
+            }
           }
-        }
-      }).catch(error => {
-        console.log(error);
-        showAlert({
-          'variant': 'danger', 
-          'message': `Error adding feed URL\n\nAre you sure this is a valid RSS feed?\n\n`
         })
-        setSubmitting(false);
-      });
+        .catch(error => {
+          console.log(error);
+          showAlert({
+            'variant': 'danger', 
+            'message': `Error adding feed URL\n\nAre you sure this is a valid RSS feed?\n\n`
+          })
+          setSubmitting(false);
+        });
+      }
     }}
   >
     {({
@@ -140,7 +141,7 @@ const FeedGroupForm = (props) => {
 
   let options = collections.map(collection => {
     let isActive = collection.id === activeCollection; 
-    let groupNameClass = "feed-group-list-group " + (isActive ? "feed-group-list-group-active" : '');
+    let groupNameClass = "button-styled-as-link feed-group-list-group " + (isActive ? "feed-group-list-group-active" : '');
 
     return <div className="feed-group-list-row" value={collection.id} key={collection.id}>
       <button className={groupNameClass} onClick={(e) => handleGroupSelect(e, collection.id)}>

@@ -19,10 +19,8 @@ const FeedForm = (props) => {
       const errors = {};
       let urlMatch = urlRegex.test(values.url);
 
-      if (!values.url) {
-        errors.url = 'Required';
-      } else if (!urlMatch) {
-        errors.url= 'Invalid url';
+      if(values.url && !urlMatch) {
+        errors.url = 'Invalid url';
       }
       return errors;
     }}
@@ -34,10 +32,11 @@ const FeedForm = (props) => {
           'Accept': 'application/json'
         },
         body: JSON.stringify({feed_url: values.url, feed_url_group: activeCollection })
-      }).then(response => {
+      })
+      .then(response => {
         return response.json();
-      }).then(json => {
-        console.log(json)
+      })
+      .then(json => {
         setSubmitting(false);
         if(json.success) {
           showAlert({'variant': 'success', 'message': 'Feed URL added'})
@@ -63,7 +62,8 @@ const FeedForm = (props) => {
           }
           showAlert({'variant': 'danger', 'message': message});
         }
-      }).catch(error => {
+      })
+      .catch(error => {
         console.log(error);
         showAlert({
           'variant': 'danger', 
