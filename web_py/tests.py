@@ -1,5 +1,6 @@
 import feed_reader
 import unittest
+import json
 
 class TestFeedReaderUtils(unittest.TestCase):
 
@@ -24,6 +25,12 @@ class TestFeedReaderUtils(unittest.TestCase):
 		self.assertEqual(feed_url_counts['https://cointelegraph.com/rss'], 2)
 		self.assertEqual(feed_url_counts['http://feeds.bbci.co.uk/news/rss.xml'], 1)
 
+	def test_clone_group(self):
+		f = open('../data/feed-url-groups.json')
+		feed_url_groups = json.load(f)['feed_url_groups']
+		group_info, success, reason = feed_reader.clone_group(feed_url_groups, 'Crypto', 'Crypto 2')
+		self.assertEqual(reason, 'ok')
+		self.assertTrue(success)
 
 if __name__ == '__main__':
 	unittest.main()

@@ -9,7 +9,7 @@ from collections import Counter
 try:
     from google.cloud import storage
 except ImportError:
-    pass
+    from mocks import storage
 
 BUCKET_URL='https://storage.googleapis.com/birdfeed-01000101.appspot.com/'
 
@@ -226,6 +226,24 @@ def delete_feed_url(loop, feed_url, feed_url_group=''):
 
     return feed_urls, success, reason
 
+def clone_group(feed_url_groups, from_group, to_group):
+    success = True
+    reason = 'ok'
+
+    group_info = feed_url_groups.get(from_group)
+
+    if group_info:
+        group_info.pop('locked', None)
+
+        feed_url_groups[to_group] = group_info
+
+        store_feed_url_groups(feed_url_groups)
+    else:
+        success = False
+        reason = 'group-to-clone-does-not-exist'
+    
+    return group_info, success, reason
+
 def store_feeds(feeds):
     store_obj(feeds, 'feed-data.json', is_cached=False)
 
@@ -250,14 +268,9 @@ def store_obj(obj, file_name, is_public=True, is_cached=True):
 
 def get_obj(loop, file_name):
     url = BUCKET_URL + file_name
-    print(url)
     data = loop.run_until_complete(fetch(url))
     data_obj = {}
-    print(data[0:1000])
-    try:
-        data_obj = json.loads(data)
-    except Exception as e:
-        print("Exceptional!")
+    data_obj = json.loads(data)
     return data_obj
 
 if __name__ == '__main__':

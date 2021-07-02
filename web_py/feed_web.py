@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import feed_reader
 import asyncio
 import logging
@@ -10,7 +10,6 @@ from flask import Flask, request, url_for, render_template, jsonify
 from flask_cors import CORS
 import urllib
 from tabulate import tabulate
-from google.cloud import *
 
 loop = asyncio.get_event_loop()
 app = Flask(__name__)
@@ -91,27 +90,61 @@ def feed_json():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/api/feed_groups')
+@app.route('/api/feed_groups', methods=['GET', 'POST'])
 def feed_groups():
-    """API endpoint for managing named groups of feed urls."""
+    """API endpoint for managing named groups of feed urls.
+    
+    GET returns the group info minus the feeds
+
+    POST is used to clone an existing feed url group. It is only possible
+    to clone to a group that doesn't already exist.
+
+    params:
+        feed_url_group - The group to clone
+        new_group_name - The new group name to clone to
+    """
     status = 200
     success = True
     reason = 'ok'
     resp = {}
 
-    feed_url_group = request.args.get('feed_url_group', '')
-    feed_url_groups = feed_reader.get_feed_url_groups(loop)
+    locked_groups = [
+        '', 'The Menagerie', 'UK News', 'News', 'Crypto', 'Science', 'Finance'
+    ]
 
-    group_info = feed_url_groups.get(feed_url_group)
+    if request.method == 'GET':
+        feed_url_group = request.args.get('feed_url_group', '')
+        feed_url_groups = feed_reader.get_feed_url_groups(loop)
+        group_info = feed_url_groups.get(feed_url_group)
 
-    if group_info:
-        group_info.pop('feeds')
-    else:
-        success = False
-        status = 400
-        reason = 'url-group-does-not-exist'
+        if group_info:
+            group_info.pop('feeds')
+            if feed_url_group in locked_groups:
+                group_info['locked'] = True
+        else:
+            success = False
+            status = 400
+            reason = 'url-group-does-not-exist'
+    elif request.method == 'POST':
+        body = request.json
 
-    response = jsonify({'success': success, 'reason': reason, 'data': resp})
+        feed_url_group = body.get('feed_url_group', '')
+        feed_url_groups = feed_reader.get_feed_url_groups(loop)
+        group_info = feed_url_groups.get(feed_url_group)
+
+        new_group_name = body.get('new_group_name', '')
+        new_group_exists = new_group_name in feed_url_groups
+
+        if new_group_exists:
+            success = False
+            status = 400
+            reason = 'new-url-group-already-exists'
+        else:
+            group_info, success, reason = feed_reader.clone_group(feed_url_groups, 
+                                                                       feed_url_group, 
+                                                                       new_group_name)
+
+    response = jsonify({'success': success, 'reason': reason, 'data': group_info})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response, status
 
@@ -139,7 +172,6 @@ def feed_urls():
         feed_url_group = request.args.get('feed_url_group', '')
         resp = feed_reader.get_feed_urls(loop, feed_url_group)
     elif request.method == 'POST':
-        logging.debug(request.json)
         body = request.json
         feed_url = body['feed_url']
         feed_url_group = body.get('feed_url_group', '')
