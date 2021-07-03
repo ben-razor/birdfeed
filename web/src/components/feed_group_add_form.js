@@ -44,14 +44,33 @@ const FeedGroupAddForm = (props) => {
         setActiveCollection(groupName);
       }
       else {
-        let urlSearchParams = new URLSearchParams({feed_url_group: groupName});
+        let url = "https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups"; 
+        let options = null;
 
-        fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + urlSearchParams , {
-          headers : { 
-            'Accept': 'application/json'
-          },
-        })
-        .then(response => {
+        if(!isCloneForm) {
+          let urlSearchParams = new URLSearchParams({feed_url_group: groupName});
+          url += '?' + urlSearchParams;
+          options = {
+            headers : { 
+              'Accept': 'application/json'
+            }
+          }
+        }
+        else {
+          options = {
+            method: 'POST',
+            headers : { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+              feed_url_group: activeCollection,
+              new_group_name: groupName
+            })
+          } 
+        }
+
+        fetch(url, options).then(response => {
           return response.json();
         })
         .then(json => {
