@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
+import FeedGroupAddForm from './feed_group_add_form';
 
 let groupNameRegex = /[a-zA-Z0-9 ]/i;
 
@@ -16,123 +17,30 @@ const FeedGroupForm = (props) => {
   const collections = props.collections;
   const setCollections = props.setCollections;
 
-  const addFeedGroupForm = <Formik
-    initialValues={{ groupName: ''}} 
-    validate={values => {
-      const errors = {};
-      let groupName = values.groupName;
-      let validGroupName = groupNameRegex.test(groupName);
-
-      if (!validGroupName) {
-        errors.groupName = 'Invalid group name. Group names have letters and numbers and spaces only';
-      }
-      return errors;
-    }}
-    onSubmit={(values, { setSubmitting }) => {
-      let groupName = values.groupName;
-
-      if(collections.includes(groupName)) {
-        setActiveCollection(groupName);
-      }
-      else {
-        let urlSearchParams = new URLSearchParams({feed_url_group: groupName});
-
-        fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + urlSearchParams , {
-          headers : { 
-            'Accept': 'application/json'
-          },
-        })
-        .then(response => {
-          return response.json();
-        })
-        .then(json => {
-          setSubmitting(false);
-
-          if(json.success) {
-            showAlert({'variant': 'info', 'message': 'Feed group imported'});
-            let newCollections = [...collections, {id: groupName, text: groupName}];
-            setCollections(newCollections);
-            setActiveCollection(groupName);
-          }
-          else {
-            switch(json.reason) {
-              case 'url-group-does-not-exist':
-                let newCollections = [...collections, {id: groupName, text: groupName}];
-                setCollections(newCollections);
-                showAlert({'variant': 'info', 'message': 'Group added'});
-                setActiveCollection(groupName);
-                break;
-              default:
-                showAlert({'variant': 'info', 'message': json.reason});
-            }
-          }
-        })
-        .catch(error => {
-          console.log(error);
-          showAlert({
-            'variant': 'danger', 
-            'message': `Error adding feed URL\n\nAre you sure this is a valid RSS feed?\n\n`
-          })
-          setSubmitting(false);
-        });
-      }
-    }}
-  >
-    {({
-      values,
-      errors,
-      touched,
-      handleChange,
-      handleBlur,
-      handleSubmit,
-      isSubmitting,
-      /* and other goodies */
-    }) => (
-      <form onSubmit={handleSubmit}>
-        <Row>
-          <Col>
-            <label htmlFor="groupName" className="big-label">Create / Import Group</label>
-            <InputGroup>
-            <input
-              className="form-control"
-              type="text"
-              name="groupName"
-              id="groupName"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.groupName}
-            />
-              <div className="input-group-append">
-                <ButtonSubmit isSubmitting={isSubmitting} label="Go" />
-              </div>
-            </InputGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            {errors.groupName && touched.groupName }
-          </Col>
-        </Row>
-    </form>
-  )}
-</Formik>;
-
   function deleteGroup(id) {
-    let newActiveCollection = '';
-    let newCollections = collections.filter((item) => item.id !== id); 
-    setCollections(newCollections);
-
-    if(activeCollection === id) {
-      if(newCollections.length) {
-        newActiveCollection = newCollections[0].id;
-      }
-      setActiveCollection(newActiveCollection);
+    if(id === 'The Menagerie') {
+      showAlert({
+        'variant': 'warning', 
+        'message': 'The Menagerie cannot be deleted!'
+      })
     }
+    else {
+      let newActiveCollection = '';
+      let newCollections = collections.filter((item) => item.id !== id); 
+      setCollections(newCollections);
 
-    showAlert({
-      'variant': 'info', 
-      'message': `Feed Group Deleted`
-    })
+      if(activeCollection === id) {
+        if(newCollections.length) {
+          newActiveCollection = newCollections[0].id;
+        }
+        setActiveCollection(newActiveCollection);
+      }
+
+      showAlert({
+        'variant': 'info', 
+        'message': `Feed Group Deleted`
+      })
+    }
   }
 
   function handleGroupSelect(e, id) {
@@ -155,7 +63,8 @@ const FeedGroupForm = (props) => {
 
   return (
     <div>
-      {addFeedGroupForm}
+      <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
+                    collections={collections} setCollections={setCollections} />
       <div className="big-label mt-3">Delete Groups</div>
       <div class="setup-table feed-group-list">
         {options}

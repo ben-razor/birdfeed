@@ -17,5 +17,22 @@ class TestFeedReaderWeb(unittest.TestCase):
 		self.assertEqual(resp['reason'], 'ok')
 		self.assertTrue(resp['success'])
 
+		url = 'http://localhost:3001/api/feed_groups?feed_url_group=The Menagerie'
+		r = requests.get(url)
+		resp = r.json()
+
+		self.assertEqual(resp['data']['locked'], True)
+
+		url = 'http://localhost:3001/api/feed_groups?feed_url_group=Test7382054'
+		r = requests.get(url)
+		resp = r.json()
+
+		self.assertEqual(resp['data']['locked'], False)
+
+
+
+
+
+
 if __name__ == '__main__':
 	unittest.main()

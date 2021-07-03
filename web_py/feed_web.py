@@ -118,9 +118,10 @@ def feed_groups():
         group_info = feed_url_groups.get(feed_url_group)
 
         if group_info:
-            group_info.pop('feeds')
             if feed_url_group in locked_groups:
                 group_info['locked'] = True
+            else:
+                group_info['locked'] = False
         else:
             success = False
             status = 400
@@ -134,11 +135,16 @@ def feed_groups():
 
         new_group_name = body.get('new_group_name', '')
         new_group_exists = new_group_name in feed_url_groups
+        new_group_is_locked = new_group_name in locked_groups
 
         if new_group_exists:
             success = False
             status = 400
             reason = 'new-url-group-already-exists'
+        elif new_group_is_locked:
+            success = False
+            status = 400
+            reason = 'new-url-group-is-locked'
         else:
             group_info, success, reason = feed_reader.clone_group(feed_url_groups, 
                                                                        feed_url_group, 

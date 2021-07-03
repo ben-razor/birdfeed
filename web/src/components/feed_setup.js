@@ -8,6 +8,7 @@ import Checkbox from 'react-bootstrap/FormCheck';
 import {AlertContext} from './feed_alert';
 import ButtonSubmit from './forms_button_submit';
 import FeedGroupForm from './feed_group_form';
+import FeedGroupAddForm from './feed_group_add_form';
 
 function logTime(label) {
     console.log(label, performance.now() / 1000);
@@ -16,6 +17,7 @@ function logTime(label) {
 function FeedSetup(props) {
   const [loaded, setLoaded] = useState(false);
   const [feeds, setFeeds] = useState([]);
+  const [isLockedGroup, setIsLockedGroup] = useState(false);
   const [deleting, setDeleting] = useState({});
   const showAlert = useContext(AlertContext);
   let activeCollection = props.activeCollection;
@@ -25,14 +27,15 @@ function FeedSetup(props) {
 
   useEffect(() => {
     setLoaded(false);
-    fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls?" + new URLSearchParams({ 
+    fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + new URLSearchParams({ 
         feed_url_group: activeCollection 
       }), {
           headers : { 
             'Accept': 'application/json'
           }
         }).then(response => { return response.json() }).then(json => {
-          setFeeds(json.data);
+          setFeeds(json.data['feeds']);
+          setIsLockedGroup(json.data['locked'])
           setLoaded(true);
         }).catch(error => { console.log(error); });
   }, [activeCollection]);
@@ -102,13 +105,46 @@ function FeedSetup(props) {
 
   let allChecked = props.hiddenFeeds.length === 0;
 
+  let feedTable = '';
+  if(loaded && feeds.length) {
+    feedTable = <table className="setup-table feed-url-table anim-fade-in-short">
+      <tbody>
+        <tr>
+          <td colSpan="2"></td>
+        </tr>
+      {feeds.map((feed, index) => {
+        let isDeleting= deleting[feed];
+
+        let isHidden = props.hiddenFeeds.indexOf(feed) !== -1;
+
+        const MAX_FEED_LEN = 50;
+        let feedStr = feed;
+        if(feed.length > MAX_FEED_LEN) {
+          feedStr = feed.substr(0, MAX_FEED_LEN) + '\u2026';
+        }
+
+        return <tr key={feed}>
+          <td className="feed-url">{feedStr}</td>
+          {!isLockedGroup && 
+            <td>
+              <ButtonSubmit onSubmitting={isDeleting} onClick={() => deleteFeed(feed)} label="🗑" className="float-right" />
+            </td>
+          }
+        </tr>
+      })}
+      </tbody>
+    </table>
+  }
+
   return (
     <DocumentTitle title='Birdfeed - Configure Your News Sources'>
       <Fragment>
         <Row>
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
             <div className="setup-panel">
-              <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
+              {!isLockedGroup && 
+                <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
+              }
               {!loaded && 
                 <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
               {loaded && feeds.length === 0 &&
@@ -119,33 +155,18 @@ function FeedSetup(props) {
                   <p class="lead">Use the form above to add new feeds.</p>
                 </div>
               }
-              {loaded && feeds.length > 0 && 
-                <table className="setup-table feed-url-table anim-fade-in-short">
-                  <tbody>
-                    <tr>
-                      <td colSpan="2"></td>
-                    </tr>
-                  {feeds.map((feed, index) => {
-                    let isDeleting= deleting[feed];
+              {loaded && isLockedGroup && 
+                <div class="alert alert-info mt-1 anim-fade-in-short">
+                  <h4>This group is locked</h4>
+                  <hr />
+                  <p>This is a built in group. Feeds cannot be added or removed.</p>
+                  <p>Use the form below to clone this group and enable changes.</p>
 
-                    let isHidden = props.hiddenFeeds.indexOf(feed) !== -1;
-
-                    const MAX_FEED_LEN = 50;
-                    let feedStr = feed;
-                    if(feed.length > MAX_FEED_LEN) {
-                      feedStr = feed.substr(0, MAX_FEED_LEN) + '\u2026';
-                    }
-
-                    return <tr key={feed}>
-                      <td className="feed-url">{feedStr}</td>
-                      <td>
-                        <ButtonSubmit onSubmitting={isDeleting} onClick={() => deleteFeed(feed)} label="🗑" className="float-right" />
-                      </td>
-                    </tr>
-                  })}
-                  </tbody>
-                </table>
+                  <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
+                    collections={collections} setCollections={setCollections} isCloneForm={true} />
+                </div>
               }
+              {feedTable}
           </div>
           </Col>
           <Col md={4}>
