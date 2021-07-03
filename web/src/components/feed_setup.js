@@ -34,9 +34,16 @@ function FeedSetup(props) {
             'Accept': 'application/json'
           }
         }).then(response => { return response.json() }).then(json => {
-          setFeeds(json.data['feeds']);
-          setIsLockedGroup(json.data['locked'])
-          setLoaded(true);
+          if(json.success) {
+            setFeeds(json.data['feeds']);
+            setIsLockedGroup(json.data['locked'])
+            setLoaded(true);
+          }
+          else {
+            setLoaded(true);
+            setIsLockedGroup(false)
+            setFeeds([]);
+          }
         }).catch(error => { console.log(error); });
   }, [activeCollection]);
 
@@ -142,6 +149,7 @@ function FeedSetup(props) {
         <Row>
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
             <div className="setup-panel">
+              <div class="big-label">Current Group: {activeCollection}</div>
               {!isLockedGroup && 
                 <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
               }
@@ -155,24 +163,24 @@ function FeedSetup(props) {
                   <p class="lead">Use the form above to add new feeds.</p>
                 </div>
               }
+              {feedTable}
               {loaded && isLockedGroup && 
                 <div class="alert alert-info mt-1 anim-fade-in-short">
-                  <h4>This group is locked</h4>
-                  <hr />
                   <p>This is a built in group. Feeds cannot be added or removed.</p>
-                  <p>Use the form below to clone this group and enable changes.</p>
+                  <p>To make changes, use the form below to clone this group.</p>
 
                   <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
                     collections={collections} setCollections={setCollections} isCloneForm={true} />
                 </div>
               }
-              {feedTable}
+
           </div>
           </Col>
           <Col md={4}>
             <div className="setup-panel">
               <FeedGroupForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
-                            collections={collections} setCollections={setCollections} />
+                            collections={collections} setCollections={setCollections} 
+                            setLoaded={setLoaded} />
             </div>
           </Col>
         </Row>

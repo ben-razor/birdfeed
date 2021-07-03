@@ -202,6 +202,7 @@ table.feed-url-table {
 td.feed-url {
   border-bottom: 1px solid hsl(199deg, 15%, 36%);
   width: 80%;
+  line-height: 30px;
 }
 
 .feed-url-delete {

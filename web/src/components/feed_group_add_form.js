@@ -16,13 +16,16 @@ const FeedGroupAddForm = (props) => {
   const collections = props.collections;
   const setCollections = props.setCollections;
   const isCloneForm = props.isCloneForm;
+  const setLoaded = props.setLoaded;
 
   let label = 'Create / Import Group';
   let buttonText = 'Go';
+  let placeholderText = '';
 
   if(isCloneForm) {
-    label = 'Enter new name for this group';
-    buttonText = 'Clone Group';
+    label = 'Clone Group';
+    buttonText = 'Clone';
+    placeholderText = "New group name";
   }
 
   const addFeedGroupForm = <Formik
@@ -40,8 +43,10 @@ const FeedGroupAddForm = (props) => {
     onSubmit={(values, { setSubmitting }) => {
       let groupName = values.groupName;
 
-      if(collections.includes(groupName)) {
+      if(collections.find(x => x.id === groupName)) {
         setActiveCollection(groupName);
+        setSubmitting(false);
+        showAlert({'variant': 'info', 'message': 'Group already exists'});
       }
       else {
         let url = "https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups"; 
@@ -129,6 +134,7 @@ const FeedGroupAddForm = (props) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.groupName}
+              placeholder={placeholderText}
             />
               <div className="input-group-append">
                 <ButtonSubmit isSubmitting={isSubmitting} label={buttonText} />
