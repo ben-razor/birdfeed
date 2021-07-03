@@ -30,7 +30,7 @@ function App(props) {
   const [hiddenFeeds, setHiddenFeeds] = useState([]);
   const [activeCollection, setActiveCollection] = useStateWithLocalStorage('activeCollection', '');
   const [collections, setCollections] = useStateWithLocalStorage('collections', [
-    { id: "", text: "The Menagerie"},
+    { id: "The Menagerie", text: "The Menagerie"},
     { id: "UK News", text: "UK News"},
     { id: "Crypto", text: "Crypto"},
   ]);
