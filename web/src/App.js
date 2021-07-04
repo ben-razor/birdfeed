@@ -6,6 +6,7 @@ import DocumentTitle from 'react-document-title';
 import FeedAlert, {AlertContext} from './components/feed_alert';
 import './css/darkly/bootstrap.min.css';
 import './App.css';
+import birdfeedLogo from './img/logo192.png';
 import React from "react";
 import Container from 'react-bootstrap/Container';
 
@@ -49,7 +50,7 @@ function App(props) {
         <div class="thing"></div>
           <header className="mb-4">
             <div className="header">
-              <img src="logo192.png" className="logo" alt="Logo" />
+              <img src={birdfeedLogo} className="logo" alt="Logo" />
               <div class="header-name-and-select">
                 <h2 className="app-name">Birdfeed</h2>
                 <select className="header-select" value={activeCollection} onChange={handleActiveCollectionChange}> 

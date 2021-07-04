@@ -113,8 +113,8 @@ function FeedSetup(props) {
     props.setHiddenFeeds(hiddenFeeds);
   }
 
-  let feedNameClass = 'feed-title-heading';
-  let feedURLClass = 'feed-title-heading';
+  let feedNameClass = 'feed-title-heading feed-title-heading-left';
+  let feedURLClass = 'feed-title-heading feed-title-heading-right';
 
   function setFeedNameClass() {
     if(useFeedName) {
@@ -167,7 +167,7 @@ function FeedSetup(props) {
         return <tr key={feed}>
           <td className="feed-url">{feedStr}</td>
           {!isLockedGroup && 
-            <td>
+            <td className="feed-url-delete">
               <ButtonSubmit onSubmitting={isDeleting} onClick={() => deleteFeed(feed)} label="🗑" className="float-right" />
             </td>
           }
@@ -200,7 +200,7 @@ function FeedSetup(props) {
               {feedTable}
               {loaded && isLockedGroup && 
                 <div class="alert alert-info mt-1 anim-fade-in-short">
-                  <p>This is a <b><i>Birdfeed Selected</i></b> group. Feeds cannot be added or removed.</p>
+                  <p>This is a <b><span class="inline-bird"></span> selected</b> group. Feeds cannot be added or removed.</p>
                   <p>To make changes, use the form below to clone this group.</p>
 
                   <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 

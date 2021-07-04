@@ -115,6 +115,10 @@ nav ul li {
   font-weight: bold;
 }
 
+.header-nav-link:hover {
+  color: hsl(200, 50%, 80%);
+}
+
 .header-nav-link.active {
   color: white;
   border-bottom: 4px solid rgb(255, 255, 255);
@@ -201,8 +205,11 @@ table.feed-url-table {
 
 td.feed-url {
   border-bottom: 1px solid hsl(199deg, 15%, 36%);
-  width: 80%;
   line-height: 30px;
+}
+
+td.feed-url-delete {
+  width: 2em;
 }
 
 .feed-url-delete {
@@ -215,17 +222,33 @@ td.feed-url {
 
 .feed-title-heading {
   display: inline-block;
-  border: 1px solid hsl(0, 0%, 20%);
-  padding: 0.2em;
+  border: 0;
+  padding: 0.3em;
   color: hsl(0, 0%, 95%);
   background-color: hsl(200, 20%, 70%);
   min-width: 6em;
   outline: 0;
 }
 
+.feed-title-heading-left {
+  border-radius: 1em 0 0 1em;
+}
+
+.feed-title-heading-right {
+  border-radius: 0 1em 1em 0;
+}
+
 .feed-title-heading-selected {
   color: hsl(0, 0%, 95%);
   background-color: hsl(200, 100%, 40%);
+}
+
+.inline-bird {
+  background-image: url('./img/logo192.png');
+  background-size: contain;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
 }
 
 .birdfeed-submit {
