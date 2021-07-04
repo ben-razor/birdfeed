@@ -213,6 +213,21 @@ td.feed-url {
   width: 8em;
 }
 
+.feed-title-heading {
+  display: inline-block;
+  border: 1px solid hsl(0, 0%, 20%);
+  padding: 0.2em;
+  color: hsl(0, 0%, 95%);
+  background-color: hsl(200, 20%, 70%);
+  min-width: 6em;
+  outline: 0;
+}
+
+.feed-title-heading-selected {
+  color: hsl(0, 0%, 95%);
+  background-color: hsl(200, 100%, 40%);
+}
+
 .birdfeed-submit {
   width: 8em;
 }

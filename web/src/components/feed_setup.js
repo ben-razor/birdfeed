@@ -18,7 +18,9 @@ function FeedSetup(props) {
   const [loaded, setLoaded] = useState(false);
   const [feeds, setFeeds] = useState([]);
   const [isLockedGroup, setIsLockedGroup] = useState(false);
+  const [feedMetadata, setFeedMetadata] = useState({});
   const [deleting, setDeleting] = useState({});
+  const [useFeedName, setUseFeedName] = useState(true);
   const showAlert = useContext(AlertContext);
   let activeCollection = props.activeCollection;
   let setActiveCollection = props.setActiveCollection;
@@ -37,6 +39,7 @@ function FeedSetup(props) {
           if(json.success) {
             setFeeds(json.data['feeds']);
             setIsLockedGroup(json.data['locked'])
+            setFeedMetadata(json.data['feed_info']);
             setLoaded(true);
           }
           else {
@@ -110,6 +113,24 @@ function FeedSetup(props) {
     props.setHiddenFeeds(hiddenFeeds);
   }
 
+  let feedNameClass = 'feed-title-heading';
+  let feedURLClass = 'feed-title-heading';
+
+  function setFeedNameClass() {
+    if(useFeedName) {
+      feedNameClass += ' feed-title-heading-selected';
+    }
+    else {
+      feedURLClass += ' feed-title-heading-selected';
+    }
+  }
+
+  function toggleUseFeedName() {
+    setUseFeedName(!useFeedName);
+    setFeedNameClass();
+  }
+  setFeedNameClass();
+
   let allChecked = props.hiddenFeeds.length === 0;
 
   let feedTable = '';
@@ -117,7 +138,11 @@ function FeedSetup(props) {
     feedTable = <table className="setup-table feed-url-table anim-fade-in-short">
       <tbody>
         <tr>
-          <td colSpan="2"></td>
+          <td>
+            <button class={feedNameClass} onClick={toggleUseFeedName}>Feed Name</button>
+            <button class={feedURLClass} onClick={toggleUseFeedName}>URL</button>
+          </td>
+          <td></td>
         </tr>
       {feeds.map((feed, index) => {
         let isDeleting= deleting[feed];
@@ -130,6 +155,15 @@ function FeedSetup(props) {
           feedStr = feed.substr(0, MAX_FEED_LEN) + '\u2026';
         }
 
+        if(useFeedName) {
+          let feedTitle = feedMetadata[feed]["title"];
+          if(feedTitle) {
+            if(feedTitle.length > MAX_FEED_LEN) {
+              feedTitle = feedTitle.substr(0, MAX_FEED_LEN) + '\u2026';
+            }
+            feedStr = feedTitle;
+          }
+        }
         return <tr key={feed}>
           <td className="feed-url">{feedStr}</td>
           {!isLockedGroup && 
