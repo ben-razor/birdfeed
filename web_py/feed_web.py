@@ -190,8 +190,11 @@ def feed_urls():
         body = request.json
         feed_url = body['feed_url']
         feed_url_group = body.get('feed_url_group', '')
-        resp, success, reason = feed_reader.add_feed_url(loop, feed_url, feed_url_group)
-        
+        feed, feed_infos, success, reason = feed_reader.add_feed_url(loop, feed_url, feed_url_group)
+
+        resp['feeds'] = feed
+        resp['feed_info'] = feed_infos
+
         if success:
             status = 201
         else:

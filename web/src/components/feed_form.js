@@ -40,7 +40,8 @@ const FeedForm = (props) => {
         setSubmitting(false);
         if(json.success) {
           showAlert({'variant': 'success', 'message': 'Feed URL added'})
-          props.setFeeds(json.data);
+          props.setFeedMetadata(json.data['feed_info'])
+          props.setFeeds(json.data['feeds']);
         }
         else {
           let message = '';
