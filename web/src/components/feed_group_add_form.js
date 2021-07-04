@@ -95,6 +95,10 @@ const FeedGroupAddForm = (props) => {
                 showAlert({'variant': 'info', 'message': 'Group added'});
                 setActiveCollection(groupName);
                 break;
+              case 'new-url-group-already-exists':
+                let message = 'New group already exists\n\nPlease choose a different name';
+                showAlert({'variant': 'warning', 'message': message});
+                break;
               default:
                 showAlert({'variant': 'info', 'message': json.reason});
             }
