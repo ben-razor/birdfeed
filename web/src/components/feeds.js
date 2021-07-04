@@ -35,7 +35,7 @@ function formatTime(date, useSeconds=true) {
  */
 function formatDate(date, useYear=true, separator='/') {
   let dayStr = date.getDate().toString().padStart(2, '0');
-  let monthStr = date.getMonth().toString().padStart(2, '0');
+  let monthStr = (date.getMonth() + 1).toString().padStart(2, '0');
   let yearStr = date.getYear().toString();
 
   let dateStr = dayStr + separator + monthStr;
