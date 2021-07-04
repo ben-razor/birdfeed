@@ -82,7 +82,11 @@ const FeedGroupAddForm = (props) => {
           setSubmitting(false);
 
           if(json.success) {
-            showAlert({'variant': 'info', 'message': 'Feed group imported'});
+            let message = 'Feed group imported';
+            if(isCloneForm) {
+              message = 'Feed group cloned';
+            }
+            showAlert({'variant': 'info', 'message': message});
             let newCollections = [...collections, {id: groupName, text: groupName}];
             setCollections(newCollections);
             setActiveCollection(groupName);

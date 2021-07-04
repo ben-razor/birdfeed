@@ -185,7 +185,7 @@ function FeedSetup(props) {
             <div className="setup-panel">
               <div class="big-label">Current Group: {activeCollection}</div>
               {!isLockedGroup && 
-                <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} />
+                <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
               }
               {!loaded && 
                 <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
