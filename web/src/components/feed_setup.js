@@ -166,7 +166,7 @@ function FeedSetup(props) {
               {feedTable}
               {loaded && isLockedGroup && 
                 <div class="alert alert-info mt-1 anim-fade-in-short">
-                  <p>This is a built in group. Feeds cannot be added or removed.</p>
+                  <p>This is a <b><i>Birdfeed Selected</i></b> group. Feeds cannot be added or removed.</p>
                   <p>To make changes, use the form below to clone this group.</p>
 
                   <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 

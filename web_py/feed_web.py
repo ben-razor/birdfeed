@@ -78,8 +78,9 @@ def feed_json():
     feed_url_group = request.args.get('feed_url_group', '')
 
     if reload:
-        feeds = feed_reader.get_feeds_async(loop)
+        feeds, feed_info = feed_reader.get_feeds_async(loop)
         feed_reader.store_feeds(feeds)
+        feed_reader.store_feed_info(feed_info)
     else:
         feeds = feed_reader.get_stored_feeds(loop)
 
@@ -118,6 +119,14 @@ def feed_groups():
         group_info = feed_url_groups.get(feed_url_group)
 
         if group_info:
+            feeds = group_info['feeds']
+            feed_info = feed_reader.get_feed_info(loop)
+            feed_info_for_group = {}
+            for feed in feeds:
+                feed_info_for_group[feed] = feed_info[feed]
+
+            group_info['feed_info'] = feed_info_for_group
+
             if feed_url_group in locked_groups:
                 group_info['locked'] = True
             else:

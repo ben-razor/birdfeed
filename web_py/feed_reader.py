@@ -20,27 +20,6 @@ def add_timezone_field(date):
     date_str = date.strftime(rss_date_format)
     return date_str
 
-async def get_feed_async(feed, feed_data=[]):
-    """Read a single rss feed asynchronously. Store the data in feed_data"""
-    feed_xml = await fetch(feed)
-    d = feedparser.parse(feed_xml)
-    if 'tele' in feed:
-        print(d)
-    source = d['feed'].get('title', '')
-    image = d['feed'].get('image', {'href': ''})
-
-    for entry in d['entries']: 
-        title = entry['title']
-        summary = entry.get('summary')
-        date_str = add_timezone_field(entry['published'])
-
-        feed_data.append({
-            'title': title, 'source': source, 'image': image,'summary': summary, 'link': entry['link'],
-            'date': date_str, 'source_url': feed
-        })
-
-    return feed_data
-
 def get_unique_feed_urls(feed_url_groups):
     """Takes a dict { group_name => [feeds...], ...} and returns a list of unique feeds"""
     feed_urls = []
@@ -63,16 +42,48 @@ def get_feed_url_counts(feed_url_groups):
 
     return c
 
+async def get_feed_async(feed, feed_data=[], feed_info={}):
+    """Read a single rss feed asynchronously. Store the data in feed_data"""
+    feed_xml = await fetch(feed)
+    d = feedparser.parse(feed_xml)
+    feed_details = d['feed']
+    source = feed_details.get('title', '')
+    desc = feed_details.get('desc', '')
+    image = feed_details.get('image', {'href': ''})
+    ttl = feed_details.get('ttl', 86400)
+    lastUpdate = feed_details.get('lastBuildDate', 'Sun, 01 Jan 2020 12:00:00 GMT')
+
+    feed_info[feed] = {
+        "title": source,
+        "desc": desc,
+        "image": image,
+        "ttl": ttl,
+        "lastUpdate": lastUpdate
+    }
+
+    for entry in d['entries']: 
+        title = entry['title']
+        summary = entry.get('summary')
+        date_str = add_timezone_field(entry['published'])
+
+        feed_data.append({
+            'title': title, 'source': source, 'image': image,'summary': summary, 'link': entry['link'],
+            'date': date_str, 'source_url': feed
+        })
+
+    return feed_data
+
 def get_feeds_async(loop):
     """Read a number of feeds asynchronously and then sort them by date"""
     feed_data = []
+    feed_info = {}
     feed_url_groups = get_feed_url_groups(loop)
     feed_urls = get_unique_feed_urls(feed_url_groups) 
 
-    tasks = [get_feed_async(feed, feed_data) for feed in feed_urls]
+    tasks = [get_feed_async(feed, feed_data, feed_info) for feed in feed_urls]
     loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
     feed_data.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
-    return feed_data
+    return feed_data, feed_info
 
 async def fetch(url, timeout=10):
     """Fetch a response from a url asynchronously"""
@@ -84,11 +95,6 @@ async def fetch(url, timeout=10):
         }
         async with aiohttp.ClientSession(skip_auto_headers=['User-Agent', 'Accept', 'Content-Type'], headers=headers) as session:
             async with session.get(url) as response:
-                if 'tele' in url:
-                    print('-- headers --')
-                    print(response.status)
-                    print(response.headers)
-                    print('-- end headers --')
                 resp_str = await response.read()
     return resp_str
 
@@ -116,6 +122,9 @@ def get_feeds():
     feed_data.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
 
     return feed_data 
+
+def get_feed_info(loop):
+    return get_obj(loop, 'feed-info.json')
 
 def get_stored_feeds(loop):
     return get_obj(loop, 'feed-data.json')
@@ -161,6 +170,8 @@ def add_feed_url(loop, feed_url, feed_url_group=''):
 
     feed_url_counts = get_feed_url_counts(feed_url_groups)
     feed_already_exists = feed_url_counts.get(feed_url, 0) > 0
+    feed_infos = get_feed_info(loop)
+    feed_info = {}
 
     if len(feed_urls) >= 10:
         success = False
@@ -172,13 +183,16 @@ def add_feed_url(loop, feed_url, feed_url_group=''):
                 store_feed_url_groups(feed_url_groups)
             else:
                 feeds = get_stored_feeds(loop)
-                new_feeds = loop.run_until_complete(asyncio.wait_for(get_feed_async(feed_url, []), timeout=5))
+                new_feeds = loop.run_until_complete(asyncio.wait_for(get_feed_async(feed_url, [], feed_info), timeout=5))
                 if new_feeds and len(new_feeds):
                     feeds.extend(new_feeds)
                     feeds.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
                     feed_urls.append(feed_url)
+                    feed_infos.update(feed_info)
+
                     store_feeds(feeds)
                     store_feed_url_groups(feed_url_groups)
+                    store_feed_info(feed_infos)
                 else:
                     success = False
                     reason = 'no-data-from-feed'
@@ -227,6 +241,8 @@ def delete_feed_url(loop, feed_url, feed_url_group=''):
     return feed_urls, success, reason
 
 def clone_group(feed_url_groups, from_group, to_group):
+    """Get the feed urls associated with one group id and copy them to 
+    a new group with a new id."""
     success = True
     reason = 'ok'
 
@@ -243,6 +259,9 @@ def clone_group(feed_url_groups, from_group, to_group):
         reason = 'group-to-clone-does-not-exist'
     
     return group_info, success, reason
+
+def store_feed_info(feed_info):
+    store_obj(feed_info, 'feed-info.json', is_cached=False)
 
 def store_feeds(feeds):
     store_obj(feeds, 'feed-data.json', is_cached=False)
@@ -275,6 +294,7 @@ def get_obj(loop, file_name):
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    feed_data = get_feeds_async(loop)
+    feed_data, feed_info = get_feeds_async(loop)
     #feed_data = get_stored_feeds(loop)
     print('after get_feeds ' + str(len(feed_data)))
+    print('after get_feeds ', feed_info)
