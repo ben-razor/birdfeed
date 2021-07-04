@@ -155,6 +155,7 @@ async function fetchFeeds(activeCollection, hiddenFeeds) {
 }
 
 function Feeds(props) {
+  const [loaded, setLoaded] = useState(false);
   const [feeds, setFeeds] = useState([]);
   const [timedOut, setTimedOut] = useState(false);
   const [refresh, setRefresh] = useState(1);
@@ -166,6 +167,7 @@ function Feeds(props) {
 
   useEffect(() => {
     showAlert({message: ''});
+    setLoaded(false);
     async function fetchFeedsAndSet() {
       console.log('fetching feeds...');
       try {
@@ -176,6 +178,7 @@ function Feeds(props) {
       catch(error) {
         setTimedOut(true); 
       }
+      setLoaded(true);
     }
     fetchFeedsAndSet();
 
@@ -189,8 +192,16 @@ function Feeds(props) {
   return (
     <DocumentTitle title='Birdfeed - Latest News'>
       <div>
-          {feeds.length === 0 && !timedOut && 
+          {feeds.length === 0 && !timedOut && !loaded &&
             <div className="lds-default anim-fade-in-delayed-short" style={{marginLeft:"50%", transform: "translate(-50%, 100%) scale(2)"}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+          }
+
+          {feeds.length === 0 && !timedOut && loaded && 
+            <div className="alert alert-info mt-1 anim-fade-in-short">
+              <h4>Empty Group</h4>
+              <hr />
+              <p class="lead">There are no posts for this group.</p>
+            </div>
           }
 
           {feeds.length > 0 &&
