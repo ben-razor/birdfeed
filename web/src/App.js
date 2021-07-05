@@ -46,12 +46,12 @@ function App(props) {
 
   return <DocumentTitle title='My Web App'>
       <Router>
-        <div class="thing thing2"></div>
-        <div class="thing"></div>
+        <div className="thing thing2"></div>
+        <div className="thing"></div>
           <header className="mb-4">
             <div className="header">
               <img src={birdfeedLogo} className="logo" alt="Logo" />
-              <div class="header-name-and-select">
+              <div className="header-name-and-select">
                 <h2 className="app-name">Birdfeed</h2>
                 <select className="header-select" value={activeCollection} onChange={handleActiveCollectionChange}> 
                   {options}
