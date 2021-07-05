@@ -1,18 +1,12 @@
 import React, {useState, useContext, useEffect, Fragment} from 'react';
 import FeedForm from './feed_form';
 import DocumentTitle from 'react-document-title';
-import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Checkbox from 'react-bootstrap/FormCheck';
 import {AlertContext} from './feed_alert';
 import ButtonSubmit from './forms_button_submit';
 import FeedGroupForm from './feed_group_form';
 import FeedGroupAddForm from './feed_group_add_form';
-
-function logTime(label) {
-    console.log(label, performance.now() / 1000);
-}
 
 function FeedSetup(props) {
   const [loaded, setLoaded] = useState(false);
