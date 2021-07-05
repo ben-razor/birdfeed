@@ -21,6 +21,33 @@ def add_timezone_field(date):
     date_str = date.strftime(rss_date_format)
     return date_str
 
+def is_locked_group(group):
+    """Check if a group is locked (feeds cannot be added or removed)"""
+    locked_groups = [
+        '', 'The Menagerie', 'UK News', 'News', 'Crypto', 'Science', 'Finance', 'Crypto Tech', 'World News',
+        'Technology', 'Tech', 'Business', 'Dev' 
+    ]
+
+    return group in locked_groups
+
+def is_locker(pw):
+    digest = os.environ.get('LOCKER_DIGEST')
+    salt = os.environ.get('LOCKER_SALT')
+
+    return password_match(pw, digest, salt)
+
+def hash_pw(pw, salt=None):
+    """"Takes a plaintext pw and an optional supplied salt as a hex string
+    
+    Returns a digest and a salt as hex strings"""
+    salt = bytes.fromhex(salt) if salt is not None else os.urandom(32)
+    digest = hashlib.pbkdf2_hmac('sha256', pw.encode('utf-8'), salt, 100000)
+    return digest.hex(), salt.hex()
+
+def password_match(pw, pw_hash, salt):
+    digest, salt = hash_pw(pw, salt)
+    return digest == pw_hash
+
 def get_unique_feed_urls(feed_url_groups):
     """Takes a dict { group_name => [feeds...], ...} and returns a list of unique feeds"""
     feed_urls = []
@@ -151,7 +178,7 @@ def limit_feeds_to_group(loop, feeds, feed_url_group=''):
 
     return matching_feeds
 
-def add_feed_url(loop, feed_url, feed_url_group=''):
+def add_feed_url(loop, feed_url, feed_url_group='', user=''):
     """Add a feed url and attempt to get and store new feeds.
 
     Returns:
@@ -159,7 +186,7 @@ def add_feed_url(loop, feed_url, feed_url_group=''):
 
         feed_urls: updated array of feed_urls
         success: boolean
-        reason: ok, no-data-from-feed, url-exists, max-feeds-10, timeout
+        reason: ok, no-data-from-feed, url-exists, max-feeds-10, timeout, group-is-locked
     """
     success = True 
     reason = 'ok'
@@ -174,7 +201,12 @@ def add_feed_url(loop, feed_url, feed_url_group=''):
     feed_infos = get_feed_info(loop)
     feed_info = {}
 
-    if len(feed_urls) >= 10:
+    group_is_locked = is_locked_group(feed_url_group)
+
+    if group_is_locked and not is_locker(user):
+        success = False
+        reason = "group-is-locked"
+    elif len(feed_urls) >= 10:
         success = False
         reason = 'max-feeds-10'
     elif feed_url not in feed_urls:
@@ -206,7 +238,7 @@ def add_feed_url(loop, feed_url, feed_url_group=''):
 
     return feed_urls, feed_infos, success, reason
 
-def delete_feed_url(loop, feed_url, feed_url_group=''):
+def delete_feed_url(loop, feed_url, feed_url_group='', user=''):
     """Delete a feed url and remove feeds for that url.
 
     Returns:
@@ -214,15 +246,20 @@ def delete_feed_url(loop, feed_url, feed_url_group=''):
 
         feed_urls: updated array of feed_urls
         success: boolean
-        reason: ok, url-does-not-exist
+        reason: ok, url-does-not-exist, group-is-locked, url-group-does-not-exist
     """
     success = True
     reason = 'ok'
+    feed_urls = []
     feed_url_groups = get_feed_url_groups(loop)
     feed_url_counts = get_feed_url_counts(feed_url_groups)
     feed_still_in_use = feed_url_counts.get(feed_url, 0) > 1
+    group_is_locked = is_locked_group(feed_url_group)
 
-    if feed_url_group not in feed_url_groups:
+    if group_is_locked and not is_locker(user):
+        success = False
+        reason = "group-is-locked"
+    elif feed_url_group not in feed_url_groups:
         success = False
         reason = 'url-group-does-not-exist'
     else:
@@ -292,18 +329,6 @@ def get_obj(loop, file_name):
     data_obj = {}
     data_obj = json.loads(data)
     return data_obj
-
-def hash_pw(pw, salt=None):
-    """"Takes a plaintext pw and an optional supplied salt as a hex string
-    
-    Returns a digest and a salt as hex strings"""
-    salt = bytes.fromhex(salt) if salt is not None else os.urandom(32)
-    digest = hashlib.pbkdf2_hmac('sha256', pw.encode('utf-8'), salt, 100000)
-    return digest.hex(), salt.hex()
-
-def password_match(pw, pw_hash, salt):
-    digest, salt = hash_pw(pw, salt)
-    return digest == pw_hash
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

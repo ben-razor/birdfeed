@@ -9,22 +9,7 @@ import './App.css';
 import birdfeedLogo from './img/logo192.png';
 import React from "react";
 import Container from 'react-bootstrap/Container';
-
-const useStateWithLocalStorage = (localStorageKey, defaultValue) => {
-  let item = defaultValue;
-  let itemJSON = localStorage.getItem(localStorageKey);
-  if(itemJSON) {
-    item = JSON.parse(itemJSON) || defaultValue
-  }
-
-  const [value, setValue] = React.useState(item);
- 
-  React.useEffect(() => {
-    localStorage.setItem(localStorageKey, JSON.stringify(value));
-  }, [value, localStorageKey]);
-
-  return [value, setValue];
-};
+import useStateWithLocalStorage from './hooks/localStorage';
 
 function App(props) {
   const [alertInfo, showAlert] = useState({variant: 'info', message: ''});

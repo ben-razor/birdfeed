@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
+import os, logging
 import feed_reader
 import asyncio
-import logging
 import datetime as dt
 from datetime import datetime
 import pytz
 from bs4 import BeautifulSoup
 from flask import Flask, request, url_for, render_template, jsonify
+from flask_httpauth import HTTPBasicAuth
 from flask_cors import CORS
 import urllib
 from tabulate import tabulate
@@ -14,6 +15,7 @@ from tabulate import tabulate
 loop = asyncio.get_event_loop()
 app = Flask(__name__)
 CORS(app)
+auth = HTTPBasicAuth()
 
 def process_feeds(feeds):
     """Modify feed data before passing to rendering"""
@@ -69,7 +71,6 @@ def simple_web_page():
         msg = 'Sorry, feeds cannot be loaded at the moment.'
         details = 'Please try again later.'
         response = render_template('error.html', msg=msg, details=details)
-        print(e)
     return response
 
 @app.route('/api/feed')
@@ -109,9 +110,7 @@ def feed_groups():
     reason = 'ok'
     resp = {}
 
-    locked_groups = [
-        '', 'The Menagerie', 'UK News', 'News', 'Crypto', 'Science', 'Finance'
-    ]
+    user = auth.username()
 
     if request.method == 'GET':
         feed_url_group = request.args.get('feed_url_group', '')
@@ -127,7 +126,7 @@ def feed_groups():
 
             group_info['feed_info'] = feed_info_for_group
 
-            if feed_url_group in locked_groups:
+            if feed_reader.is_locked_group(feed_url_group) and not feed_reader.is_locker(user):
                 group_info['locked'] = True
             else:
                 group_info['locked'] = False
@@ -144,7 +143,7 @@ def feed_groups():
 
         new_group_name = body.get('new_group_name', '')
         new_group_exists = new_group_name in feed_url_groups
-        new_group_is_locked = new_group_name in locked_groups
+        new_group_is_locked = feed_reader.is_locked_group(new_group_name) and not feed_reader.is_locker(user)
 
         if new_group_exists:
             success = False
@@ -183,6 +182,9 @@ def feed_urls():
     success = True
     reason = 'ok'
     resp = {}
+
+    user = auth.username()
+
     if request.method == 'GET':
         feed_url_group = request.args.get('feed_url_group', '')
         resp = feed_reader.get_feed_urls(loop, feed_url_group)
@@ -190,7 +192,8 @@ def feed_urls():
         body = request.json
         feed_url = body['feed_url']
         feed_url_group = body.get('feed_url_group', '')
-        feed, feed_infos, success, reason = feed_reader.add_feed_url(loop, feed_url, feed_url_group)
+
+        feed, feed_infos, success, reason = feed_reader.add_feed_url(loop, feed_url, feed_url_group, user)
 
         resp['feeds'] = feed
         resp['feed_info'] = feed_infos
@@ -204,7 +207,8 @@ def feed_urls():
         body = request.json
         feed_url = body['feed_url']
         feed_url_group = body.get('feed_url_group', '')
-        resp, success, reason = feed_reader.delete_feed_url(loop, feed_url, feed_url_group)
+        user = request.cookies.get('user', '')
+        resp, success, reason = feed_reader.delete_feed_url(loop, feed_url, feed_url_group, user)
         
         if not success:
             status = 400

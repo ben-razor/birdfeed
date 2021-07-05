@@ -7,6 +7,7 @@ import {AlertContext} from './feed_alert';
 import ButtonSubmit from './forms_button_submit';
 import FeedGroupForm from './feed_group_form';
 import FeedGroupAddForm from './feed_group_add_form';
+import useStateWithLocalStorage from '../hooks/localStorage';
 
 function FeedSetup(props) {
   const [loaded, setLoaded] = useState(false);
@@ -15,6 +16,7 @@ function FeedSetup(props) {
   const [feedMetadata, setFeedMetadata] = useState({});
   const [deleting, setDeleting] = useState({});
   const [useFeedName, setUseFeedName] = useState(true);
+  const [user, setUser] = useStateWithLocalStorage('user', '', sessionStorage);
   const showAlert = useContext(AlertContext);
   let activeCollection = props.activeCollection;
   let setActiveCollection = props.setActiveCollection;
@@ -24,11 +26,15 @@ function FeedSetup(props) {
   useEffect(() => {
     setLoaded(false);
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + new URLSearchParams({ 
-        feed_url_group: activeCollection 
+        feed_url_group: activeCollection,
+        some_other_shizzle: 'amazing' 
       }), {
-          headers : { 
+          method: 'get',
+          headers : new Headers({ 
+            'Authorization': 'Basic ' + btoa(user + ':' + user),
+            'Content-Type': 'application/json',
             'Accept': 'application/json'
-          }
+          })
         }).then(response => { return response.json() }).then(json => {
           if(json.success) {
             setFeeds(json.data['feeds']);
@@ -42,16 +48,17 @@ function FeedSetup(props) {
             setFeeds([]);
           }
         }).catch(error => { console.log(error); });
-  }, [activeCollection]);
+  }, [activeCollection, user]);
 
   function deleteFeed(url) {
     setDeleting({[url]: true});
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls?", {
       method: 'DELETE',
-      headers : { 
+      headers : new Headers({ 
+        'Authorization': 'Basic ' + btoa('MrSmith:MrSmith'),
         'Content-Type': 'application/json',
         'Accept': 'application/json'
-      },
+      }),
       body: JSON.stringify({feed_url: url, feed_url_group: activeCollection })
     }).then(response => response.json()).then(json => {
       console.log(json)
@@ -133,8 +140,8 @@ function FeedSetup(props) {
       <tbody>
         <tr>
           <td>
-            <button class={feedNameClass} onClick={toggleUseFeedName}>Feed Name</button>
-            <button class={feedURLClass} onClick={toggleUseFeedName}>URL</button>
+            <button className={feedNameClass} onClick={toggleUseFeedName}>Feed Name</button>
+            <button className={feedURLClass} onClick={toggleUseFeedName}>URL</button>
           </td>
           <td></td>
         </tr>
@@ -177,24 +184,24 @@ function FeedSetup(props) {
         <Row>
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
             <div className="setup-panel">
-              <div class="big-label">Current Group: {activeCollection}</div>
+              <div className="big-label">Current Group: {activeCollection}</div>
               {!isLockedGroup && 
                 <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
               }
               {!loaded && 
                 <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
               {loaded && feeds.length === 0 &&
-                <div class="alert alert-info mt-1 anim-fade-in-short">
+                <div className="alert alert-info mt-1 anim-fade-in-short">
                   <h4>Empty Group</h4>
                   <hr />
-                  <p class="lead">There are no feeds in group {activeCollection}.</p>
-                  <p class="lead">Use the form above to add new feeds.</p>
+                  <p className="lead">There are no feeds in group {activeCollection}.</p>
+                  <p className="lead">Use the form above to add new feeds.</p>
                 </div>
               }
               {feedTable}
               {loaded && isLockedGroup && 
-                <div class="alert alert-info mt-1 anim-fade-in-short">
-                  <p>This is a <b><span class="inline-bird"></span> selected</b> group. Feeds cannot be added or removed.</p>
+                <div className="alert alert-info mt-1 anim-fade-in-short">
+                  <p>This is a <b><span className="inline-bird"></span> selected</b> group. Feeds cannot be added or removed.</p>
                   <p>To make changes, use the form below to clone this group.</p>
 
                   <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
