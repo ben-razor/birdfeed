@@ -1,6 +1,5 @@
 import React, {useContext, Fragment} from 'react';
 import { Formik } from 'formik';
-import Button from 'react-bootstrap/Button';
 import ButtonSubmit from './forms_button_submit'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -16,7 +15,6 @@ const FeedGroupAddForm = (props) => {
   const collections = props.collections;
   const setCollections = props.setCollections;
   const isCloneForm = props.isCloneForm;
-  const setLoaded = props.setLoaded;
 
   let label = 'Create / Import Group';
   let buttonText = 'Go';
