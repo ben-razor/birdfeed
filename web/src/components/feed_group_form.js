@@ -1,14 +1,7 @@
 import React, {useContext} from 'react';
-import { Formik } from 'formik';
-import Button from 'react-bootstrap/Button';
 import ButtonSubmit from './forms_button_submit'
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
 import FeedGroupAddForm from './feed_group_add_form';
-
-let groupNameRegex = /[a-zA-Z0-9 ]/i;
 
 const FeedGroupForm = (props) => {
   const showAlert = useContext(AlertContext);
