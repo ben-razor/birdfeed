@@ -1,3 +1,4 @@
+import os, hashlib
 import feedparser, json
 import asyncio, aiohttp, async_timeout
 import logging
@@ -291,6 +292,18 @@ def get_obj(loop, file_name):
     data_obj = {}
     data_obj = json.loads(data)
     return data_obj
+
+def hash_pw(pw, salt=None):
+    """"Takes a plaintext pw and an optional supplied salt as a hex string
+    
+    Returns a digest and a salt as hex strings"""
+    salt = bytes.fromhex(salt) if salt is not None else os.urandom(32)
+    digest = hashlib.pbkdf2_hmac('sha256', pw.encode('utf-8'), salt, 100000)
+    return digest.hex(), salt.hex()
+
+def password_match(pw, pw_hash, salt):
+    digest, salt = hash_pw(pw, salt)
+    return digest == pw_hash
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

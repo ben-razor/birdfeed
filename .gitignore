@@ -255,3 +255,5 @@ dist
 .pnp.*
 
 .vscode
+
+env_variables.yaml

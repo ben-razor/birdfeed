@@ -1,6 +1,8 @@
+import os, sys, unittest, json
 import feed_reader
-import unittest
-import json
+
+cur_dir = os.path.dirname(sys.argv[0])
+print(cur_dir)
 
 class TestFeedReaderUtils(unittest.TestCase):
 
@@ -26,11 +28,19 @@ class TestFeedReaderUtils(unittest.TestCase):
 		self.assertEqual(feed_url_counts['http://feeds.bbci.co.uk/news/rss.xml'], 1)
 
 	def test_clone_group(self):
-		f = open('../data/feed-url-groups.json')
+		f = open(os.path.join(cur_dir, '../data/feed-url-groups.json'))
 		feed_url_groups = json.load(f)['feed_url_groups']
 		group_info, success, reason = feed_reader.clone_group(feed_url_groups, 'Crypto', 'Crypto 2')
 		self.assertEqual(reason, 'ok')
 		self.assertTrue(success)
+
+	def test_pw(self):
+		pw = 'greatpassword'
+		digest, salt = feed_reader.hash_pw(pw)
+		match = feed_reader.password_match(pw, salt, digest)
+		self.assertEqual(len(salt), 64)
+		self.assertEqual(len(digest), 64)
+		self.assertTrue(match)
 
 if __name__ == '__main__':
 	unittest.main()
