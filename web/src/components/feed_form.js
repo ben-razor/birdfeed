@@ -1,6 +1,5 @@
 import React, {useContext} from 'react';
 import { Formik } from 'formik';
-import Button from 'react-bootstrap/Button';
 import ButtonSubmit from './forms_button_submit'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -87,7 +86,7 @@ const FeedForm = (props) => {
       <form onSubmit={handleSubmit}>
         <Row>
           <Col>
-            <label for="url" class="big-label">Add RSS URL</label>
+            <label htmlFor="url" class="big-label">Add RSS URL</label>
             <InputGroup>
             <input
               className="form-control"
