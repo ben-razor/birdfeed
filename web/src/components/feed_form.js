@@ -86,7 +86,7 @@ const FeedForm = (props) => {
       <form onSubmit={handleSubmit}>
         <Row>
           <Col>
-            <label htmlFor="url" class="big-label">Add RSS URL</label>
+            <label htmlFor="url" className="big-label">Add RSS URL</label>
             <InputGroup>
             <input
               className="form-control"
@@ -97,7 +97,7 @@ const FeedForm = (props) => {
               onBlur={handleBlur}
               value={values.url}
             />
-              <div class="input-group-append">
+              <div className="input-group-append">
                 <ButtonSubmit isSubmitting={isSubmitting} />
               </div>
             </InputGroup>

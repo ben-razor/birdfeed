@@ -59,7 +59,7 @@ const FeedGroupForm = (props) => {
       <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
                     collections={collections} setCollections={setCollections} />
       <div className="big-label mt-3">Delete Groups</div>
-      <div class="setup-table feed-group-list">
+      <div className="setup-table feed-group-list">
         {options}
       </div>
     </div>

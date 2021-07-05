@@ -200,7 +200,7 @@ function Feeds(props) {
             <div className="alert alert-info mt-1 anim-fade-in-short">
               <h4>Empty Group</h4>
               <hr />
-              <p class="lead">There are no posts for this group.</p>
+              <p className="lead">There are no posts for this group.</p>
             </div>
           }
 
