@@ -18,20 +18,11 @@ const FeedForm = (props) => {
   const activeCollection = props.activeCollection;
   const feedMetadata = props.feedMetadata;
   const selectedGroups = props.selectedGroups;
+  const [selectedSubmitting, setSelectedSubmitting] = useState(false);
   const user = props.user;
 
-  const addFeedForm = <Formik
-    initialValues={{ url: ''}}
-    validate={values => {
-      const errors = {};
-      let urlMatch = urlRegex.test(values.url);
-
-      if(values.url && !urlMatch) {
-        errors.url = 'Invalid url';
-      }
-      return errors;
-    }}
-    onSubmit={(values, { setSubmitting }) => {
+  function addFeed(url, setSubmitting) {
+    console.log('add feed');
       fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
         method: 'POST',
         headers : { 
@@ -39,7 +30,7 @@ const FeedForm = (props) => {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify({feed_url: values.url, feed_url_group: activeCollection })
+        body: JSON.stringify({feed_url: url, feed_url_group: activeCollection })
       })
       .then(response => {
         return response.json();
@@ -80,7 +71,20 @@ const FeedForm = (props) => {
         })
         setSubmitting(false);
       });
+    }
+
+  const addFeedForm = <Formik
+    initialValues={{ url: ''}}
+    validate={values => {
+      const errors = {};
+      let urlMatch = urlRegex.test(values.url);
+
+      if(values.url && !urlMatch) {
+        errors.url = 'Invalid url';
+      }
+      return errors;
     }}
+    onSubmit={(values, { setSubmitting }) => { addFeed(values.url, setSubmitting) }}
   >
     {({
       values,
@@ -197,10 +201,14 @@ const FeedForm = (props) => {
           if(feedMetadata[feed]) {
             feedTitle = feedMetadata[feed]["title"];
           }
-          return <div class="feed-url" key={index}>{feedTitle}</div>
+          return <div className="feed-url feed-group-list-row" key={index}>
+            <button class="button-styled-as-link feed-group-list-group" onClick={() => addFeed(feed, setSelectedSubmitting)}>{feedTitle}</button>
+          </div>
         });
 
-        let content = <Collapse in={open ? true : false}><div id={id}>{feeds}</div></Collapse>
+        let content = <Collapse in={open}>
+          <div id={id} className="setup-table feed-group-list">{feeds}</div>
+        </Collapse>
 
         return content;    
       })
