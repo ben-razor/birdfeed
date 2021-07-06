@@ -38,9 +38,9 @@ function FeedSetup(props) {
           })
         }).then(response => { return response.json() }).then(json => {
           if(json.success) {
+            setFeedMetadata(json.data['feed_info']);
             setFeeds(json.data['feeds']);
             setIsLockedGroup(json.data['locked'])
-            setFeedMetadata(json.data['feed_info']);
             setLoaded(true);
           }
           else {
@@ -75,7 +75,7 @@ function FeedSetup(props) {
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls?", {
       method: 'DELETE',
       headers : new Headers({ 
-        'Authorization': 'Basic ' + btoa('MrSmith:MrSmith'),
+        'Authorization': 'Basic ' + btoa(user + ':' + user),
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }),
@@ -205,9 +205,6 @@ function FeedSetup(props) {
           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
             <div className="setup-panel">
               <div className="big-label">Current Group: {activeCollection}</div>
-              {!isLockedGroup && 
-                <FeedForm selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
-              }
               {!loaded && 
                 <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
               {loaded && feeds.length === 0 &&
@@ -219,6 +216,9 @@ function FeedSetup(props) {
                 </div>
               }
               {feedTable}
+              {loaded && !isLockedGroup && 
+                <FeedForm user={user} feedMetadata={feedMetadata} selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
+              }
               {loaded && isLockedGroup && 
                 <div className="alert alert-info mt-1 anim-fade-in-short">
                   <p>This is a <BirdfeedSelected /> group. Feeds cannot be added or removed.</p>

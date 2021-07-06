@@ -1,11 +1,14 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState, Fragment} from 'react';
 import { Formik } from 'formik';
 import ButtonSubmit from './forms_button_submit'
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Col from 'react-bootstrap/Col'; 
+import Collapse from 'react-bootstrap/Collapse'
+import Button from 'react-bootstrap/Button'
 import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
 import BirdfeedSelected from './birdfeed_selected';
+import BirdfeedCollapse from './birdfeed_collapse';
 
 let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
 
@@ -128,32 +131,88 @@ const FeedForm = (props) => {
     addFeedURLClass += ' feed-title-heading-selected';
   }
 
-  console.log(feedMetadata);
+  function setOrToggleAddFeedMode(mode) {
+    if(mode === addFeedMode) {
+      setAddFeedMode('none');
+    }
+    else {
+      setAddFeedMode(mode);
+    }
+  }
+
+  const [openPanels, setOpenPanels] = useState({});
+
+  function setOpenPanel(id, open) {
+    let newOpenPanels = {...openPanels};
+
+    Object.keys(newOpenPanels).forEach((panelID) => {
+      newOpenPanels[panelID] = false;
+    });
+
+    newOpenPanels[id] = open;
+
+    setOpenPanels(newOpenPanels);
+  }
+
+  let groupIndex = 0;
+
   let addSelectedFeedForm = <div>
     <div>
     {
       Object.entries(selectedGroups).map(([k, v]) => {
+        let className = 'big-label feed-title-heading birdfeed-trigger feed-title-heading-left feed-title-heading-selected';
+        let id = k;
+
+        groupIndex++;
+
+        let open = openPanels[id] ? true : false;
+
+        let content = <Fragment key={groupIndex}>
+        <Button onClick={() => setOpenPanel(id, !open)} aria-controls={id} aria-expanded={open} className={className} >
+          {k}
+        </Button>
+        </Fragment>
+
         let feeds = v['feeds'].map((feed, index) => {
           let feedTitle = feed;
           if(feedMetadata[feed]) {
             feedTitle = feedMetadata[feed]["title"];
           }
-          return <div class="feed-url">{feedTitle}</div>
-        })
-        return <div>
-          <h4>{k}</h4>
-          {feeds}
-        </div>
+          return <div class="feed-url" key={index}>{feedTitle}</div>
+        });
+
+        <Collapse in={open ? true : false}><div id={id}>{feeds}</div></Collapse>
+
+        return content;    
       })
+    }
+    {
+      Object.entries(selectedGroups).map(([k, v]) => {
+        let className = 'big-label feed-title-heading birdfeed-trigger feed-title-heading-left feed-title-heading-selected';
+        let id = k;
+
+        let open = openPanels[id] ? true : false;
+        let feeds = v['feeds'].map((feed, index) => {
+          let feedTitle = feed;
+          if(feedMetadata[feed]) {
+            feedTitle = feedMetadata[feed]["title"];
+          }
+          return <div class="feed-url" key={index}>{feedTitle}</div>
+        });
+
+        let content = <Collapse in={open ? true : false}><div id={id}>{feeds}</div></Collapse>
+
+        return content;    
+      })
+
     }
     </div>
   </div>
 
-      //<button className="big-label birdfeed-popup-trigger mt-2">Add <BirdfeedSelected /> Feeds</button>
   return (
     <div>
-      <button onClick={() => setAddFeedMode('selected')} className={addSelectedFeedClass}>Add <BirdfeedSelected /> Feeds</button>
-      <button onClick={() => setAddFeedMode('url')} className={addFeedURLClass}>Add Feed URL</button>
+      <button onClick={() => setOrToggleAddFeedMode('selected')} className={addSelectedFeedClass}>Add <BirdfeedSelected /> Feeds</button>
+      <button onClick={() => setOrToggleAddFeedMode('url')} className={addFeedURLClass}>Add Feed URL</button>
       {addFeedMode === 'selected' && addSelectedFeedForm}
       {addFeedMode === 'url' && addFeedForm}
     </div>
