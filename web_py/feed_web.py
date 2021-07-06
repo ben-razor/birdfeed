@@ -223,7 +223,6 @@ def feed_urls():
         body = request.json
         feed_url = body['feed_url']
         feed_url_group = body.get('feed_url_group', '')
-        user = request.cookies.get('user', '')
         resp, success, reason = feed_reader.delete_feed_url(loop, feed_url, feed_url_group, user)
         
         if not success:
