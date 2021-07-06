@@ -204,8 +204,8 @@ table.feed-url-table {
 }
 
 td.feed-url {
-  border-bottom: 1px solid hsl(199deg, 15%, 36%);
-  line-height: 30px;
+  border-bottom: 1px solid hsl(200deg, 0%, 70%);
+  line-height: 2.2em;
 }
 
 td.feed-url-delete {
@@ -465,6 +465,12 @@ table.fancy {
 
 .button-styled-as-link {
   color: hsl(200, 10%, 20%);
+  line-height: 2.2em;
+  min-height: 2.2em;
+}
+
+.button-styled-as-link:hover {
+  color: hsl(200, 50%, 40%);
 }
 
 .feed-group-list {
@@ -482,7 +488,8 @@ table.fancy {
 .feed-group-list-group {
   flex: 1 0;
   border-width: 0 0 1px 0;
-  border-color: grey;
+  border-color: hsl(0, 0%, 80%);
+  border-style: solid;
   display: flex;
   flex-direction: column;
   justify-content: center;
