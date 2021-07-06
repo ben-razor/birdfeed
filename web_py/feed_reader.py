@@ -21,13 +21,22 @@ def add_timezone_field(date):
     date_str = date.strftime(rss_date_format)
     return date_str
 
+selected_groups = [
+    'UK News', 'News', 'Crypto', 'Science', 'Finance', 'Crypto Tech', 'World News',
+    'Technology', 'Business', 'Dev' 
+]
+
+locked_groups = [
+    '', 'The Menagerie', 'UK News', 'News', 'Crypto', 'Science', 'Finance', 'Crypto Tech', 'World News',
+    'Technology', 'Tech', 'Business', 'Dev' 
+]
+
+def is_selected_group(group):
+    """Check if a group is selected (groups/feeds will be shown as suggestions)"""
+    return group in selected_groups
+
 def is_locked_group(group):
     """Check if a group is locked (feeds cannot be added or removed)"""
-    locked_groups = [
-        '', 'The Menagerie', 'UK News', 'News', 'Crypto', 'Science', 'Finance', 'Crypto Tech', 'World News',
-        'Technology', 'Tech', 'Business', 'Dev' 
-    ]
-
     return group in locked_groups
 
 def is_locker(pw):

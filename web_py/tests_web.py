@@ -16,6 +16,7 @@ class TestFeedReaderWeb(unittest.TestCase):
 		}
 
 		r = requests.post(url, json = myobj)
+		print('HELLO', r.text)
 		resp = r.json()
 
 		self.assertEqual(resp['reason'], 'ok')
@@ -32,6 +33,12 @@ class TestFeedReaderWeb(unittest.TestCase):
 		resp = r.json()
 
 		self.assertEqual(resp['data']['locked'], False)
+
+		url = 'http://localhost:3001/api/feed_groups?get_selected_groups=1'
+		r = requests.get(url)
+		resp = r.json()
+
+		self.assertTrue('UK News' in resp['data'].keys())
 
 	def test_feeds(self):
 		url = 'http://localhost:3001/api/feed_urls'

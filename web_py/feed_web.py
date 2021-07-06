@@ -113,27 +113,43 @@ def feed_groups():
     user = auth.username()
 
     if request.method == 'GET':
-        feed_url_group = request.args.get('feed_url_group', '')
-        feed_url_groups = feed_reader.get_feed_url_groups(loop)
-        group_info = feed_url_groups.get(feed_url_group)
+        get_selected_groups = request.args.get('get_selected_groups', False)
 
-        if group_info:
-            feeds = group_info['feeds']
-            feed_info = feed_reader.get_feed_info(loop)
-            feed_info_for_group = {}
-            for feed in feeds:
-                feed_info_for_group[feed] = feed_info[feed]
+        if get_selected_groups:
+            feed_url_groups = feed_reader.get_feed_url_groups(loop)
+            
+            group_info = {}
 
-            group_info['feed_info'] = feed_info_for_group
-
-            if feed_reader.is_locked_group(feed_url_group) and not feed_reader.is_locker(user):
-                group_info['locked'] = True
-            else:
-                group_info['locked'] = False
+            for group in feed_reader.selected_groups:
+                if group in feed_url_groups:
+                    group_info[group] = feed_url_groups[group]
+                    if feed_reader.is_locked_group(group) and not feed_reader.is_locker(user):
+                        group_info[group]['locked'] = True
+                    else:
+                        group_info[group]['locked'] = False
         else:
-            success = False
-            status = 400
-            reason = 'url-group-does-not-exist'
+            feed_url_group = request.args.get('feed_url_group', '')
+            feed_url_groups = feed_reader.get_feed_url_groups(loop)
+            group_info = feed_url_groups.get(feed_url_group)
+
+            if group_info:
+                feeds = group_info['feeds']
+                feed_info = feed_reader.get_feed_info(loop)
+                feed_info_for_group = {}
+                for feed in feeds:
+                    feed_info_for_group[feed] = feed_info[feed]
+
+                group_info['feed_info'] = feed_info_for_group
+
+                if feed_reader.is_locked_group(feed_url_group) and not feed_reader.is_locker(user):
+                    group_info['locked'] = True
+                else:
+                    group_info['locked'] = False
+            else:
+                success = False
+                status = 400
+                reason = 'url-group-does-not-exist'
+
     elif request.method == 'POST':
         body = request.json
 

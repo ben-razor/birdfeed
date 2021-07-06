@@ -17,6 +17,7 @@ function FeedSetup(props) {
   const [deleting, setDeleting] = useState({});
   const [useFeedName, setUseFeedName] = useState(true);
   const [user, setUser] = useStateWithLocalStorage('user', '', sessionStorage);
+  const [selectedGroups, setSelectedGroups] = useState([]);
   const showAlert = useContext(AlertContext);
   let activeCollection = props.activeCollection;
   let setActiveCollection = props.setActiveCollection;
