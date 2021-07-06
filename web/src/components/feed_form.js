@@ -1,16 +1,19 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Formik } from 'formik';
 import ButtonSubmit from './forms_button_submit'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
+import BirdfeedSelected from './birdfeed_selected';
 
 let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
 
 const FeedForm = (props) => {
+  const [addFeedMode, setAddFeedMode] = useState('none');
   const showAlert = useContext(AlertContext);
   const activeCollection = props.activeCollection;
+  let selectedGroups = props.selectedGroups;
 
   const addFeedForm = <Formik
     initialValues={{ url: ''}}
@@ -86,7 +89,6 @@ const FeedForm = (props) => {
       <form onSubmit={handleSubmit}>
         <Row>
           <Col>
-            <label htmlFor="url" className="big-label">Add RSS URL</label>
             <InputGroup>
             <input
               className="form-control"
@@ -110,12 +112,42 @@ const FeedForm = (props) => {
         </Row>
     </form>
   )}
-</Formik>;
+  </Formik>;
 
+  let addFeedBaseClass = 'big-label feed-title-heading birdfeed-trigger';
+  let addSelectedFeedClass = addFeedBaseClass + ' feed-title-heading-left';
+  let addFeedURLClass = addFeedBaseClass + ' feed-title-heading-right';
 
+  if(addFeedMode === 'selected') {
+    addSelectedFeedClass += ' feed-title-heading-selected';
+  }
+  else if(addFeedMode === 'url') {
+    addFeedURLClass += ' feed-title-heading-selected';
+  }
+
+  let addSelectedFeedForm = <div>
+    <div>
+    {
+      Object.entries(selectedGroups).map(([k, v]) => {
+        let feeds = v['feeds'].map((feed, index) => {
+          return <div class="feed-url">{feed}</div>
+        })
+        return <div>
+          <h4>{k}</h4>
+          {feeds}
+        </div>
+      })
+    }
+    </div>
+  </div>
+
+      //<button className="big-label birdfeed-popup-trigger mt-2">Add <BirdfeedSelected /> Feeds</button>
   return (
     <div>
-      {addFeedForm}
+      <button onClick={() => setAddFeedMode('selected')} className={addSelectedFeedClass}>Add <BirdfeedSelected /> Feeds</button>
+      <button onClick={() => setAddFeedMode('url')} className={addFeedURLClass}>Add Feed URL</button>
+      {addFeedMode === 'selected' && addSelectedFeedForm}
+      {addFeedMode === 'url' && addFeedForm}
     </div>
   );
 

@@ -7,6 +7,7 @@ import {AlertContext} from './feed_alert';
 import ButtonSubmit from './forms_button_submit';
 import FeedGroupForm from './feed_group_form';
 import FeedGroupAddForm from './feed_group_add_form';
+import BirdfeedSelected from './birdfeed_selected';
 import useStateWithLocalStorage from '../hooks/localStorage';
 
 function FeedSetup(props) {
@@ -27,8 +28,7 @@ function FeedSetup(props) {
   useEffect(() => {
     setLoaded(false);
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + new URLSearchParams({ 
-        feed_url_group: activeCollection,
-        some_other_shizzle: 'amazing' 
+        feed_url_group: activeCollection
       }), {
           method: 'get',
           headers : new Headers({ 
@@ -50,6 +50,25 @@ function FeedSetup(props) {
           }
         }).catch(error => { console.log(error); });
   }, [activeCollection, user]);
+
+  useEffect(() => {
+    setLoaded(false);
+    fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + new URLSearchParams({ 
+        get_selected_groups: true,
+      }), {
+          method: 'get',
+          headers : new Headers({ 
+            'Authorization': 'Basic ' + btoa(user + ':' + user),
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          })
+        }).then(response => { return response.json() }).then(json => {
+          if(json.success) {
+            setSelectedGroups(json.data);
+            setLoaded(true);
+          }
+        }).catch(error => { console.log(error); });
+  }, [user]);
 
   function deleteFeed(url) {
     setDeleting({[url]: true});
@@ -187,7 +206,7 @@ function FeedSetup(props) {
             <div className="setup-panel">
               <div className="big-label">Current Group: {activeCollection}</div>
               {!isLockedGroup && 
-                <FeedForm setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
+                <FeedForm selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
               }
               {!loaded && 
                 <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
@@ -202,7 +221,7 @@ function FeedSetup(props) {
               {feedTable}
               {loaded && isLockedGroup && 
                 <div className="alert alert-info mt-1 anim-fade-in-short">
-                  <p>This is a <b><span className="inline-bird"></span> selected</b> group. Feeds cannot be added or removed.</p>
+                  <p>This is a <BirdfeedSelected /> group. Feeds cannot be added or removed.</p>
                   <p>To make changes, use the form below to clone this group.</p>
 
                   <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
