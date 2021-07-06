@@ -13,7 +13,9 @@ const FeedForm = (props) => {
   const [addFeedMode, setAddFeedMode] = useState('none');
   const showAlert = useContext(AlertContext);
   const activeCollection = props.activeCollection;
-  let selectedGroups = props.selectedGroups;
+  const feedMetadata = props.feedMetadata;
+  const selectedGroups = props.selectedGroups;
+  const user = props.user;
 
   const addFeedForm = <Formik
     initialValues={{ url: ''}}
@@ -30,6 +32,7 @@ const FeedForm = (props) => {
       fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
         method: 'POST',
         headers : { 
+          'Authorization': 'Basic ' + btoa(user + ':' + user),
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
@@ -125,12 +128,17 @@ const FeedForm = (props) => {
     addFeedURLClass += ' feed-title-heading-selected';
   }
 
+  console.log(feedMetadata);
   let addSelectedFeedForm = <div>
     <div>
     {
       Object.entries(selectedGroups).map(([k, v]) => {
         let feeds = v['feeds'].map((feed, index) => {
-          return <div class="feed-url">{feed}</div>
+          let feedTitle = feed;
+          if(feedMetadata[feed]) {
+            feedTitle = feedMetadata[feed]["title"];
+          }
+          return <div class="feed-url">{feedTitle}</div>
         })
         return <div>
           <h4>{k}</h4>
