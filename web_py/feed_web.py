@@ -135,11 +135,7 @@ def feed_groups():
             if group_info:
                 feeds = group_info['feeds']
                 feed_info = feed_reader.get_feed_info(loop)
-                feed_info_for_group = {}
-                for feed in feeds:
-                    feed_info_for_group[feed] = feed_info[feed]
-
-                group_info['feed_info'] = feed_info_for_group
+                group_info['feed_info'] = feed_info
 
                 if feed_reader.is_locked_group(feed_url_group) and not feed_reader.is_locker(user):
                     group_info['locked'] = True
