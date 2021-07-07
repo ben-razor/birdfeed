@@ -217,7 +217,7 @@ function FeedSetup(props) {
               }
               {feedTable}
               {loaded && !isLockedGroup && 
-                <FeedForm user={user} feedMetadata={feedMetadata} selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
+                <FeedForm deleteFeed={deleteFeed} feeds={feeds} user={user} feedMetadata={feedMetadata} selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
               }
               {loaded && isLockedGroup && 
                 <div className="alert alert-info mt-1 anim-fade-in-short">

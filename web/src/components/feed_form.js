@@ -20,6 +20,8 @@ const FeedForm = (props) => {
   const selectedGroups = props.selectedGroups;
   const [selectedSubmitting, setSelectedSubmitting] = useState(false);
   const user = props.user;
+  const userFeeds= props.feeds;
+  const deleteFeed = props.deleteFeed;
 
   function addFeed(url, setSubmitting) {
     console.log('add feed');
@@ -202,7 +204,22 @@ const FeedForm = (props) => {
             feedTitle = feedMetadata[feed]["title"];
           }
           return <div className="feed-url feed-group-list-row" key={index}>
-            <button class="button-styled-as-link feed-group-list-group" onClick={() => addFeed(feed, setSelectedSubmitting)}>{feedTitle}</button>
+            <button className="button-styled-as-link feed-group-list-group" onClick={() => addFeed(feed, setSelectedSubmitting)}>{feedTitle}</button>
+            <div className="feed-group-list-delete">
+
+              {userFeeds.includes(feed) &&
+                <button type="submit" class="float-right btn btn-primary" onClick={() => deleteFeed(feed)}>
+                  <i className="fa fa-refresh fa-spin" style={{width: '0px', opacity: 0}}></i>🗑
+                </button>
+              }
+              {!userFeeds.includes(feed) &&
+                <button type="submit" class="float-right btn btn-success" onClick={() => addFeed(feed, setSelectedSubmitting)}>
+                  <i className="fa fa-refresh fa-spin" style={{width: '0px', opacity: 0}}></i>+
+                </button>
+              }
+
+            </div>
+
           </div>
         });
 
