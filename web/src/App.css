@@ -246,7 +246,6 @@ td.feed-url-delete {
 .birdfeed-trigger {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
-  min-width: 10em;
   border-radius: 1em;
   margin-right: 0.5em;
   padding: 0.3em 0.5em;
@@ -471,6 +470,16 @@ table.fancy {
 
 .button-styled-as-link:hover {
   color: hsl(200, 50%, 40%);
+}
+
+.selected-feed-group-list {
+  min-height: 20em;
+}
+
+.add-feeds-panel {
+  padding: 1em;
+  background-color: hsla(200deg, 0%, 100%, 0.5);
+  border-radius: 0.2em 0.2em 1em 1em;
 }
 
 .feed-group-list {

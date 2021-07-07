@@ -224,7 +224,7 @@ const FeedForm = (props) => {
         });
 
         let content = <Collapse in={open}>
-          <div id={id} className="setup-table feed-group-list">{feeds}</div>
+          <div id={id} className="setup-table feed-group-list selected-feed-group-list">{feeds}</div>
         </Collapse>
 
         return content;    
@@ -235,11 +235,15 @@ const FeedForm = (props) => {
   </div>
 
   return (
-    <div>
+    <div class="add-feeds-panel">
       <button onClick={() => setOrToggleAddFeedMode('selected')} className={addSelectedFeedClass}>Add <BirdfeedSelected /> Feeds</button>
       <button onClick={() => setOrToggleAddFeedMode('url')} className={addFeedURLClass}>Add Feed URL</button>
-      {addFeedMode === 'selected' && addSelectedFeedForm}
-      {addFeedMode === 'url' && addFeedForm}
+      {addFeedMode !== 'none' &&
+        <div className="add-feeds-panel-form">
+          {addFeedMode === 'selected' && addSelectedFeedForm}
+          {addFeedMode === 'url' && addFeedForm}
+        </div>
+      }
     </div>
   );
 
