@@ -166,7 +166,7 @@ const FeedForm = (props) => {
     <div>
     {
       Object.entries(selectedGroups).map(([k, v]) => {
-        let className = 'big-label feed-title-heading birdfeed-trigger feed-title-heading-left feed-title-heading-selected';
+        let className = 'feed-title-heading birdfeed-trigger feed-title-heading-left feed-title-heading-selected';
         let id = k;
 
         groupIndex++;
@@ -174,27 +174,16 @@ const FeedForm = (props) => {
         let open = openPanels[id] ? true : false;
 
         let content = <Fragment key={groupIndex}>
-        <Button onClick={() => setOpenPanel(id, !open)} aria-controls={id} aria-expanded={open} className={className} >
-          {k}
-        </Button>
-        </Fragment>
-
-        let feeds = v['feeds'].map((feed, index) => {
-          let feedTitle = feed;
-          if(feedMetadata[feed]) {
-            feedTitle = feedMetadata[feed]["title"];
-          }
-          return <div class="feed-url" key={index}>{feedTitle}</div>
-        });
-
-        <Collapse in={open ? true : false}><div id={id}>{feeds}</div></Collapse>
+          <Button onClick={() => setOpenPanel(id, !open)} aria-controls={id} aria-expanded={open} className={className} >
+            {k}
+          </Button>
+        </Fragment>;
 
         return content;    
       })
     }
     {
       Object.entries(selectedGroups).map(([k, v]) => {
-        let className = 'big-label feed-title-heading birdfeed-trigger feed-title-heading-left feed-title-heading-selected';
         let id = k;
 
         let open = openPanels[id] ? true : false;
@@ -208,12 +197,12 @@ const FeedForm = (props) => {
             <div className="feed-group-list-delete">
 
               {userFeeds.includes(feed) &&
-                <button type="submit" class="float-right btn btn-primary" onClick={() => deleteFeed(feed)}>
+                <button type="submit" className="float-right btn btn-primary" onClick={() => deleteFeed(feed)}>
                   <i className="fa fa-refresh fa-spin" style={{width: '0px', opacity: 0}}></i>🗑
                 </button>
               }
               {!userFeeds.includes(feed) &&
-                <button type="submit" class="float-right btn btn-success" onClick={() => addFeed(feed, setSelectedSubmitting)}>
+                <button type="submit" className="float-right btn btn-success" onClick={() => addFeed(feed, setSelectedSubmitting)}>
                   <i className="fa fa-refresh fa-spin" style={{width: '0px', opacity: 0}}></i>+
                 </button>
               }
@@ -223,7 +212,7 @@ const FeedForm = (props) => {
           </div>
         });
 
-        let content = <Collapse in={open}>
+        let content = <Collapse in={open} key={k}>
           <div id={id} className="setup-table feed-group-list selected-feed-group-list">{feeds}</div>
         </Collapse>
 
@@ -235,7 +224,7 @@ const FeedForm = (props) => {
   </div>
 
   return (
-    <div class="add-feeds-panel">
+    <div className="add-feeds-panel">
       <button onClick={() => setOrToggleAddFeedMode('selected')} className={addSelectedFeedClass}>Add <BirdfeedSelected /> Feeds</button>
       <button onClick={() => setOrToggleAddFeedMode('url')} className={addFeedURLClass}>Add Feed URL</button>
       {addFeedMode !== 'none' &&
