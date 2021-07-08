@@ -6,7 +6,8 @@ import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
 
-let groupNameRegex = /[a-zA-Z0-9 ]/i;
+let groupNameRegexStr = '[a-zA-Z0-9 ]{2,}';
+let groupNameRegex = new RegExp(groupNameRegexStr);
 
 const FeedGroupAddForm = (props) => {
   const showAlert = useContext(AlertContext);
@@ -30,11 +31,11 @@ const FeedGroupAddForm = (props) => {
     initialValues={{ groupName: ''}} 
     validate={values => {
       const errors = {};
-      let groupName = values.groupName;
+      let groupName = values.groupName.trim();
       let validGroupName = groupNameRegex.test(groupName);
 
       if (!validGroupName) {
-        errors.groupName = 'Invalid group name. Group names have letters and numbers and spaces only';
+        errors.groupName = 'Invalid group name. Group names have letters and numbers and spaces only.';
       }
       return errors;
     }}
@@ -140,6 +141,8 @@ const FeedGroupAddForm = (props) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.groupName}
+              title="Group name must be more than 2 characters. Letters, numbers and spaces are allowed."
+              pattern={groupNameRegexStr}
               placeholder={placeholderText}
             />
               <div className="input-group-append">

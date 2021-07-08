@@ -173,6 +173,12 @@ def get_feed_urls(loop, feed_url_group):
         feed_urls = feed_url_groups[feed_url_group]['feeds']
     return feed_urls
 
+def is_valid_group_name(group_name):
+    group_name = group_name.strip()
+    p = re.compile('[a-zA-Z0-9 ]{2,}')
+    valid = bool(p.match(group_name))
+    return valid
+
 def get_feed_url_groups(loop):
     o = get_obj(loop, 'feed-url-groups.json')
     return o['feed_url_groups']

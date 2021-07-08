@@ -16,11 +16,22 @@ class TestFeedReaderWeb(unittest.TestCase):
 		}
 
 		r = requests.post(url, json = myobj)
-		print('HELLO', r.text)
 		resp = r.json()
 
 		self.assertEqual(resp['reason'], 'ok')
 		self.assertTrue(resp['success'])
+
+		url = 'http://localhost:3001/api/feed_groups'
+		myobj = {
+			'feed_url_group': 'Crypto',
+			'new_group_name': 'C'
+		}
+
+		r = requests.post(url, json = myobj)
+		resp = r.json()
+
+		self.assertEqual(resp['reason'], 'group-name-is-invalid')
+		self.assertFalse(resp['success'])
 
 		url = 'http://localhost:3001/api/feed_groups?feed_url_group=The Menagerie'
 		r = requests.get(url)

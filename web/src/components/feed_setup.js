@@ -209,7 +209,6 @@ function FeedSetup(props) {
                   <h4>Empty Group</h4>
                   <hr />
                   <p className="lead">There are no feeds in group {activeCollection}.</p>
-                  <p className="lead">Use the form above to add new feeds.</p>
                 </div>
               }
               {feedTable}

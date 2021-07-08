@@ -149,15 +149,19 @@ def feed_groups():
     elif request.method == 'POST':
         body = request.json
 
-        feed_url_group = body.get('feed_url_group', '')
+        feed_url_group = body.get('feed_url_group', '').strip()
         feed_url_groups = feed_reader.get_feed_url_groups(loop)
         group_info = feed_url_groups.get(feed_url_group)
 
-        new_group_name = body.get('new_group_name', '')
+        new_group_name = body.get('new_group_name', '').strip()
         new_group_exists = new_group_name in feed_url_groups
         new_group_is_locked = feed_reader.is_locked_group(new_group_name) and not feed_reader.is_locker(user)
 
-        if new_group_exists:
+        if not feed_reader.is_valid_group_name(new_group_name):
+            success = False
+            status = 400
+            reason = 'group-name-is-invalid'
+        elif new_group_exists:
             success = False
             status = 400
             reason = 'new-url-group-already-exists'
@@ -198,22 +202,27 @@ def feed_urls():
     user = auth.username()
 
     if request.method == 'GET':
-        feed_url_group = request.args.get('feed_url_group', '')
+        feed_url_group = request.args.get('feed_url_group', '').strip()
         resp = feed_reader.get_feed_urls(loop, feed_url_group)
     elif request.method == 'POST':
         body = request.json
         feed_url = body['feed_url']
-        feed_url_group = body.get('feed_url_group', '')
+        feed_url_group = body.get('feed_url_group', '').strip()
 
-        feed, feed_infos, success, reason = feed_reader.add_feed_url(loop, feed_url, feed_url_group, user)
-
-        resp['feeds'] = feed
-        resp['feed_info'] = feed_infos
-
-        if success:
-            status = 201
-        else:
+        if not feed_reader.is_valid_group_name(feed_url_group):
+            success = False
             status = 400
+            reason = 'group-name-is-invalid'
+        else:
+            feed, feed_infos, success, reason = feed_reader.add_feed_url(loop, feed_url, feed_url_group, user)
+
+            resp['feeds'] = feed
+            resp['feed_info'] = feed_infos
+
+            if success:
+                status = 201
+            else:
+                status = 400
 
     elif request.method == 'DELETE':
         body = request.json

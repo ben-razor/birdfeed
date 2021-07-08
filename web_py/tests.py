@@ -49,7 +49,6 @@ class TestFeedReaderUtils(unittest.TestCase):
 		feed_infos = {}
 		feed_data = loop.run_until_complete(feed_reader.get_feed_async(url, feed_data, feed_infos))
 
-		print('feed_infos', feed_infos)
 		self.assertTrue('title' in feed_infos[url])
 		self.assertTrue(len(feed_data) > 0)
 
@@ -59,6 +58,16 @@ class TestFeedReaderUtils(unittest.TestCase):
 		url = 'https://www.proactiveinvestors.co.uk/companies/rss/'
 		self.assertTrue(url in feed_urls)
 		self.assertTrue(len(set(feed_urls)) == len(feed_urls))
+
+	def test_is_valid_group_name(self):
+		is_valid = feed_reader.is_valid_group_name('a')
+		self.assertFalse(is_valid)
+
+		is_valid = feed_reader.is_valid_group_name('aA')
+		self.assertTrue(is_valid)
+
+		is_valid = feed_reader.is_valid_group_name(' a ')
+		self.assertFalse(is_valid)
 
 if __name__ == '__main__':
 	unittest.main()
