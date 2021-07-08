@@ -9,6 +9,7 @@ import FeedGroupForm from './feed_group_form';
 import FeedGroupAddForm from './feed_group_add_form';
 import BirdfeedSelected from './birdfeed_selected';
 import useStateWithLocalStorage from '../hooks/localStorage';
+import {useMediaQuery} from 'react-responsive';
 
 function FeedSetup(props) {
   const [loaded, setLoaded] = useState(false);
@@ -18,12 +19,15 @@ function FeedSetup(props) {
   const [deleting, setDeleting] = useState({});
   const [useFeedName, setUseFeedName] = useState(true);
   const [user, setUser] = useStateWithLocalStorage('user', '', sessionStorage);
+  const [tab, setTab] = useState('');
   const [selectedGroups, setSelectedGroups] = useState([]);
   const showAlert = useContext(AlertContext);
   let activeCollection = props.activeCollection;
   let setActiveCollection = props.setActiveCollection;
   let collections = props.collections;
   let setCollections = props.setCollections;
+
+  const isSmall = useMediaQuery({ query: '(max-width: 768px)' })
 
   useEffect(() => {
     setLoaded(false);
@@ -195,11 +199,40 @@ function FeedSetup(props) {
     </table>
   }
 
+
+  let tabs = '';
+  if(isSmall) {
+    let baseClass = "big-label birdfeed-tab";
+    let feedsClass = baseClass;
+    let groupsClass = baseClass;
+
+    if(tab === 'feeds') {
+      feedsClass += ' birdfeed-tab-selected';
+    }
+    else if(tab === 'groups') {
+      groupsClass += ' birdfeed-tab-selected';
+    }
+
+    tabs = <div class="birdfeed-tabs">
+        <button class={feedsClass} onClick={() => setTab('feeds')}>
+          Feeds
+        </button>
+        <button class={groupsClass} onClick={() => setTab('groups')}>
+          Groups
+        </button>
+    </div>;
+  }
+
+  let showFeeds = !tab || tab === 'feeds';
+  let showGroups = !tab || tab === 'groups';
+
   return (
     <DocumentTitle title='Birdfeed - Configure Your News Sources'>
       <Fragment>
+        {tabs}
         <Row>
-          <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
+          {showFeeds && 
+           <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
             <div className="setup-panel">
               <div className="big-label">Current Group: {activeCollection}</div>
               {!loaded && 
@@ -225,15 +258,18 @@ function FeedSetup(props) {
                 </div>
               }
 
-          </div>
-          </Col>
-          <Col md={4}>
-            <div className="setup-panel">
-              <FeedGroupForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
-                            collections={collections} setCollections={setCollections} 
-                            setLoaded={setLoaded} />
             </div>
-          </Col>
+            </Col>
+          }
+          {showGroups &&
+            <Col md={4}>
+              <div className="setup-panel">
+                <FeedGroupForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
+                              collections={collections} setCollections={setCollections} 
+                              setLoaded={setLoaded} />
+              </div>
+            </Col>
+          }
         </Row>
       </Fragment>
     </DocumentTitle>

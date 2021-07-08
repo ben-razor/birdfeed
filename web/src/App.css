@@ -220,6 +220,26 @@ td.feed-url-delete {
   width: 8em;
 }
 
+.birdfeed-tabs {
+  border-bottom: 1px solid hsl(200, 0%, 60%);
+}
+
+.birdfeed-tab {
+  display: inline-block;
+  border: 0;
+  padding: 0.3em;
+  color: hsl(0, 0%, 95%);
+  background-color: hsl(200, 20%, 60%);
+  min-width: 6em;
+  outline: 0;
+  border-radius: 1em 1em 0 0;
+}
+
+.birdfeed-tab-selected {
+  color: hsl(0, 0%, 95%);
+  background-color: hsl(200, 100%, 40%);
+}
+
 .feed-title-heading {
   display: inline-block;
   border: 0;
