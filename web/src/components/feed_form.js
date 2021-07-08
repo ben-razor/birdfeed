@@ -9,6 +9,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
 import BirdfeedSelected from './birdfeed_selected';
 import BirdfeedCollapse from './birdfeed_collapse';
+import {useMediaQuery} from 'react-responsive';
 
 let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
 
@@ -22,6 +23,8 @@ const FeedForm = (props) => {
   const user = props.user;
   const userFeeds= props.feeds;
   const deleteFeed = props.deleteFeed;
+
+  const isSmall = useMediaQuery({ query: '(max-width: 768px)' })
 
   function addFeed(url, setSubmitting) {
     console.log('add feed');
@@ -191,9 +194,15 @@ const FeedForm = (props) => {
           let feedTitle = feed;
           if(feedMetadata[feed] && feedMetadata[feed]["title"]) {
             feedTitle = feedMetadata[feed]["title"];
+            let SMALL_SCREEN_MAX_LEN = 34;
+            if(isSmall && feedTitle.length > SMALL_SCREEN_MAX_LEN) {
+              feedTitle = feedTitle.substr(0, 34) + '\u2026';
+            }
           }
           return <div className="feed-url feed-group-list-row" key={index}>
-            <button className="button-styled-as-link feed-group-list-group" onClick={() => addFeed(feed, setSelectedSubmitting)}>{feedTitle}</button>
+            <button className="button-styled-as-link feed-group-list-group" onClick={() => addFeed(feed, setSelectedSubmitting)}>
+              {feedTitle}
+            </button>
             <div className="feed-group-list-delete">
 
               {userFeeds.includes(feed) &&

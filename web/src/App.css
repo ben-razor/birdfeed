@@ -523,6 +523,7 @@ table.fancy {
   flex-direction: column;
   justify-content: center;
   background-color: initial;
+  text-align: left;
 }
 
 .feed-group-list-group-active {

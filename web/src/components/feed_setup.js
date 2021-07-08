@@ -174,17 +174,20 @@ function FeedSetup(props) {
 
         let isHidden = props.hiddenFeeds.indexOf(feed) !== -1;
 
-        const MAX_FEED_LEN = 50;
+        let MAX_FEED_LEN = 50;
+        if(isSmall) {
+          MAX_FEED_LEN = 34;
+        }
         let feedStr = feed;
 
         if(useFeedName) {
           let feedTitle = feedMetadata[feed]["title"];
           if(feedTitle) {
-            if(feedTitle.length > MAX_FEED_LEN) {
-              feedTitle = feedTitle.substr(0, MAX_FEED_LEN) + '\u2026';
-            }
             feedStr = feedTitle;
           }
+        }
+        if(feedStr.length > MAX_FEED_LEN) {
+          feedStr = feedStr.substr(0, MAX_FEED_LEN) + '\u2026';
         }
         return <tr key={feed}>
           <td className="feed-url">{feedStr}</td>

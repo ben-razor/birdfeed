@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
+import {useMediaQuery} from 'react-responsive';
 
 let groupNameRegexStr = '[a-zA-Z0-9 ]{2,}';
 let groupNameRegex = new RegExp(groupNameRegexStr);
