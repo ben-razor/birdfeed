@@ -271,6 +271,20 @@ td.feed-url-delete {
   padding: 0.3em 0.5em;
 }
 
+.birdfeed-selected-group-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.birdfeed-selected-group-button {
+  flex: 1 1 auto;
+  margin: 0.2em;
+  border-radius: 1em;
+  padding: 0.5em;
+}
+
 .inline-bird {
   background-image: url('./img/logo192.png');
   background-size: contain;
@@ -492,8 +506,11 @@ table.fancy {
   color: hsl(200, 50%, 40%);
 }
 
-.selected-feed-group-list {
+.selected-feed-group-list-panel {
   min-height: 20em;
+}
+
+.selected-feed-group-list {
 }
 
 .add-feeds-panel {

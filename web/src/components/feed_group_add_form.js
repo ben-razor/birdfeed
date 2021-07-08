@@ -18,6 +18,8 @@ const FeedGroupAddForm = (props) => {
   const setCollections = props.setCollections;
   const isCloneForm = props.isCloneForm;
 
+  const isSmall = useMediaQuery({ query: '(max-width: 768px)' })
+
   let label = 'Create / Import Group';
   let buttonText = 'Go';
   let placeholderText = '';
