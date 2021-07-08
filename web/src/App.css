@@ -263,6 +263,13 @@ td.feed-url-delete {
   background-color: hsl(200, 100%, 40%);
 }
 
+.feed-list-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 .birdfeed-trigger {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
@@ -282,7 +289,7 @@ td.feed-url-delete {
   flex: 1 1 auto;
   margin: 0.2em;
   border-radius: 1em;
-  padding: 0.5em;
+  padding: 0.3em;
 }
 
 .inline-bird {
@@ -573,5 +580,8 @@ table.fancy {
   }
   .source {
     width: initial;
+  }
+  .setup-panel {
+    font-size: 0.9em;
   }
 }
