@@ -1,8 +1,9 @@
 import os, sys, unittest, json
+import asyncio
 import feed_reader
 
 cur_dir = os.path.dirname(sys.argv[0])
-print(cur_dir)
+loop = asyncio.get_event_loop()
 
 class TestFeedReaderUtils(unittest.TestCase):
 
@@ -28,19 +29,36 @@ class TestFeedReaderUtils(unittest.TestCase):
 		self.assertEqual(feed_url_counts['http://feeds.bbci.co.uk/news/rss.xml'], 1)
 
 	def test_clone_group(self):
-		f = open(os.path.join(cur_dir, '../data/feed-url-groups.json'))
-		feed_url_groups = json.load(f)['feed_url_groups']
-		group_info, success, reason = feed_reader.clone_group(feed_url_groups, 'Crypto', 'Crypto 2')
-		self.assertEqual(reason, 'ok')
-		self.assertTrue(success)
+		with open(os.path.join(cur_dir, '../data/feed-url-groups.json')) as f:
+			feed_url_groups = json.load(f)['feed_url_groups']
+			group_info, success, reason = feed_reader.clone_group(feed_url_groups, 'Crypto', 'Crypto 2')
+			self.assertEqual(reason, 'ok')
+			self.assertTrue(success)
 
 	def test_pw(self):
 		pw = 'greatpassword'
 		digest, salt = feed_reader.hash_pw(pw)
-		match = feed_reader.password_match(pw, salt, digest)
+		match = feed_reader.password_match(pw, digest, salt)
 		self.assertEqual(len(salt), 64)
 		self.assertEqual(len(digest), 64)
 		self.assertTrue(match)
+
+	def test_get_feed_async(self):
+		url = 'https://www.proactiveinvestors.co.uk/companies/rss/'
+		feed_data = []
+		feed_infos = {}
+		feed_data = loop.run_until_complete(feed_reader.get_feed_async(url, feed_data, feed_infos))
+
+		print('feed_infos', feed_infos)
+		self.assertTrue('title' in feed_infos[url])
+		self.assertTrue(len(feed_data) > 0)
+
+	def test_get_unique_feed_urls(self):
+		feed_url_groups = feed_reader.get_feed_url_groups(loop)
+		feed_urls = feed_reader.get_unique_feed_urls(feed_url_groups) 
+		url = 'https://www.proactiveinvestors.co.uk/companies/rss/'
+		self.assertTrue(url in feed_urls)
+		self.assertTrue(len(set(feed_urls)) == len(feed_urls))
 
 if __name__ == '__main__':
 	unittest.main()

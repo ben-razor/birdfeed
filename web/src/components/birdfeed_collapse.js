@@ -11,17 +11,10 @@ function BirdfeedCollapse(props) {
 
   return (
     <>
-      <Button
-        onClick={() => setOpen(!open)}
-        aria-controls={elemID}
-        aria-expanded={open}
-				className={className}
-      >
+      <Button onClick={() => setOpen(!open)} aria-controls={elemID} aria-expanded={open} className={className} >
 				{triggerLabel}
       </Button>
-      <Collapse in={open}>
-        <div id={elemID}>{content}</div>
-      </Collapse>
+      <Collapse in={open}> <div id={elemID}>{content}</div> </Collapse>
     </>
   );
 }

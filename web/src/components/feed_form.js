@@ -189,7 +189,7 @@ const FeedForm = (props) => {
         let open = openPanels[id] ? true : false;
         let feeds = v['feeds'].map((feed, index) => {
           let feedTitle = feed;
-          if(feedMetadata[feed]) {
+          if(feedMetadata[feed] && feedMetadata[feed]["title"]) {
             feedTitle = feedMetadata[feed]["title"];
           }
           return <div className="feed-url feed-group-list-row" key={index}>

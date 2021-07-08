@@ -172,9 +172,6 @@ function FeedSetup(props) {
 
         const MAX_FEED_LEN = 50;
         let feedStr = feed;
-        if(feed.length > MAX_FEED_LEN) {
-          feedStr = feed.substr(0, MAX_FEED_LEN) + '\u2026';
-        }
 
         if(useFeedName) {
           let feedTitle = feedMetadata[feed]["title"];
