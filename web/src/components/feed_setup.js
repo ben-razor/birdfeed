@@ -19,7 +19,6 @@ function FeedSetup(props) {
   const [deleting, setDeleting] = useState({});
   const [useFeedName, setUseFeedName] = useState(true);
   const [user, setUser] = useStateWithLocalStorage('user', '', sessionStorage);
-  const [tab, setTab] = useState('');
   const [selectedGroups, setSelectedGroups] = useState([]);
   const showAlert = useContext(AlertContext);
   let activeCollection = props.activeCollection;
@@ -28,6 +27,7 @@ function FeedSetup(props) {
   let setCollections = props.setCollections;
 
   const isSmall = useMediaQuery({ query: '(max-width: 768px)' })
+  const [tab, setTab] = useState('feeds');
 
   useEffect(() => {
     setLoaded(false);
@@ -223,8 +223,8 @@ function FeedSetup(props) {
     </div>;
   }
 
-  let showFeeds = !tab || tab === 'feeds';
-  let showGroups = !tab || tab === 'groups';
+  let showFeeds = !isSmall || tab === 'feeds';
+  let showGroups = !isSmall || tab === 'groups';
 
   return (
     <DocumentTitle title='Birdfeed - Configure Your News Sources'>
