@@ -213,9 +213,9 @@ function FeedSetup(props) {
                 <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
               {loaded && feeds.length === 0 &&
                 <div className="alert alert-info mt-1 anim-fade-in-short">
-                  <h4>Empty Group</h4>
+                  <h6>Empty Group</h6>
                   <hr />
-                  <p className="lead">There are no feeds in group {activeCollection}.</p>
+                  <p>There are no feeds in group {activeCollection}.</p>
                 </div>
               }
               {feedTable}
