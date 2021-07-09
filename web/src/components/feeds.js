@@ -198,9 +198,9 @@ function Feeds(props) {
 
           {feeds.length === 0 && !timedOut && loaded && 
             <div className="alert alert-info mt-1 anim-fade-in-short">
-              <h4>Empty Group</h4>
+              <h6>Empty Group</h6>
               <hr />
-              <p className="lead">There are no posts for this group.</p>
+              <p>There are no posts for this group.</p>
             </div>
           }
 

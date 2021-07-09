@@ -202,15 +202,17 @@ function FeedSetup(props) {
           {showFeeds && 
            <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
             <div className="setup-panel">
-              <div className="feed-list-header">
-                <div className="big-label">Feeds in <b>{activeCollection}</b></div>
-                <div className="feed-name-url-toggler">
-                  <button className={feedNameClass} onClick={toggleUseFeedName}>Feed Name</button>
-                  <button className={feedURLClass} onClick={toggleUseFeedName}>URL</button>
-                </div>
-              </div>
               {!loaded && 
                 <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+              {loaded && feeds.length > 0 &&
+                <div className="feed-list-header">
+                  <div className="big-label">Feeds in <b>{activeCollection}</b></div>
+                  <div className="feed-name-url-toggler">
+                    <button className={feedNameClass} onClick={toggleUseFeedName}>Feed Name</button>
+                    <button className={feedURLClass} onClick={toggleUseFeedName}>URL</button>
+                  </div>
+                </div>
+              }
               {loaded && feeds.length === 0 &&
                 <div className="alert alert-info mt-1 anim-fade-in-short">
                   <h6>Empty Group</h6>

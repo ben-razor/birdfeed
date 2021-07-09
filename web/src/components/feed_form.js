@@ -20,6 +20,7 @@ const FeedForm = (props) => {
   const feedMetadata = props.feedMetadata;
   const selectedGroups = props.selectedGroups;
   const [selectedSubmitting, setSelectedSubmitting] = useState(false);
+  const [openPanels, setOpenPanels] = useState({'Crypto': true});
   const user = props.user;
   const userFeeds= props.feeds;
   const deleteFeed = props.deleteFeed;
@@ -99,7 +100,6 @@ const FeedForm = (props) => {
       handleBlur,
       handleSubmit,
       isSubmitting,
-      /* and other goodies */
     }) => (
       <form onSubmit={handleSubmit}>
         <Row>
@@ -148,8 +148,6 @@ const FeedForm = (props) => {
       setAddFeedMode(mode);
     }
   }
-
-  const [openPanels, setOpenPanels] = useState({});
 
   function setOpenPanel(id, open) {
     let newOpenPanels = {...openPanels};
