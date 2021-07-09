@@ -56,7 +56,6 @@ function FeedSetup(props) {
   }, [activeCollection, user]);
 
   useEffect(() => {
-    setLoaded(false);
     fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_groups?" + new URLSearchParams({ 
         get_selected_groups: true,
       }), {
@@ -69,7 +68,6 @@ function FeedSetup(props) {
         }).then(response => { return response.json() }).then(json => {
           if(json.success) {
             setSelectedGroups(json.data);
-            setLoaded(true);
           }
         }).catch(error => { console.log(error); });
   }, [user]);
