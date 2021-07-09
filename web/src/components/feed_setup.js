@@ -203,7 +203,10 @@ function FeedSetup(props) {
            <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
             <div className="setup-panel">
               {!loaded && 
-                <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>}
+                <div className="bf-spinner-container">
+                  <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+              }
               {loaded && feeds.length > 0 &&
                 <div className="feed-list-header">
                   <div className="big-label">Feeds in <b>{activeCollection}</b></div>

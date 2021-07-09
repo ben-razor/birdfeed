@@ -340,6 +340,12 @@ div.anim-fade-out {
   animation-duration: 1s;
 }
 
+.bf-spinner-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 .lds-default {
   display: inline-block;
   position: relative;
