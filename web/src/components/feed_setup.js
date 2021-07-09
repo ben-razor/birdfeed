@@ -108,36 +108,6 @@ function FeedSetup(props) {
     });
   }
 
-  function handleChecked(e, feed) {
-    let checked = e.target.checked;
-    let hiddenFeeds = props.hiddenFeeds.slice(0);
-    let hiddenFeedIndex = hiddenFeeds.indexOf(feed);
-    let isHidden = hiddenFeedIndex !== -1;
-
-    if(checked) {
-      if(isHidden) {
-        hiddenFeeds.splice(hiddenFeedIndex, 1);
-      }
-    }
-    else {
-      if(!isHidden) {
-        hiddenFeeds.push(feed);
-      }
-    }
-    props.setHiddenFeeds(hiddenFeeds);
-  }
-
-  function handleAllChecked(e) {
-    let checked = e.target.checked;
-    let hiddenFeeds = [];
-
-    if(!checked) {
-      hiddenFeeds = feeds.slice(0);
-    }
-
-    props.setHiddenFeeds(hiddenFeeds);
-  }
-
   let feedNameClass = 'feed-title-heading feed-title-heading-left';
   let feedURLClass = 'feed-title-heading feed-title-heading-right';
 
@@ -156,8 +126,6 @@ function FeedSetup(props) {
   }
   setFeedNameClass();
 
-  let allChecked = props.hiddenFeeds.length === 0;
-
   let feedTable = '';
   if(loaded && feeds.length) {
     feedTable = <table className="setup-table feed-url-table anim-fade-in-short">
@@ -170,14 +138,13 @@ function FeedSetup(props) {
       {feeds.map((feed, index) => {
         let isDeleting= deleting[feed];
 
-        let isHidden = props.hiddenFeeds.indexOf(feed) !== -1;
-
         let MAX_FEED_LEN = 50;
         if(isSmall) {
           MAX_FEED_LEN = 34;
         }
         let feedStr = feed;
 
+        console.log('isdel', isDeleting);
         if(useFeedName) {
           let feedTitle = feedMetadata[feed]["title"];
           if(feedTitle) {
@@ -191,7 +158,8 @@ function FeedSetup(props) {
           <td className="feed-url">{feedStr}</td>
           {!isLockedGroup && 
             <td className="feed-url-delete">
-              <ButtonSubmit onSubmitting={isDeleting} onClick={() => deleteFeed(feed)} label="🗑" className="float-right" />
+              <ButtonSubmit isSubmitting={isDeleting} onClick={() => deleteFeed(feed)} 
+                            label="🗑" hideLabelDuringSubmit={true} className="float-right" />
             </td>
           }
         </tr>
@@ -199,7 +167,6 @@ function FeedSetup(props) {
       </tbody>
     </table>
   }
-
 
   let tabs = '';
   if(isSmall) {
