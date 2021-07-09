@@ -3,6 +3,7 @@ import DocumentTitle from 'react-document-title';
 import {AlertContext} from './feed_alert';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
+import {useMediaQuery} from 'react-responsive';
 
 /**
  * Returns time in format HH:MM:SS.
@@ -160,6 +161,8 @@ function Feeds(props) {
   const [timedOut, setTimedOut] = useState(false);
   const [refresh, setRefresh] = useState(1);
   const showAlert = useContext(AlertContext);
+  const isSmall = useMediaQuery({ query: '(max-width: 768px)' })
+  const minimalUI = props.minimalUI && isSmall;
 
   function triggerRefresh() {
     setRefresh(refresh === 1 ? 2 : 1);
@@ -209,9 +212,13 @@ function Feeds(props) {
             <tbody>
               {feeds.map((feed, index) => {
                 return <tr key={index}>
+                  {!isSmall && 
                     <td className="date">{ feed.date_time_str }</td>
+                  }
                     <td className="source" style={{color: "white", backgroundColor: feed.color}}>
-                      <div className="sourceText">{ feed.source }</div>
+                      <div className="sourceText">
+                        { feed.source }
+                      </div>
                       <div className="time d-block d-md-none">{ feed.time_str }</div>
                     </td>
                     <td className="time d-none d-md-table-cell">{ feed.time_str }</td>

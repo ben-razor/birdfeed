@@ -15,6 +15,7 @@ function App(props) {
   const [alertInfo, showAlert] = useState({variant: 'info', message: ''});
   const [hiddenFeeds, setHiddenFeeds] = useState([]);
   const [activeCollection, setActiveCollection] = useStateWithLocalStorage('activeCollection', '');
+  const [minimalUI, setMinimalUI]  = useState(false);
   const [collections, setCollections] = useStateWithLocalStorage('collections', [
     { id: "The Menagerie", text: "The Menagerie"},
     { id: "UK News", text: "UK News"},
@@ -35,7 +36,7 @@ function App(props) {
         <div className="thing"></div>
           <header className="mb-4">
             <div className="header">
-              <img src={birdfeedLogo} className="logo" alt="Logo" />
+              <img src={birdfeedLogo} className="logo" alt="Logo" onClick={() => setMinimalUI(!minimalUI)} />
               <div className="header-name-and-select">
                 <h2 className="app-name">Birdfeed</h2>
                 <select className="header-select" value={activeCollection} onChange={handleActiveCollectionChange}> 
@@ -65,7 +66,8 @@ function App(props) {
               </Route>
               <Route path="/">
                 <Feeds hiddenFeeds={hiddenFeeds} 
-                       activeCollection={activeCollection} setActiveCollection={setActiveCollection} />
+                       activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
+                       minimalUI={minimalUI} />
               </Route>
             </Switch>
           </AlertContext.Provider>

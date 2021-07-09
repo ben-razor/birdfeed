@@ -71,6 +71,7 @@ td.time {
   position: relative;
   background-color: hsl(0, 0%, 95%);
   width: 15em;
+  min-width: 4em;
 }
 
 td.source .time {
@@ -584,6 +585,12 @@ table.fancy {
 @media only screen and (max-width: 768px) {
   td.source .sourceText {
     margin-bottom: 1.2em;
+    width: 7em;
+    white-space: pre;
+    overflow: hidden;
+    background: -webkit-linear-gradient(0deg, white 70%, transparent);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   .header-name-and-select {
     flex-direction: column;
