@@ -34,7 +34,7 @@ function App(props) {
       <Router>
         <div className="thing thing2"></div>
         <div className="thing"></div>
-          <header className="mb-4">
+          <header className="mb-2">
             <div className="header">
               <img src={birdfeedLogo} className="logo" alt="Logo" onClick={() => setMinimalUI(!minimalUI)} />
               <div className="header-name-and-select">

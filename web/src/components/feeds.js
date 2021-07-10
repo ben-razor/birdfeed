@@ -62,8 +62,8 @@ function formatDate(date, useYear=true, separator='/') {
  * @returns string
  */
 function stringToColour(text, hue, levels, baseLevel) {
-  let variant = text.split('').map(x => x.charCodeAt(0)).reduce((p, c) => p + c) % 20 + 15; 
-  let variantCSS = `hsla(200, 100%, ${variant}%, 0.9)`; 
+  let variant = text.split('').map(x => x.charCodeAt(0)).reduce((p, c) => p + c) % 20 + 30; 
+  let variantCSS = `hsla(200, 70%, ${variant}%, 0.9)`; 
   return variantCSS;
 }
 
