@@ -7,7 +7,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import {AlertContext} from './feed_alert';
 import {useMediaQuery} from 'react-responsive';
 
-let groupNameRegexStr = '[a-zA-Z0-9 ]{2,}';
+let groupNameRegexStr = '[a-zA-Z0-9 ]{2,20}';
 let groupNameRegex = new RegExp(groupNameRegexStr);
 
 const FeedGroupAddForm = (props) => {
@@ -38,7 +38,7 @@ const FeedGroupAddForm = (props) => {
       let validGroupName = groupNameRegex.test(groupName);
 
       if (!validGroupName) {
-        errors.groupName = 'Invalid group name. Group names have letters and numbers and spaces only.';
+        errors.groupName = 'Group name must be 2 to 20 characters. Letters, numbers and spaces are allowed.';
       }
       return errors;
     }}
@@ -144,7 +144,7 @@ const FeedGroupAddForm = (props) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.groupName}
-              title="Group name must be more than 2 characters. Letters, numbers and spaces are allowed."
+              title="Group name must be 2 to 20 characters. Letters, numbers and spaces are allowed."
               pattern={groupNameRegexStr}
               placeholder={placeholderText}
             />

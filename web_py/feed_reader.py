@@ -175,7 +175,7 @@ def get_feed_urls(loop, feed_url_group):
 
 def is_valid_group_name(group_name):
     group_name = group_name.strip()
-    p = re.compile('[a-zA-Z0-9 ]{2,}')
+    p = re.compile('[a-zA-Z0-9 ]{2,20}')
     valid = bool(p.match(group_name))
     return valid
 
