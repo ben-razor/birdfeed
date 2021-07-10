@@ -112,7 +112,7 @@ nav ul li {
   flex-direction: row;
   padding: 0.5em 0.9em;
   border-radius: 0 0 1em 1em;
-  background-color: hsla(200deg, 0%, 50%, 0.4);
+  background-color: hsla(200deg, 0%, 0%, 0.4);
   color: white;
 }
 
