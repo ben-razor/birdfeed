@@ -8,6 +8,11 @@
     src: url(font/Nunito-SemiBold.ttf); 
 }
 
+@font-face {
+    font-family: BirdfeedFancy;
+    src: url(font/Bangers-Regular.ttf); 
+}
+
 html {
   position: relative;
   overflow-x: hidden;

@@ -199,51 +199,55 @@ function FeedSetup(props) {
         <Row>
           {showFeeds && 
            <Col md={8} style={{minHeight: '20em', display: 'flex', flexDirection: 'column'}}>
-            <div className="setup-panel">
               {!loaded && 
                 <div className="bf-spinner-container">
                   <div className="lds-default anim-fade-in-delayed-short" style={{margin: 'auto'}}><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                 </div>
               }
-              {loaded && feeds.length > 0 &&
-                <div className="feed-list-header">
-                  <div className="big-label">Feeds in <b>{activeCollection}</b></div>
-                  <div className="feed-name-url-toggler">
-                    <button className={feedNameClass} onClick={toggleUseFeedName}>Feed Name</button>
-                    <button className={feedURLClass} onClick={toggleUseFeedName}>URL</button>
-                  </div>
-                </div>
-              }
-              {loaded && feeds.length === 0 &&
-                <div className="alert alert-info mt-1 anim-fade-in-short">
-                  <h6>Empty Group</h6>
-                  <hr />
-                  <p>There are no feeds in group {activeCollection}.</p>
-                </div>
-              }
-              {feedTable}
-              {loaded && !isLockedGroup && 
-                <FeedForm deleteFeed={deleteFeed} deleting={deleting} feeds={feeds} user={user} feedMetadata={feedMetadata} selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
-              }
-              {loaded && isLockedGroup && 
-                <div className="alert alert-info mt-1 anim-fade-in-short">
-                  <p>This is a <BirdfeedSelected /> group. Feeds cannot be added or removed.</p>
-                  <p>To make changes, use the form below to clone this group.</p>
+              {loaded && 
+                <div className="setup-panel">
+                  
+                  {loaded && feeds.length > 0 &&
+                    <div className="feed-list-header">
+                      <div className="big-label">Feeds in <b>{activeCollection}</b></div>
+                      <div className="feed-name-url-toggler">
+                        <button className={feedNameClass} onClick={toggleUseFeedName}>Feed Name</button>
+                        <button className={feedURLClass} onClick={toggleUseFeedName}>URL</button>
+                      </div>
+                    </div>
+                  }
+                  {loaded && feeds.length === 0 &&
+                    <div className="alert alert-info mt-1 anim-fade-in-short">
+                      <h6>Empty Group</h6>
+                      <hr />
+                      <p>There are no feeds in group {activeCollection}.</p>
+                    </div>
+                  }
+                  {feedTable}
+                  {loaded && !isLockedGroup && 
+                    <FeedForm deleteFeed={deleteFeed} deleting={deleting} feeds={feeds} user={user} feedMetadata={feedMetadata} selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
+                  }
+                  {loaded && isLockedGroup && 
+                    <div className="alert alert-info mt-1 anim-fade-in-short">
+                      <p>This is a <BirdfeedSelected /> group. Feeds cannot be added or removed.</p>
+                      <p>To make changes, use the form below to clone this group.</p>
 
-                  <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
-                    collections={collections} setCollections={setCollections} isCloneForm={true} />
-                </div>
-              }
+                      <FeedGroupAddForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
+                        collections={collections} setCollections={setCollections} isCloneForm={true} />
+                    </div>
+                  }
 
-            </div>
-            </Col>
+                </div>
+       
+              }
+                  </Col>
           }
           {showGroups &&
             <Col md={4}>
               <div className="setup-panel">
                 <FeedGroupForm activeCollection={activeCollection} setActiveCollection={setActiveCollection} 
                               collections={collections} setCollections={setCollections} 
-                              setLoaded={setLoaded} />
+                              setLoaded={setLoaded} setTab={setTab} />
               </div>
             </Col>
           }

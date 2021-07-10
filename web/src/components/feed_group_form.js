@@ -9,12 +9,13 @@ const FeedGroupForm = (props) => {
   const setActiveCollection = props.setActiveCollection;
   const collections = props.collections;
   const setCollections = props.setCollections;
+  const setTab = props.setTab;
 
   function deleteGroup(id) {
     if(id === 'The Menagerie') {
       showAlert({
         'variant': 'warning', 
-        'message': 'The Menagerie cannot be deleted!'
+        'message': 'The Menagerie must not be deleted!'
       })
     }
     else {
@@ -46,7 +47,7 @@ const FeedGroupForm = (props) => {
 
     return <div className="feed-group-list-row" value={collection.id} key={collection.id}>
       <button className={groupNameClass} onClick={(e) => handleGroupSelect(e, collection.id)}>
-        {collection.text}
+        {collection.text} {isActive ? ' (active)' : ''}
       </button>
       <div className="feed-group-list-delete">
         <ButtonSubmit onClick={() => deleteGroup(collection.id)} 

@@ -112,7 +112,7 @@ nav ul li {
   flex-direction: row;
   padding: 0.5em 0.9em;
   border-radius: 0 0 1em 1em;
-  background-color: hsla(200deg, 0%, 0%, 0.4);
+  background-color: hsla(200deg, 40%, 30%, 0.6);
   color: white;
 }
 
@@ -167,6 +167,7 @@ header .app-name {
   letter-spacing: 0.4em;
   transform: scaleY(0.4);
   text-shadow: 0 0 4px grey;
+  font-family: BirdfeedFancy, cursive, sans-serif;
 }
 
 @media only screen and (max-width: 600px) {
@@ -612,6 +613,7 @@ table.fancy {
   }
   .header-select {
     font-size: 1rem;
+    max-width: 12em;
   }
   .header-nav-link {
     padding: 10px 12px;
