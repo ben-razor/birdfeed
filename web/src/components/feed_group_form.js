@@ -49,7 +49,8 @@ const FeedGroupForm = (props) => {
         {collection.text}
       </button>
       <div className="feed-group-list-delete">
-        <ButtonSubmit onClick={() => deleteGroup(collection.id)}  label="🗑" className="float-right" />
+        <ButtonSubmit onClick={() => deleteGroup(collection.id)} 
+                label={<i className="fa fa-trash"></i>} className="float-right" />
       </div>
       </div>
   });

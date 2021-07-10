@@ -44,6 +44,10 @@ function App(props) {
                 </select>
               </div>
               <nav>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" width="100" height="100" focusable="false" className="svg-motif-1">
+                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M 4 7 h22 M4 15 h22 M4 23 h22">
+                </path>
+              </svg>
                 <ul>
                   <li>
                     <NavLink className="header-nav-link" activeClassName="active" exact={true} to="/">Latest</NavLink>
