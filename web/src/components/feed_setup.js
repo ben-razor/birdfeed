@@ -157,7 +157,7 @@ function FeedSetup(props) {
           {!isLockedGroup && 
             <td className="feed-url-delete">
               <ButtonSubmit isSubmitting={isDeleting} onClick={() => deleteFeed(feed)} 
-                            label="🗑" hideLabelDuringSubmit={true} className="float-right" />
+                            label={<i className="fa fa-trash"></i>} hideLabelDuringSubmit={true} className="float-right" />
             </td>
           }
         </tr>
@@ -223,7 +223,7 @@ function FeedSetup(props) {
               }
               {feedTable}
               {loaded && !isLockedGroup && 
-                <FeedForm deleteFeed={deleteFeed} feeds={feeds} user={user} feedMetadata={feedMetadata} selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
+                <FeedForm deleteFeed={deleteFeed} deleting={deleting} feeds={feeds} user={user} feedMetadata={feedMetadata} selectedGroups={selectedGroups} setFeeds={setFeeds} activeCollection={activeCollection} setFeedMetadata={setFeedMetadata} />
               }
               {loaded && isLockedGroup && 
                 <div className="alert alert-info mt-1 anim-fade-in-short">

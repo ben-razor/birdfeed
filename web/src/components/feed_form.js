@@ -19,16 +19,18 @@ const FeedForm = (props) => {
   const activeCollection = props.activeCollection;
   const feedMetadata = props.feedMetadata;
   const selectedGroups = props.selectedGroups;
+  const [adding, setAdding] = useState({});
   const [selectedSubmitting, setSelectedSubmitting] = useState(false);
   const [openPanels, setOpenPanels] = useState({'Crypto': true});
   const user = props.user;
   const userFeeds= props.feeds;
   const deleteFeed = props.deleteFeed;
+  const deleting = props.deleting;
 
   const isSmall = useMediaQuery({ query: '(max-width: 768px)' })
 
   function addFeed(url, setSubmitting) {
-    console.log('add feed');
+    setAdding({[url]: true});
       fetch("https://birdfeed-01000101.ew.r.appspot.com/api/feed_urls", {
         method: 'POST',
         headers : { 
@@ -42,7 +44,6 @@ const FeedForm = (props) => {
         return response.json();
       })
       .then(json => {
-        setSubmitting(false);
         if(json.success) {
           showAlert({'variant': 'success', 'message': 'Feed URL added'})
           props.setFeedMetadata(json.data['feed_info'])
@@ -75,7 +76,10 @@ const FeedForm = (props) => {
           'variant': 'danger', 
           'message': `Error adding feed URL\n\nAre you sure this is a valid RSS feed?\n\n`
         })
+      })
+      .finally(() => {
         setSubmitting(false);
+        setAdding({[url]: false});
       });
     }
 
@@ -193,6 +197,8 @@ const FeedForm = (props) => {
 
             let open = openPanels[id] ? true : false;
             let feeds = v['feeds'].map((feed, index) => {
+              let isDeleting= deleting[feed];
+              let isAdding = adding[feed];
               let feedTitle = feed;
               if(feedMetadata[feed] && feedMetadata[feed]["title"]) {
                 feedTitle = feedMetadata[feed]["title"];
@@ -208,14 +214,12 @@ const FeedForm = (props) => {
                 <div className="feed-group-list-delete">
 
                   {userFeeds.includes(feed) &&
-                    <button type="submit" className="float-right btn btn-primary" onClick={() => deleteFeed(feed)}>
-                      <i className="fa fa-refresh fa-spin" style={{width: '0px', opacity: 0}}></i>🗑
-                    </button>
+                    <ButtonSubmit isSubmitting={isDeleting} onClick={() => deleteFeed(feed)} 
+                            label={<i className="fa fa-trash"></i>} hideLabelDuringSubmit={true} className="float-right" />
                   }
                   {!userFeeds.includes(feed) &&
-                    <button type="submit" className="float-right btn btn-success" onClick={() => addFeed(feed, setSelectedSubmitting)}>
-                      <i className="fa fa-refresh fa-spin" style={{width: '0px', opacity: 0}}></i>+
-                    </button>
+                    <ButtonSubmit isSubmitting={isAdding} onClick={() => addFeed(feed, setSelectedSubmitting)} 
+                            label={<i className="fa fa-plus"></i>} hideLabelDuringSubmit={true} className="btn-success float-right" />
                   }
 
                 </div>
