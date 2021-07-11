@@ -580,6 +580,7 @@ table.fancy {
   margin-top: 1em;
   padding: 0.5em;
   box-shadow: 0px 5px 8px grey;
+  min-height: 15em;
 }
 
 .setup-panel .alert {
