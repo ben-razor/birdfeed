@@ -10,8 +10,7 @@ import {AlertContext} from './feed_alert';
 import BirdfeedSelected from './birdfeed_selected';
 import BirdfeedCollapse from './birdfeed_collapse';
 import {useMediaQuery} from 'react-responsive';
-
-let urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)?/i;
+import FeedAddForm from './feed_add_form';
 
 const FeedForm = (props) => {
   const [addFeedMode, setAddFeedMode] = useState('none');
@@ -83,55 +82,7 @@ const FeedForm = (props) => {
       });
     }
 
-  const addFeedForm = <Formik
-    initialValues={{ url: ''}}
-    validate={values => {
-      const errors = {};
-      let urlMatch = urlRegex.test(values.url);
 
-      if(values.url && !urlMatch) {
-        errors.url = 'Invalid url';
-      }
-      return errors;
-    }}
-    onSubmit={(values, { setSubmitting }) => { addFeed(values.url, setSubmitting) }}
-  >
-    {({
-      values,
-      errors,
-      touched,
-      handleChange,
-      handleBlur,
-      handleSubmit,
-      isSubmitting,
-    }) => (
-      <form onSubmit={handleSubmit}>
-        <Row>
-          <Col>
-            <InputGroup>
-            <input
-              className="form-control"
-              type="url"
-              name="url"
-              id="url"
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.url}
-            />
-              <div className="input-group-append">
-                <ButtonSubmit isSubmitting={isSubmitting} />
-              </div>
-            </InputGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            {errors.url && touched.url && errors.url}
-          </Col>
-        </Row>
-    </form>
-  )}
-  </Formik>;
 
   let addFeedBaseClass = 'big-label feed-title-heading birdfeed-trigger';
   let addSelectedFeedClass = addFeedBaseClass + ' feed-title-heading-left';
@@ -245,7 +196,9 @@ const FeedForm = (props) => {
       {addFeedMode !== 'none' &&
         <div className="add-feeds-panel-form">
           {addFeedMode === 'selected' && addSelectedFeedForm}
-          {addFeedMode === 'url' && addFeedForm}
+          {addFeedMode === 'url' && 
+            <FeedAddForm addFeed={addFeed} setAdding={setAdding} user={user} activeCollection={activeCollection} showAlert={showAlert}/>
+          }
         </div>
       }
     </div>
