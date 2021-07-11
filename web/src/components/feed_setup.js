@@ -9,6 +9,7 @@ import FeedGroupForm from './feed_group_form';
 import FeedGroupAddForm from './feed_group_add_form';
 import BirdfeedSelected from './birdfeed_selected';
 import useStateWithLocalStorage from '../hooks/localStorage';
+import useWindowDimensions from '../hooks/use_window_dimensions';
 import {useMediaQuery} from 'react-responsive';
 
 function FeedSetup(props) {
@@ -20,6 +21,7 @@ function FeedSetup(props) {
   const [useFeedName, setUseFeedName] = useState(true);
   const [user, setUser] = useStateWithLocalStorage('user', '', sessionStorage);
   const [selectedGroups, setSelectedGroups] = useState([]);
+  const {width, height} = useWindowDimensions();
   const showAlert = useContext(AlertContext);
   let activeCollection = props.activeCollection;
   let setActiveCollection = props.setActiveCollection;
@@ -124,6 +126,8 @@ function FeedSetup(props) {
   }
   setFeedNameClass();
 
+
+
   let feedTable = '';
   if(loaded && feeds.length) {
     feedTable = <table className="setup-table feed-url-table anim-fade-in-short">
@@ -136,24 +140,20 @@ function FeedSetup(props) {
       {feeds.map((feed, index) => {
         let isDeleting= deleting[feed];
 
-        let MAX_FEED_LEN = 50;
-        if(isSmall) {
-          MAX_FEED_LEN = 34;
-        }
         let feedStr = feed;
 
-        console.log('isdel', isDeleting);
         if(useFeedName) {
           let feedTitle = feedMetadata[feed]["title"];
           if(feedTitle) {
             feedStr = feedTitle;
           }
         }
-        if(feedStr.length > MAX_FEED_LEN) {
-          feedStr = feedStr.substr(0, MAX_FEED_LEN) + '\u2026';
-        }
+        let strWidth = Math.floor(width/17);
         return <tr key={feed}>
-          <td className="feed-url">{feedStr}</td>
+          <td className="feed-url">
+            {isSmall ? <div className="text-shorten-with-fade" style={{width: `${strWidth}em`}}>{feedStr}</div>
+                     : feedStr }
+          </td>
           {!isLockedGroup && 
             <td className="feed-url-delete">
               <ButtonSubmit isSubmitting={isDeleting} onClick={() => deleteFeed(feed)} 
