@@ -13,6 +13,11 @@
     src: url(font/Bangers-Regular.ttf); 
 }
 
+@font-face {
+    font-family: BirdfeedShort;
+    src: url(font/Poppins-Regular.ttf); 
+}
+
 html {
   position: relative;
   overflow-x: hidden;
