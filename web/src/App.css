@@ -365,7 +365,7 @@ div.anim-fade-out {
   position: absolute;
   width: 6px;
   height: 6px;
-  background: #fff;
+  background: hsl(200deg, 100%, 40%);
   border-radius: 50%;
   animation: lds-default 1.2s linear infinite;
 }
