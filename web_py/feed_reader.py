@@ -14,10 +14,15 @@ except ImportError:
     from mocks import storage
 
 BUCKET_URL='https://storage.googleapis.com/birdfeed-01000101.appspot.com/'
+rss_date_format = "%a, %d %b %Y %H:%M:%S %z"
+
+def iso_date_to_rss(iso_date_str):
+    """Convert an ISO 8601 date string to an rss/atom date string."""
+    d = parser.parse(iso_date_str)
+    return d.strftime(rss_date_format)
 
 def add_timezone_field(date):
     """The RSS standard has timezone in the date, but not all feeds do. This adds it."""
-    rss_date_format = "%a, %d %b %Y %H:%M:%S %z"
     date = parser.parse(date)
     date_str = date.strftime(rss_date_format)
     return date_str
@@ -81,7 +86,10 @@ def get_feed_url_counts(feed_url_groups):
     return c
 
 async def get_tweets_async(handle, feed_data=[], feed_info={}):
-    """Read a single twitter feed asynchronously. Store the data in feed_data"""
+    """Read a single twitter feed asynchronously. Store the data in feed_data.
+    
+    Handles must be in format @ben_razor.
+    """
     
     endpoint_URL = 'https://api.twitter.com/2/tweets/search/recent'
     token = os.environ.get('TWITTER_BEARER_TOKEN')
@@ -92,7 +100,7 @@ async def get_tweets_async(handle, feed_data=[], feed_info={}):
     }
 
     params = { 
-        'query': f'from:{handle}',
+        'query': f'from:{handle[1:]}',
         'tweet.fields': 'id,text,created_at', 
         'max_results': 10
     }
@@ -100,9 +108,31 @@ async def get_tweets_async(handle, feed_data=[], feed_info={}):
     query = urlencode(params)
     url = endpoint_URL + '?' + query
 
-    feed_xml = await fetch(url, headers)
+    result_json = await fetch(url, headers)
+    d = json.loads(result_json)
 
-    return feed_xml
+    tweets = d['data']
+    image = {'href', ''}
+
+    feed_info[handle] = {
+        "title": handle,
+        "desc": handle,
+        "image": image,
+        "ttl": 86400,
+        "lastUpdate": 'Sun, 01 Jan 2020 12:00:00 GMT'
+    }
+
+    for entry in tweets:
+        title = entry['text']
+        summary = entry.get('text')
+        date_str = add_timezone_field(iso_date_to_rss(entry['created_at']))
+
+        feed_data.append({
+            'title': title, 'source': handle, 'image': image,'summary': summary, 'link': entry['link'],
+            'date': date_str, 'source_url': handle 
+        })
+
+    return feed_data 
 
 async def get_feed_async(feed, feed_data=[], feed_info={}):
     """Read a single rss feed asynchronously. Store the data in feed_data"""
@@ -144,7 +174,7 @@ def get_feeds_async(loop):
 
     tasks = [get_feed_async(feed, feed_data, feed_info) for feed in feed_urls]
     loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
-    feed_data.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
+    feed_data.sort(key = lambda f: datetime.strptime(f['date'], rss_date_format), reverse=True)
     return feed_data, feed_info
 
 async def fetch(url, ex_headers={}, timeout=10):
@@ -183,7 +213,7 @@ def get_feeds():
                 'date': date_str
             })
 
-    feed_data.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
+    feed_data.sort(key = lambda f: datetime.strptime(f['date'], rss_date_format), reverse=True)
 
     return feed_data 
 

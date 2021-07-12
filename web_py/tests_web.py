@@ -8,6 +8,7 @@ import yaml
 
 loop = asyncio.get_event_loop()
 dir_path = os.path.dirname(os.path.realpath(__file__))
+os.chdir(dir_path)
 
 class TestFeedReaderWeb(unittest.TestCase):
 
@@ -99,6 +100,7 @@ class TestFeedReaderWeb(unittest.TestCase):
 		self.assertTrue(test_url in feed_info)
 		self.assertTrue('title' in feed_info[test_url])
 
+class TestTwitter(unittest.TestCase):
 	def test_tweets(self):
 		with open(os.path.join(dir_path, "env_variables.yaml"), 'r') as stream:
 			try:
@@ -110,11 +112,17 @@ class TestFeedReaderWeb(unittest.TestCase):
 
 		feed_data = []
 		feed_info = {}
-		future = feed_reader.get_tweets_async('elonmusk', feed_data, feed_info)
+		future = feed_reader.get_tweets_async('@elonmusk', feed_data, feed_info)
 		feed_data = loop.run_until_complete(future)
+
 		j = json.loads(feed_data)
-		feeds = j['data']
+
+		with open('data/tweets_em.json', 'w') as f:
+			f.write(feed_data.decode('utf-8'))
+
+		feeds = j
 		self.assertTrue(len(feeds) > 0)
+		self.assertTrue('title' in feeds[0])
 
 if __name__ == '__main__':
 	unittest.main()
