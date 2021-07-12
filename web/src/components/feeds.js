@@ -197,6 +197,10 @@ function Feeds(props) {
     return tweetText;
   }
 
+  function removeEmojis(text) {
+    return text.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g, '');
+  }
+
   return (
     <DocumentTitle title='Birdfeed - Latest News'>
       <div>
@@ -216,7 +220,14 @@ function Feeds(props) {
             <table className="fancy anim-fade-in-short"> 
             <tbody>
               {feeds.map((feed, index) => {
-                feed.title = removeTwitterHandle(feed.title);
+                let title = removeTwitterHandle(feed.title);
+                title = removeEmojis(title);
+                title = title.replace('the ', );
+
+                let MINIMAL_LEN = 110;
+                if(minimalUI && feed.title.length > MINIMAL_LEN) {
+                  feed.title = feed.title.substr(0, MINIMAL_LEN) + ' …';
+                }
 
                 return <tr key={index}>
                   {!isSmall && 
@@ -230,7 +241,7 @@ function Feeds(props) {
                     </td>
                     <td className="time d-none d-md-table-cell">{ feed.time_str }</td>
                     <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">
-                      { !minimalUI ? feed.title : feed.title.substr(0, 132) + '…' }
+                      {title}
                     </a></td>
                 </tr> 
               })}
