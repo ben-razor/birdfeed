@@ -162,7 +162,7 @@ function Feeds(props) {
   const [refresh, setRefresh] = useState(1);
   const showAlert = useContext(AlertContext);
   const isSmall = useMediaQuery({ query: '(max-width: 768px)' })
-  const minimalUI = props.minimalUI && isSmall;
+  const minimalUI = props.minimalUI;
 
   function triggerRefresh() {
     setRefresh(refresh === 1 ? 2 : 1);
@@ -222,7 +222,9 @@ function Feeds(props) {
                       <div className="time d-block d-md-none">{ feed.time_str }</div>
                     </td>
                     <td className="time d-none d-md-table-cell">{ feed.time_str }</td>
-                    <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">{ feed.title }</a></td>
+                    <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">
+                      { !minimalUI ? feed.title : feed.title.substr(0, 100) + '…' }
+                    </a></td>
                 </tr> 
               })}
             </tbody>
