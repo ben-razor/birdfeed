@@ -65,6 +65,7 @@ td.time {
     color: hsl(200, 66%, 93%);
     white-space: nowrap;
     width: 3em;
+    background-color: hsl(200deg, 0%, 100%, 0.9);
 }
 
 .source {
