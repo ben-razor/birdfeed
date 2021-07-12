@@ -601,7 +601,7 @@ table.fancy {
   white-space: pre;
   overflow: hidden;
   background: -webkit-linear-gradient(0deg, black 90%, transparent);
-  background-clip: text;
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
