@@ -221,12 +221,14 @@ function Feeds(props) {
             <tbody>
               {feeds.map((feed, index) => {
                 let title = removeTwitterHandle(feed.title);
-                title = removeEmojis(title);
-                title = title.replace('the ', );
+                if(minimalUI) {
+                  title = removeEmojis(title);
+                  title = title.replace(' the', '');
+                }
 
                 let MINIMAL_LEN = 110;
-                if(minimalUI && feed.title.length > MINIMAL_LEN) {
-                  feed.title = feed.title.substr(0, MINIMAL_LEN) + ' …';
+                if(minimalUI && title.length > MINIMAL_LEN) {
+                  title = title.substr(0, MINIMAL_LEN) + ' …';
                 }
 
                 return <tr key={index}>
