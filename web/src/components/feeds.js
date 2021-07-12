@@ -192,6 +192,11 @@ function Feeds(props) {
     return () => clearInterval(timer);
   }, [showAlert, refresh, props.hiddenFeeds, props.activeCollection]);
 
+  function removeTwitterHandle(tweetText) {
+    tweetText = tweetText.replace(/^@.*: /, '')
+    return tweetText;
+  }
+
   return (
     <DocumentTitle title='Birdfeed - Latest News'>
       <div>
@@ -211,6 +216,8 @@ function Feeds(props) {
             <table className="fancy anim-fade-in-short"> 
             <tbody>
               {feeds.map((feed, index) => {
+                feed.title = removeTwitterHandle(feed.title);
+
                 return <tr key={index}>
                   {!isSmall && 
                     <td className="date">{ feed.date_time_str }</td>
@@ -223,7 +230,7 @@ function Feeds(props) {
                     </td>
                     <td className="time d-none d-md-table-cell">{ feed.time_str }</td>
                     <td className="title"><a href={ feed.link } target="_blank" rel="noreferrer">
-                      { !minimalUI ? feed.title : feed.title.substr(0, 100) + '…' }
+                      { !minimalUI ? feed.title : feed.title.substr(0, 132) + '…' }
                     </a></td>
                 </tr> 
               })}
