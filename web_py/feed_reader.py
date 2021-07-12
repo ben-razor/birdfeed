@@ -1,5 +1,6 @@
 import os, hashlib
 import feedparser, json
+from urllib.parse import urlencode
 import asyncio, aiohttp, async_timeout
 import logging
 from tabulate import tabulate
@@ -79,6 +80,30 @@ def get_feed_url_counts(feed_url_groups):
 
     return c
 
+async def get_tweets_async(handle, feed_data=[], feed_info={}):
+    """Read a single twitter feed asynchronously. Store the data in feed_data"""
+    
+    endpoint_URL = 'https://api.twitter.com/2/tweets/search/recent'
+    token = os.environ.get('TWITTER_BEARER_TOKEN')
+    
+    headers = {
+        "User-Agent": "v2RecentSearchJS",
+        "authorization": f'Bearer {token}'
+    }
+
+    params = { 
+        'query': f'from:{handle}',
+        'tweet.fields': 'id,text,created_at', 
+        'max_results': 10
+    }
+
+    query = urlencode(params)
+    url = endpoint_URL + '?' + query
+
+    feed_xml = await fetch(url, headers)
+
+    return feed_xml
+
 async def get_feed_async(feed, feed_data=[], feed_info={}):
     """Read a single rss feed asynchronously. Store the data in feed_data"""
     feed_xml = await fetch(feed)
@@ -122,7 +147,7 @@ def get_feeds_async(loop):
     feed_data.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
     return feed_data, feed_info
 
-async def fetch(url, timeout=10):
+async def fetch(url, ex_headers={}, timeout=10):
     """Fetch a response from a url asynchronously"""
     with async_timeout.timeout(timeout):
         headers = {
@@ -130,6 +155,8 @@ async def fetch(url, timeout=10):
             "Content-Type": "application/rss+xml",
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36", 
         }
+        headers.update(ex_headers)
+
         async with aiohttp.ClientSession(skip_auto_headers=['User-Agent', 'Accept', 'Content-Type'], headers=headers) as session:
             async with session.get(url) as response:
                 resp_str = await response.read()

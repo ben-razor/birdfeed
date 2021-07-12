@@ -1,10 +1,13 @@
+import os
 import requests
 import unittest
 import json
 import feed_reader
 import asyncio
+import yaml
 
 loop = asyncio.get_event_loop()
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class TestFeedReaderWeb(unittest.TestCase):
 
@@ -95,6 +98,23 @@ class TestFeedReaderWeb(unittest.TestCase):
 		self.assertGreater(len(feed_data), 0)
 		self.assertTrue(test_url in feed_info)
 		self.assertTrue('title' in feed_info[test_url])
+
+	def test_tweets(self):
+		with open(os.path.join(dir_path, "env_variables.yaml"), 'r') as stream:
+			try:
+				data = yaml.safe_load(stream)
+				bearer_token = data['env_variables']['TWITTER_BEARER_TOKEN']
+				os.environ['TWITTER_BEARER_TOKEN'] = bearer_token
+			except yaml.YAMLError as exc:
+				print(exc)
+
+		feed_data = []
+		feed_info = {}
+		future = feed_reader.get_tweets_async('elonmusk', feed_data, feed_info)
+		feed_data = loop.run_until_complete(future)
+		j = json.loads(feed_data)
+		feeds = j['data']
+		self.assertTrue(len(feeds) > 0)
 
 if __name__ == '__main__':
 	unittest.main()
