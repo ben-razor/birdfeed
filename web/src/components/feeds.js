@@ -223,7 +223,7 @@ function Feeds(props) {
                 let title = removeTwitterHandle(feed.title);
                 if(minimalUI) {
                   title = removeEmojis(title);
-                  title = title.replace(' the ', ' ');
+                  title = title.replaceAll(' the ', ' ');
                 }
 
                 let MINIMAL_LEN = 110;
