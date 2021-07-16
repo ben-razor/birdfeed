@@ -231,13 +231,19 @@ function Feeds(props) {
                   title = title.substr(0, MINIMAL_LEN) + ' …';
                 }
 
+                let source = feed.source;
+                let MINIMAL_SOURCE_LEN = 20;
+                if(minimalUI && source.length > MINIMAL_SOURCE_LEN) {
+                  source = source.substr(0, MINIMAL_SOURCE_LEN) + '…';
+                }
+
                 return <tr key={index}>
                   {!isSmall && 
                     <td className="date">{ feed.date_time_str }</td>
                   }
                     <td className="source" style={{color: "white", backgroundColor: feed.color}}>
                       <div className="sourceText">
-                        { feed.source }
+                        { source }
                       </div>
                       <div className="time d-block d-md-none">{ feed.time_str }</div>
                     </td>
