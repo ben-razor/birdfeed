@@ -112,7 +112,7 @@ class TestTwitter(unittest.TestCase):
 
 		feed_data = []
 		feed_info = {}
-		future = feed_reader.get_tweets_async('@elonmusk', feed_data, feed_info)
+		future = feed_reader.get_tweets_async(['@solana', '@ben_razor'], feed_data, feed_info)
 		feeds = loop.run_until_complete(future)
 
 		self.assertTrue(len(feeds) > 0)

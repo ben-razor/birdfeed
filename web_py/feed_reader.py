@@ -85,10 +85,10 @@ def get_feed_url_counts(feed_url_groups):
 
     return c
 
-async def get_tweets_async(handle, feed_data=[], feed_info={}):
+async def get_tweets_async(handles, feed_data=[], feed_info={}):
     """Read a single twitter feed asynchronously. Store the data in feed_data.
     
-    Handles must be in format @ben_razor.
+    Handles must be in format ['@ben_razor', '@solana', ...].
     """
     
     endpoint_URL = 'https://api.twitter.com/2/tweets/search/recent'
@@ -99,8 +99,10 @@ async def get_tweets_async(handle, feed_data=[], feed_info={}):
         "authorization": f'Bearer {token}'
     }
 
+    query = ' OR '.join(map(lambda x: 'from:' + x[1:], handles))
+
     params = { 
-        'query': f'from:{handle[1:]}',
+        'query': f'({query})',
         'tweet.fields': 'id,text,created_at', 
         'max_results': 10
     }
@@ -109,22 +111,24 @@ async def get_tweets_async(handle, feed_data=[], feed_info={}):
     url = endpoint_URL + '?' + query
 
     result_json = await fetch(url, headers)
+    print(result_json)
     d = json.loads(result_json)
 
     tweets = d['data']
     image = {'href': ''}
 
-    feed_info[handle] = {
-        "title": handle,
-        "desc": handle,
-        "image": image,
-        "ttl": 86400,
-        "lastUpdate": 'Sun, 01 Jan 2020 12:00:00 GMT'
-    }
+    for handle in handles:
+        feed_info[handle] = {
+            "title": handle,
+            "desc": handle,
+            "image": image,
+            "ttl": 86400,
+            "lastUpdate": 'Sun, 01 Jan 2020 12:00:00 GMT'
+        }
 
     for entry in tweets:
         title = entry['text']
-        link = f'https://twitter.com/MyMetaverse/status/{entry["id"]}'
+        link = f'https://twitter.com/ben_razor/status/{entry["id"]}'
         summary = entry.get('text')
         date_str = add_timezone_field(iso_date_to_rss(entry['created_at']))
 
