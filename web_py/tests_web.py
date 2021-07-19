@@ -113,16 +113,13 @@ class TestTwitter(unittest.TestCase):
 		feed_data = []
 		feed_info = {}
 		future = feed_reader.get_tweets_async('@elonmusk', feed_data, feed_info)
-		feed_data = loop.run_until_complete(future)
+		feeds = loop.run_until_complete(future)
 
-		j = json.loads(feed_data)
-
-		with open('data/tweets_em.json', 'w') as f:
-			f.write(feed_data.decode('utf-8'))
-
-		feeds = j
 		self.assertTrue(len(feeds) > 0)
 		self.assertTrue('title' in feeds[0])
 
+		with open('data/tweets_em.json', 'w') as f:
+			f.write(json.dumps({"data": feeds}))
+
 if __name__ == '__main__':
-	unittest.main()
+	unittest.main(TestTwitter())

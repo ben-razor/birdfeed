@@ -112,7 +112,7 @@ async def get_tweets_async(handle, feed_data=[], feed_info={}):
     d = json.loads(result_json)
 
     tweets = d['data']
-    image = {'href', ''}
+    image = {'href': ''}
 
     feed_info[handle] = {
         "title": handle,
@@ -124,11 +124,12 @@ async def get_tweets_async(handle, feed_data=[], feed_info={}):
 
     for entry in tweets:
         title = entry['text']
+        link = f'https://twitter.com/MyMetaverse/status/{entry["id"]}'
         summary = entry.get('text')
         date_str = add_timezone_field(iso_date_to_rss(entry['created_at']))
 
         feed_data.append({
-            'title': title, 'source': handle, 'image': image,'summary': summary, 'link': entry['link'],
+            'title': title, 'source': handle, 'image': image,'summary': summary, 'link': link,
             'date': date_str, 'source_url': handle 
         })
 
