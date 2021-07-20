@@ -63,15 +63,20 @@ def password_match(pw, pw_hash, salt):
     digest, salt = hash_pw(pw, salt)
     return digest == pw_hash
 
-def get_unique_feed_urls(feed_url_groups):
-    """Takes a dict { group_name => [feeds...], ...} and returns a list of unique feeds"""
+def get_unique_feed_urls(feed_url_groups, get_twitter_handles=False):
+    """Takes a dict { group_name => [feeds...], ...} and returns a list of unique feeds
+    
+    :param get_twitter_handles: true => return urls starting with @, false => return not starting with @
+    """
     feed_urls = []
 
     for g in feed_url_groups:
         urls = feed_url_groups[g]['feeds']
         for url in urls:
             if url not in feed_urls:
-                feed_urls.append(url)
+                wanted = get_twitter_handles == url.startswith('@')
+                if wanted:
+                    feed_urls.append(url)
     return feed_urls 
 
 def get_feed_url_counts(feed_url_groups):
@@ -85,10 +90,13 @@ def get_feed_url_counts(feed_url_groups):
 
     return c
 
-async def get_tweets_async(handles, feed_data=[], feed_info={}):
-    """Read a single twitter feed asynchronously. Store the data in feed_data.
+async def get_twitter_feed_async(handles, feed_data=[], feed_info={}):
+    """Read a twitter feeds asynchronously. Store the data in feed_data.
     
     Handles must be in format ['@ben_razor', '@solana', ...].
+
+    Can deal with up to 10 handles at a time due to restrictions on the
+    twitter API.
     """
     
     endpoint_URL = 'https://api.twitter.com/2/tweets/search/recent'
@@ -137,7 +145,7 @@ async def get_tweets_async(handles, feed_data=[], feed_info={}):
             'date': date_str, 'source_url': handle 
         })
 
-    return feed_data 
+    return feed_data
 
 async def get_feed_async(feed, feed_data=[], feed_info={}):
     """Read a single rss feed asynchronously. Store the data in feed_data"""
@@ -170,6 +178,16 @@ async def get_feed_async(feed, feed_data=[], feed_info={}):
 
     return feed_data
 
+def create_handle_request_groups(twitter_handles, max_handles_per_req=10):
+    """Takes an array of twitter handles. Returns an array of arrays of twitter handles of
+    length that can be handled in a single twitter api request.
+    """
+    num_handles = len(twitter_handles)
+    handle_groups = [
+        twitter_handles[i:i+max_handles_per_req] for i in range(0, num_handles, max_handles_per_req)
+    ]
+    return handle_groups
+
 def get_feeds_async(loop):
     """Read a number of feeds asynchronously and then sort them by date"""
     feed_data = []
@@ -179,6 +197,12 @@ def get_feeds_async(loop):
 
     tasks = [get_feed_async(feed, feed_data, feed_info) for feed in feed_urls]
     loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
+
+    twitter_handles = get_unique_feed_urls(feed_url_groups, get_twitter_handles=True)
+    handle_groups = create_handle_request_groups(twitter_handles)
+    tasks = [get_twitter_feed_async(handles, feed_data, feed_info) for handles in handle_groups]
+    loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
+
     feed_data.sort(key = lambda f: datetime.strptime(f['date'], rss_date_format), reverse=True)
     return feed_data, feed_info
 

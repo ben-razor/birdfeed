@@ -59,6 +59,16 @@ class TestFeedReaderUtils(unittest.TestCase):
 		self.assertTrue(url in feed_urls)
 		self.assertTrue(len(set(feed_urls)) == len(feed_urls))
 
+		test_group = {
+			'TestGroup1': {'feeds': ['https://a.com', '@solana', '@ben_razor']},
+			'TestGroup2': {'feeds': ['@ben_razor']}
+		}
+		feed_urls = feed_reader.get_unique_feed_urls(test_group, True) 
+		self.assertEqual(len(feed_urls), 2)
+		self.assertTrue('@solana' in feed_urls)
+		self.assertFalse('https://a.com' in feed_urls)
+
+
 	def test_is_valid_group_name(self):
 		is_valid = feed_reader.is_valid_group_name('a')
 		self.assertFalse(is_valid)
