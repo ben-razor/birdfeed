@@ -12,7 +12,7 @@ function ButtonSubmit(props) {
                  disabled={isSubmitting} className={ (className ? className : '') } onClick={onClick}>
     <i className="fa fa-refresh fa-spin" style={{ 
       marginRight: isSubmitting && !hideLabelDuringSubmit ? '5px' : '',
-      width: isSubmitting ? '1em' : 0,
+      width: isSubmitting ? '' : 0,
       opacity: isSubmitting ? 1 : 0 
     }} />
     { !(hideLabelDuringSubmit && isSubmitting) && 

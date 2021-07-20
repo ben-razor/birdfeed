@@ -113,7 +113,6 @@ nav ul li {
   display: flex;
   flex-direction: row;
   padding: 0.5em 0.9em;
-  border-radius: 0 0 1em 1em;
   background-color: hsla(200deg, 40%, 30%, 0.6);
   color: white;
 }
@@ -616,9 +615,6 @@ table.fancy {
     background: -webkit-linear-gradient(0deg, white 70%, transparent);
     background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-  .header {
-    border-radius: 0 0 0.5em 0.5em;
   }
   .header-name-and-select {
     flex-direction: column;
