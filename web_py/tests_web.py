@@ -129,5 +129,7 @@ class TestTwitter(unittest.TestCase):
 
 		feed_data, feed_info = feed_reader.get_feeds_async(loop, test_group)
 
+		print(list(filter(lambda x: '&' in x['summary'], feed_data)))
+
 if __name__ == '__main__':
 	unittest.main(TestTwitter())

@@ -8,6 +8,7 @@ from datetime import *
 from dateutil import parser
 import re
 from collections import Counter
+from html.parser import HTMLParser
 try:
     from google.cloud import storage
 except ImportError:
@@ -114,7 +115,7 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}):
         'tweet.fields': 'id,text,created_at', 
         'user.fields': 'id',
         'expansions': 'author_id',
-        'max_results': 10
+        'max_results': 50
     }
 
     query = urlencode(params)
@@ -140,12 +141,13 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}):
             "lastUpdate": 'Sun, 01 Jan 2020 12:00:00 GMT'
         }
 
+    h = HTMLParser()
+
     for entry in tweets:
-        title = entry['text']
         author_id = entry['author_id']
         source = '@' + users_dict[author_id]['username']
         link = f'https://twitter.com/ben_razor/status/{entry["id"]}'
-        summary = entry.get('text')
+        title = summary = h.unescape(entry.get('text'))
         date_str = add_timezone_field(iso_date_to_rss(entry['created_at']))
 
         feed_data.append({

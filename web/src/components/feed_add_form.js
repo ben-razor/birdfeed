@@ -44,7 +44,7 @@ function FeedAddForm(props) {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.url}
-							placeholder="RSS or Atom feed URL"
+							placeholder="RSS/Atom or Twitter feed URL"
             />
               <div className="input-group-append">
                 <ButtonSubmit isSubmitting={isSubmitting} />

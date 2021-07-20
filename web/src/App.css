@@ -113,7 +113,7 @@ nav ul li {
   display: flex;
   flex-direction: row;
   padding: 0.5em 0.9em;
-  background-color: hsla(200deg, 40%, 30%, 0.6);
+  background-color: hsla(200deg, 40%, 0%, 0.6);
   color: white;
 }
 
@@ -364,7 +364,7 @@ div.anim-fade-out {
   position: absolute;
   width: 6px;
   height: 6px;
-  background: hsl(200deg, 100%, 40%);
+  background-color: hsla(200deg, 40%, 0%, 0.6);
   border-radius: 50%;
   animation: lds-default 1.2s linear infinite;
 }
