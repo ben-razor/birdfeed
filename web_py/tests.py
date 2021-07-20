@@ -68,6 +68,13 @@ class TestFeedReaderUtils(unittest.TestCase):
 		self.assertTrue('@solana' in feed_urls)
 		self.assertFalse('https://a.com' in feed_urls)
 
+	def test_get_feeds_async(self):
+		test_group = {
+			'TestGroup1': {'feeds': ['http://feeds.bbci.co.uk/news/rss.xml?edition=uk', '@solana']},
+		}
+
+		#feed_data, feed_info = feed_reader.get_feeds_async(loop, test_group)
+		#print('gfa', feed_data, feed_info)
 
 	def test_is_valid_group_name(self):
 		is_valid = feed_reader.is_valid_group_name('a')

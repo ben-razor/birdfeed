@@ -121,5 +121,12 @@ class TestTwitter(unittest.TestCase):
 		with open('data/tweets_em.json', 'w') as f:
 			f.write(json.dumps({"data": feeds}))
 
+			test_group = {
+			'TestGroup1': {'feeds': ['http://feeds.bbci.co.uk/news/rss.xml?edition=uk', '@solana']},
+		}
+
+		feed_data, feed_info = feed_reader.get_feeds_async(loop, test_group)
+		print('gfa', feed_data, feed_info)
+
 if __name__ == '__main__':
 	unittest.main(TestTwitter())

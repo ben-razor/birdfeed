@@ -188,11 +188,10 @@ def create_handle_request_groups(twitter_handles, max_handles_per_req=10):
     ]
     return handle_groups
 
-def get_feeds_async(loop):
+def get_feeds_async(loop, feed_url_groups):
     """Read a number of feeds asynchronously and then sort them by date"""
     feed_data = []
     feed_info = {}
-    feed_url_groups = get_feed_url_groups(loop)
     feed_urls = get_unique_feed_urls(feed_url_groups) 
 
     tasks = [get_feed_async(feed, feed_data, feed_info) for feed in feed_urls]
@@ -433,7 +432,8 @@ def get_obj(loop, file_name):
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    feed_data, feed_info = get_feeds_async(loop)
+    feed_url_groups = get_feed_url_groups(loop)
+    feed_data, feed_info = get_feeds_async(loop, feed_url_groups)
     #feed_data = get_stored_feeds(loop)
     print('after get_feeds ' + str(len(feed_data)))
     print('after get_feeds ', feed_info)
