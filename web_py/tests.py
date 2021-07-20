@@ -68,14 +68,6 @@ class TestFeedReaderUtils(unittest.TestCase):
 		self.assertTrue('@solana' in feed_urls)
 		self.assertFalse('https://a.com' in feed_urls)
 
-	def test_get_feeds_async(self):
-		test_group = {
-			'TestGroup1': {'feeds': ['http://feeds.bbci.co.uk/news/rss.xml?edition=uk', '@solana']},
-		}
-
-		#feed_data, feed_info = feed_reader.get_feeds_async(loop, test_group)
-		#print('gfa', feed_data, feed_info)
-
 	def test_is_valid_group_name(self):
 		is_valid = feed_reader.is_valid_group_name('a')
 		self.assertFalse(is_valid)
@@ -85,6 +77,19 @@ class TestFeedReaderUtils(unittest.TestCase):
 
 		is_valid = feed_reader.is_valid_group_name(' a ')
 		self.assertFalse(is_valid)
+
+	def test_twitter_handles(self):
+		h = feed_reader.is_twitter_url('https://twitter.com/solana/status/1416174316362735616')
+		self.assertTrue(h)
+
+		h = feed_reader.is_twitter_url('https://www.coingecko.com/en')
+		self.assertFalse(h)
+
+		h = feed_reader.url_to_twitter_handle('https://twitter.com/solana/status/1416174316362735616')
+		self.assertEqual(h, '@solana')
+
+		h = feed_reader.url_to_twitter_handle('https://www.coingecko.com/en')
+		self.assertEqual(h, 'https://www.coingecko.com/en')
 
 if __name__ == '__main__':
 	unittest.main()

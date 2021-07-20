@@ -119,7 +119,6 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}):
     url = endpoint_URL + '?' + query
 
     result_json = await fetch(url, headers)
-    print(result_json)
     d = json.loads(result_json)
 
     tweets = d['data']
@@ -278,8 +277,32 @@ def limit_feeds_to_group(loop, feeds, feed_url_group=''):
 
     return matching_feeds
 
+def is_twitter_url(feed_url):
+    """Check if url supplied is in form https://twitter.com/..."""
+    return feed_url.startswith('https://twitter.com/')
+
+def url_to_twitter_handle(feed_url):
+    """If a url is supplied in form https://twitter.com/handle/... then
+    returns handle in form @handle. Otherwise, return original url"""
+    if is_twitter_url(feed_url):
+        parts = feed_url.split('/')
+        if len(parts) > 3:
+            twitter_handle = parts[3]
+            feed_url = f'@{twitter_handle}'
+    return feed_url
+
+def is_twitter_handle(url):
+    """Checks if passed string starts with @"""
+    return url.startswith('@')
+
 def add_feed_url(loop, feed_url, feed_url_group='', user=''):
     """Add a feed url and attempt to get and store new feeds.
+
+    Accepts twitter urls in form https://twitter.com/handle/...
+
+    If url is twitter, will parse the handle as @handle and store it like that.
+
+    :param feed_url: An RSS/Atom or twitter url
 
     Returns:
         A tuple (feed_urls, success, reason)
@@ -290,11 +313,15 @@ def add_feed_url(loop, feed_url, feed_url_group='', user=''):
     """
     success = True 
     reason = 'ok'
+
     feed_url_groups = get_feed_url_groups(loop)
     if feed_url_group not in feed_url_groups:
         feed_url_groups[feed_url_group] = {'feeds': []}
 
     feed_urls = feed_url_groups[feed_url_group]['feeds']
+
+    if is_twitter_url(feed_url):
+        feed_url = url_to_twitter_handle(feed_url)
 
     feed_url_counts = get_feed_url_counts(feed_url_groups)
     feed_already_exists = feed_url_counts.get(feed_url, 0) > 0
@@ -316,7 +343,12 @@ def add_feed_url(loop, feed_url, feed_url_group='', user=''):
                 store_feed_url_groups(feed_url_groups)
             else:
                 feeds = get_stored_feeds(loop)
-                new_feeds = loop.run_until_complete(asyncio.wait_for(get_feed_async(feed_url, [], feed_info), timeout=5))
+
+                if is_twitter_handle(feed_url):
+                    new_feeds = loop.run_until_complete(asyncio.wait_for(get_twitter_feed_async([feed_url], [], feed_info), timeout=5))
+                else:
+                    new_feeds = loop.run_until_complete(asyncio.wait_for(get_feed_async(feed_url, [], feed_info), timeout=5))
+
                 if new_feeds and len(new_feeds):
                     feeds.extend(new_feeds)
                     feeds.sort(key = lambda f: datetime.strptime(f['date'], "%a, %d %b %Y %H:%M:%S %z"), reverse=True)
