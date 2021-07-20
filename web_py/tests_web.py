@@ -117,6 +117,8 @@ class TestTwitter(unittest.TestCase):
 
 		self.assertTrue(len(feeds) > 0)
 		self.assertTrue('title' in feeds[0])
+		self.assertTrue('source' in feeds[0])
+		self.assertEqual(feeds[0]['source'], '@solana')
 
 		with open('data/tweets_em.json', 'w') as f:
 			f.write(json.dumps({"data": feeds}))
@@ -128,4 +130,4 @@ class TestTwitter(unittest.TestCase):
 		feed_data, feed_info = feed_reader.get_feeds_async(loop, test_group)
 
 if __name__ == '__main__':
-	unittest.main()
+	unittest.main(TestTwitter())
