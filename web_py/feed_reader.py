@@ -99,7 +99,7 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}):
     Can deal with up to 10 handles at a time due to restrictions on the
     twitter API.
     """
-    
+    handles = handles[:10] 
     endpoint_URL = 'https://api.twitter.com/2/tweets/search/recent'
     token = os.environ.get('TWITTER_BEARER_TOKEN')
     
@@ -115,7 +115,7 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}):
         'tweet.fields': 'id,text,created_at', 
         'user.fields': 'id',
         'expansions': 'author_id',
-        'max_results': 50
+        'max_results': 100
     }
 
     query = urlencode(params)

@@ -110,11 +110,23 @@ nav ul li {
 }
 
 .header {
+  position: relative;
   display: flex;
   flex-direction: row;
   padding: 0.5em 0.9em;
   background-color: hsla(200deg, 40%, 0%, 0.6);
   color: white;
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: -2;
+  background-image: url(./img/bg-tri-1.jpg);
 }
 
 .header-nav-link {
