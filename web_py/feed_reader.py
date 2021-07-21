@@ -9,7 +9,7 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 import re
 from collections import Counter
-from html.parser import HTMLParser
+import html
 try:
     from google.cloud import storage
 except ImportError:
@@ -136,16 +136,7 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}, since_id=N
     query = urlencode(params)
     url = endpoint_URL + '?' + query
 
-    result_json = await fetch(url, headers)
-    d = json.loads(result_json)
-    tweets = d['data']
-    users = d['includes']['users']
-    users_dict = {}
-    for user in users:
-        users_dict[user['id']] = user
-
     image = {'href': ''}
-
     for handle in handles:
         feed_info[handle] = {
             "title": handle,
@@ -155,19 +146,26 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}, since_id=N
             "lastUpdate": 'Sun, 01 Jan 2020 12:00:00 GMT'
         }
 
-    h = HTMLParser()
+    result_json = await fetch(url, headers)
+    d = json.loads(result_json)
 
-    for entry in tweets:
-        author_id = entry['author_id']
-        source = '@' + users_dict[author_id]['username']
-        link = f'https://twitter.com/ben_razor/status/{entry["id"]}'
-        title = summary = h.unescape(entry.get('text'))
-        date_str = add_timezone_field(iso_date_to_rss(entry['created_at']))
+    if 'data' in d:
+        tweets = d['data']
+        users = d['includes']['users']
+        users_dict = {}
+        for user in users:
+            users_dict[user['id']] = user
+        for entry in tweets:
+            author_id = entry['author_id']
+            source = '@' + users_dict[author_id]['username']
+            link = f'https://twitter.com/ben_razor/status/{entry["id"]}'
+            title = summary = html.unescape(entry.get('text'))
+            date_str = add_timezone_field(iso_date_to_rss(entry['created_at']))
 
-        feed_data.append({
-            'title': title, 'source': source, 'image': image,'summary': summary, 'link': link,
-            'date': date_str, 'source_url': handle 
-        })
+            feed_data.append({
+                'title': title, 'source': source, 'image': image,'summary': summary, 'link': link,
+                'date': date_str, 'source_url': handle 
+            })
 
     return feed_data
 

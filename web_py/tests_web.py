@@ -119,20 +119,18 @@ class TestTwitter(unittest.TestCase):
 		self.assertTrue('title' in feeds[0])
 		self.assertTrue('source' in feeds[0])
 		self.assertEqual(feeds[0]['source'], '@solana')
+		self.assertIn('@solana', feed_info)
 
 		with open('data/tweets_em.json', 'w') as f:
 			f.write(json.dumps({"data": feeds}))
 
 			test_group = {
-			'TestGroup1': {'feeds': ['http://feeds.bbci.co.uk/news/rss.xml?edition=uk', '@solana']},
+			'TestGroup1': {'feeds': ['@solana']},
 		}
 
 		feed_data, feed_info = feed_reader.get_twitter_feeds_async(loop, test_group)
 		self.assertTrue(len(feed_data) > 0)
-		print('len', feed_data, len(feed_data))
-
-		#feed_data, feed_info = feed_reader.get_all_feeds(loop, test_group)
-		#self.assertTrue(len(feed_data) > 0)
+		self.assertIn('@solana', feed_info)
 
 if __name__ == '__main__':
 	unittest.main(TestTwitter())
