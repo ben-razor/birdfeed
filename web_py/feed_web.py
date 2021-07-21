@@ -80,7 +80,7 @@ def feed_json():
 
     if reload:
         feed_url_groups = feed_reader.get_feed_url_groups(loop)
-        feeds, feed_info = feed_reader.get_feeds_async(loop, feed_url_groups)
+        feeds, feed_info = feed_reader.get_all_feeds(loop, feed_url_groups)
         feed_reader.store_feeds(feeds)
         feed_reader.store_feed_info(feed_info)
     else:

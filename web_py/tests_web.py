@@ -112,7 +112,7 @@ class TestTwitter(unittest.TestCase):
 
 		feed_data = []
 		feed_info = {}
-		future = feed_reader.get_twitter_feed_async(['@solana', '@ben_razor'], feed_data, feed_info)
+		future = feed_reader.get_twitter_feed_async(['@solana'], feed_data, feed_info)
 		feeds = loop.run_until_complete(future)
 
 		self.assertTrue(len(feeds) > 0)
@@ -127,9 +127,12 @@ class TestTwitter(unittest.TestCase):
 			'TestGroup1': {'feeds': ['http://feeds.bbci.co.uk/news/rss.xml?edition=uk', '@solana']},
 		}
 
-		feed_data, feed_info = feed_reader.get_feeds_async(loop, test_group)
+		feed_data, feed_info = feed_reader.get_twitter_feeds_async(loop, test_group)
+		self.assertTrue(len(feed_data) > 0)
+		print('len', feed_data, len(feed_data))
 
-		print(list(filter(lambda x: '&' in x['summary'], feed_data)))
+		#feed_data, feed_info = feed_reader.get_all_feeds(loop, test_group)
+		#self.assertTrue(len(feed_data) > 0)
 
 if __name__ == '__main__':
 	unittest.main(TestTwitter())

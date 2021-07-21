@@ -1,6 +1,7 @@
 import os, sys, unittest, json
 import asyncio
 import feed_reader
+from datetime import *
 
 cur_dir = os.path.dirname(sys.argv[0])
 loop = asyncio.get_event_loop()
@@ -90,6 +91,33 @@ class TestFeedReaderUtils(unittest.TestCase):
 
 		h = feed_reader.url_to_twitter_handle('https://www.coingecko.com/en')
 		self.assertEqual(h, 'https://www.coingecko.com/en')
+
+	def test_get_most_recent_tweet_id(self):
+		with open(cur_dir + '/data/feed_data_1.json') as f:
+			feed_data = json.load(f)
+			id = feed_reader.get_most_recent_tweet_id(feed_data)
+			self.assertEqual(id, '1417825690678972416')
+
+		with open(cur_dir + '/data/feed_data_2.json') as f:
+			feed_data = json.load(f)
+			id = feed_reader.get_most_recent_tweet_id(feed_data)
+			self.assertIsNone(id)
+
+	def test_rss_date(self):
+		now = datetime(2021, 7, 21, 15)
+		r = feed_reader.rss_date_more_recent_than('Wed, 21 Jul 2021 13:16:26 +0000', 24, now=now)
+		self.assertTrue(r)
+
+		r = feed_reader.rss_date_more_recent_than('Wed, 19 Jul 2021 13:16:26 +0000', 24, now=now)
+		self.assertFalse(r)
+
+
+		with open(cur_dir + '/data/feed_data_2.json') as f:
+			feed_data = json.load(f)
+			self.assertEqual(len(feed_data), 3)
+
+			feed_data = list(filter(lambda x: feed_reader.rss_date_more_recent_than(x['date'], 48, now=now), feed_data))
+			self.assertEqual(len(feed_data), 2)
 
 if __name__ == '__main__':
 	unittest.main()

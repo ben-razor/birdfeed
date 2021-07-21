@@ -6,6 +6,7 @@ import logging
 from tabulate import tabulate
 from datetime import *
 from dateutil import parser
+from dateutil.relativedelta import relativedelta
 import re
 from collections import Counter
 from html.parser import HTMLParser
@@ -91,7 +92,18 @@ def get_feed_url_counts(feed_url_groups):
 
     return c
 
-async def get_twitter_feed_async(handles, feed_data=[], feed_info={}):
+def get_most_recent_tweet_id(feeds):
+    """Search a list of sorted feeds. Return the ID of the most recent tweet."""
+    tweet_id = None
+
+    for feed in feeds:
+        if is_twitter_handle(feed['source']):
+            tweet_id = feed['link'].split('/')[-1:][0]
+            break
+
+    return tweet_id
+
+async def get_twitter_feed_async(handles, feed_data=[], feed_info={}, since_id=None):
     """Read a twitter feeds asynchronously. Store the data in feed_data.
     
     Handles must be in format ['@ben_razor', '@solana', ...].
@@ -118,12 +130,14 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}):
         'max_results': 100
     }
 
+    if since_id:
+        params['since_id'] = since_id
+
     query = urlencode(params)
     url = endpoint_URL + '?' + query
 
     result_json = await fetch(url, headers)
     d = json.loads(result_json)
-
     tweets = d['data']
     users = d['includes']['users']
     users_dict = {}
@@ -207,13 +221,50 @@ def get_feeds_async(loop, feed_url_groups):
     tasks = [get_feed_async(feed, feed_data, feed_info) for feed in feed_urls]
     loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
 
+    feed_data.sort(key = lambda f: datetime.strptime(f['date'], rss_date_format), reverse=True)
+    return feed_data, feed_info
+
+def get_twitter_feeds_async(loop, feed_url_groups):
+    """Takes a feed groups object where some entries will be twitter handles.
+    
+    Gets tweets more recent than the most recently stored tweet.
+    """
+    feed_info = {}
+    feed_data = get_stored_feeds(loop)
+    feed_data = list(filter(lambda x: is_twitter_handle(x['source']), feed_data))
+    since_id = get_most_recent_tweet_id(feed_data)
+
     twitter_handles = get_unique_feed_urls(feed_url_groups, get_twitter_handles=True)
     handle_groups = create_handle_request_groups(twitter_handles)
-    tasks = [get_twitter_feed_async(handles, feed_data, feed_info) for handles in handle_groups]
+    tasks = [get_twitter_feed_async(handles, feed_data, feed_info, since_id) for handles in handle_groups]
     loop.run_until_complete(asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED))
 
     feed_data.sort(key = lambda f: datetime.strptime(f['date'], rss_date_format), reverse=True)
     return feed_data, feed_info
+
+def get_all_feeds(loop, feed_url_groups, more_recent_than=48):
+    """Gets RSS/Atom feeds, then twitter feeds.
+    
+    Combines them, removes entries older than a specfied date and sorts by date.
+    """
+    feed_data, feed_info = get_feeds_async(loop, feed_url_groups)
+    t_feed_data, t_feed_info = get_twitter_feeds_async(loop, feed_url_groups)
+
+    feed_data.extend(t_feed_data)
+    feed_info.update(t_feed_info)
+
+    feed_data = list(filter(lambda x: rss_date_more_recent_than(x['date'], more_recent_than), feed_data))
+    feed_data.sort(key = lambda f: datetime.strptime(f['date'], rss_date_format), reverse=True)
+
+    return feed_data, feed_info
+
+def rss_date_more_recent_than(rss_date_str, hours=1, now=None):
+    """Takes an RSS format date string and finds if it is more recent than a given number of hours"""
+    now = now or datetime.utcnow()
+    d = datetime.strptime(rss_date_str, rss_date_format) 
+    d_now = now.replace(tzinfo=timezone.utc)
+    d_past = d_now - relativedelta(hours=hours)
+    return d > d_past
 
 async def fetch(url, ex_headers={}, timeout=10):
     """Fetch a response from a url asynchronously"""
@@ -476,7 +527,7 @@ def get_obj(loop, file_name):
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     feed_url_groups = get_feed_url_groups(loop)
-    feed_data, feed_info = get_feeds_async(loop, feed_url_groups)
+    feed_data, feed_info = get_all_feeds(loop, feed_url_groups)
     #feed_data = get_stored_feeds(loop)
     print('after get_feeds ' + str(len(feed_data)))
     print('after get_feeds ', feed_info)
