@@ -164,7 +164,7 @@ async def get_twitter_feed_async(handles, feed_data=[], feed_info={}, since_id=N
 
             feed_data.append({
                 'title': title, 'source': source, 'image': image,'summary': summary, 'link': link,
-                'date': date_str, 'source_url': handle 
+                'date': date_str, 'source_url': source 
             })
 
     return feed_data
