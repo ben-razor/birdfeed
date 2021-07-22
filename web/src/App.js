@@ -26,7 +26,7 @@ function App(props) {
     setActiveCollection(event.target.value);
   }
 
-  let options = collections.map(collection => {
+  let options = collections.map((collection, i) => {
     return <option value={collection.id} key={collection.id}>{collection.text}</option>
   });
 
