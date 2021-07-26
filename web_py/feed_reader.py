@@ -338,8 +338,8 @@ def limit_feeds_to_group(loop, feeds, feed_url_group=''):
     return matching_feeds
 
 def is_twitter_url(feed_url):
-    """Check if url supplied is in form https://twitter.com/..."""
-    return feed_url.startswith('https://twitter.com/')
+    """Check if url supplied is from twitter..."""
+    return 'twitter.com/' in feed_url
 
 def url_to_twitter_handle(feed_url):
     """If a url is supplied in form https://twitter.com/handle/... then
