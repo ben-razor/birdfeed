@@ -73,10 +73,10 @@ def get_unique_feed_urls(feed_url_groups, get_twitter_handles=False):
     feed_urls = []
 
     for g in feed_url_groups:
-        urls = feed_url_groups[g]['feeds']
+        urls = [x.lower() for x in feed_url_groups[g]['feeds']]
         for url in urls:
             if url not in feed_urls:
-                wanted = get_twitter_handles == url.startswith('@')
+                wanted = get_twitter_handles == url.startswith('@') 
                 if wanted:
                     feed_urls.append(url)
     return feed_urls 
@@ -327,12 +327,12 @@ def get_feed_url_groups(loop):
     o = get_obj(loop, 'feed-url-groups.json')
     return o['feed_url_groups']
 
-def limit_feeds_to_group(loop, feeds, feed_url_group=''):
-    """Takes a list of feed entries and returns those with urls in the feed_url_group"""
-    feed_urls = get_feed_urls(loop, feed_url_group)
+def limit_feeds_to_group(loop, feeds, feed_urls):
+    """Takes a list of feed entries and returns those with urls in the urls from the feed url group"""
+    feed_urls = [x.lower() for x in feed_urls]
     matching_feeds = []
     for feed in feeds:
-        if feed['source_url'] in feed_urls:
+        if feed['source_url'].lower() in feed_urls:
             matching_feeds.append(feed)
 
     return matching_feeds

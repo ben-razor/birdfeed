@@ -103,6 +103,16 @@ class TestFeedReaderUtils(unittest.TestCase):
 			id = feed_reader.get_most_recent_tweet_id(feed_data)
 			self.assertIsNone(id)
 
+	def test_limit_feeds_to_group(self):
+		test_group = {
+			'TestGroup1': {'feeds': ['https://a.com', '@Solana', '@ben_razor']},
+		}
+
+		with open(cur_dir + '/data/feed_data_3.json') as f:
+			feed_data = json.load(f)
+			feeds = feed_reader.limit_feeds_to_group(loop, feed_data, test_group['TestGroup1']['feeds'])
+			self.assertEqual(len(feeds), 1)
+
 	def test_rss_date(self):
 		now = datetime(2021, 7, 21, 15)
 		r = feed_reader.rss_date_more_recent_than('Wed, 21 Jul 2021 13:16:26 +0000', 24, now=now)

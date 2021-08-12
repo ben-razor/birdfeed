@@ -60,7 +60,8 @@ def simple_web_page():
 
         feed_url_group = request.args.get('feed_url_group', '')
         if feed_url_group is not None:
-            feeds = feed_reader.limit_feeds_to_group(loop, feeds, feed_url_group)
+            feed_urls = feed_reader.get_feed_urls(loop, feed_url_group)
+            feeds = feed_reader.limit_feeds_to_group(loop, feeds, feed_urls)
 
         print('-- feeds --')
         print(feeds)
@@ -87,7 +88,8 @@ def feed_json():
         feeds = feed_reader.get_stored_feeds(loop)
 
     if feed_url_group is not None:
-        feeds = feed_reader.limit_feeds_to_group(loop, feeds, feed_url_group)
+        feed_urls = feed_reader.get_feed_urls(loop, feed_url_group)
+        feeds = feed_reader.limit_feeds_to_group(loop, feeds, feed_urls)
 
     response = jsonify(feeds)
     response.headers.add('Access-Control-Allow-Origin', '*')
