@@ -204,6 +204,7 @@ def create_handle_request_groups(twitter_handles, max_handles_per_req=10):
     """Takes an array of twitter handles. Returns an array of arrays of twitter handles of
     length that can be handled in a single twitter api request.
     """
+    max_handles_per_req = 8
     num_handles = len(twitter_handles)
     handle_groups = [
         twitter_handles[i:i+max_handles_per_req] for i in range(0, num_handles, max_handles_per_req)
