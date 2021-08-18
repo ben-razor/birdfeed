@@ -141,9 +141,10 @@ function FeedSetup(props) {
         let isDeleting= deleting[feed];
 
         let feedStr = feed;
+        let feedID = feed.toLowerCase();
 
         if(useFeedName) {
-          let feedTitle = feedMetadata[feed]["title"];
+          let feedTitle = feedMetadata[feedID]["title"];
           if(feedTitle) {
             feedStr = feedTitle;
           }
