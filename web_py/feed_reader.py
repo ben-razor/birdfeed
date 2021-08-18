@@ -347,7 +347,7 @@ def url_to_twitter_handle(feed_url):
     if is_twitter_url(feed_url):
         parts = feed_url.split('/')
         if len(parts) > 3:
-            twitter_handle = parts[3]
+            twitter_handle = parts[3].split('?')[0]
             feed_url = f'@{twitter_handle}'
     return feed_url
 
@@ -374,17 +374,20 @@ def add_feed_url(loop, feed_url, feed_url_group='', user=''):
     success = True 
     reason = 'ok'
 
+    feed_url = feed_url.lower()
+
     feed_url_groups = get_feed_url_groups(loop)
     if feed_url_group not in feed_url_groups:
         feed_url_groups[feed_url_group] = {'feeds': []}
 
     feed_urls = [x.lower() for x in feed_url_groups[feed_url_group]['feeds']]
+    feed_url_groups[feed_url_group]['feeds'] = feed_urls
 
     if is_twitter_url(feed_url):
         feed_url = url_to_twitter_handle(feed_url)
 
     feed_url_counts = get_feed_url_counts(feed_url_groups)
-    feed_already_exists = feed_url_counts.get(feed_url.lower(), 0) > 0
+    feed_already_exists = feed_url_counts.get(feed_url, 0) > 0
     feed_infos = get_feed_info(loop)
     feed_info = {}
 
@@ -396,7 +399,7 @@ def add_feed_url(loop, feed_url, feed_url_group='', user=''):
     elif len(feed_urls) >= 10:
         success = False
         reason = 'max-feeds-10'
-    elif feed_url.lower() not in feed_urls:
+    elif feed_url not in feed_urls:
         try:
             if feed_already_exists:
                 feed_urls.append(feed_url)
@@ -415,6 +418,7 @@ def add_feed_url(loop, feed_url, feed_url_group='', user=''):
                     feed_urls.append(feed_url)
                     feed_infos.update(feed_info)
 
+                    logging.error('Yes there are new feeds! ' + json.dumps(new_feeds))
                     store_feeds(feeds)
                     store_feed_url_groups(feed_url_groups)
                     store_feed_info(feed_infos)
