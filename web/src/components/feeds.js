@@ -224,6 +224,7 @@ function Feeds(props) {
                 if(minimalUI) {
                   title = removeEmojis(title);
                   title = title.replaceAll(' the ', ' ');
+                  title = title.replace(/^RT(.*?): /, '');
                 }
 
                 let MINIMAL_LEN = 110;
