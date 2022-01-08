@@ -133,4 +133,4 @@ class TestTwitter(unittest.TestCase):
 		self.assertIn('@solana', feed_info)
 
 if __name__ == '__main__':
-	unittest.main(TestTwitter())
+	unittest.main()
