@@ -30,10 +30,8 @@ function App(props) {
     return <option value={collection.id} key={collection.id}>{collection.text}</option>
   });
 
-  return <DocumentTitle title='My Web App'>
+  return <DocumentTitle title='Birdfeed'>
       <Router>
-        <div className="thing thing2"></div>
-        <div className="thing"></div>
           <header className="mb-3">
             <div className="header">
               <img src={birdfeedLogo} className="logo" alt="Logo" onClick={() => setMinimalUI(!minimalUI)} />

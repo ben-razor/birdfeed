@@ -143,17 +143,18 @@ function FeedSetup(props) {
         let feedStr = feed;
         let feedID = feed.toLowerCase();
 
-        if(useFeedName) {
+        if(useFeedName && feedMetadata[feedID]) {
           let feedTitle = feedMetadata[feedID]["title"];
           if(feedTitle) {
             feedStr = feedTitle;
           }
         }
+
         let strWidth = Math.floor(width/17);
         return <tr key={feed}>
           <td className="feed-url">
             {isSmall ? <div className="text-shorten-with-fade" style={{width: `${strWidth}em`}}>{feedStr}</div>
-                     : feedStr }
+                    : feedStr }
           </td>
           {!isLockedGroup && 
             <td className="feed-url-delete">
@@ -162,6 +163,7 @@ function FeedSetup(props) {
             </td>
           }
         </tr>
+
       })}
       </tbody>
     </table>
